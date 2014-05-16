@@ -1,0 +1,36 @@
+package uk.co.revsys.objectology.serialiser.xml;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.dom4j.Node;
+import uk.co.revsys.objectology.model.instance.Collection;
+import uk.co.revsys.objectology.model.template.CollectionTemplate;
+import uk.co.revsys.objectology.serialiser.DeserialiserException;
+import uk.co.revsys.objectology.serialiser.ObjectMapper;
+
+public class XMLCollectionDeserialiser extends XMLAttributeDeserialiser<Collection>{
+
+	@Override
+	public Collection deserialise(ObjectMapper objectMapper, Node source, Object... args) throws DeserialiserException {
+		CollectionTemplate template = (CollectionTemplate)args[0];
+		Collection collection = new Collection();
+		List members = new LinkedList();
+		List<Node> nodes = source.selectNodes("*");
+		for(Node node: nodes){
+			try {
+				Class memberType = template.getMemberTemplate().getClass().newInstance().getAttributeType();
+				XMLAttributeDeserialiser instanceDeserialiser = (XMLAttributeDeserialiser)objectMapper.getDeserialiser(memberType);
+				members.add(instanceDeserialiser.deserialise(objectMapper, node, template.getMemberTemplate()));
+			} catch (InstantiationException ex) {
+				throw new DeserialiserException(ex);
+			} catch (IllegalAccessException ex) {
+				throw new DeserialiserException(ex);
+			}
+		}
+		collection.setMembers(members);
+		return collection;
+	}
+
+}
