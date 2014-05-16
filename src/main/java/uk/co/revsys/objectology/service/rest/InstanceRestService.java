@@ -49,9 +49,25 @@ public class InstanceRestService {
 	@Path("/{type}")
 	@Consumes(MediaType.TEXT_XML)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response create(String json) {
+	public Response createFromXML(String xml) {
 		try {
-			OlogyInstance object = xmlObjectMapper.deserialise(json, OlogyInstance.class);
+			OlogyInstance object = xmlObjectMapper.deserialise(xml, OlogyInstance.class);
+			object = service.create(object);
+			return buildResponse(object);
+		} catch (DeserialiserException ex) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		} catch (DaoException ex) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	@POST
+	@Path("/{type}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createFromJSON(String json) {
+		try {
+			OlogyInstance object = jsonObjectMapper.deserialise(json, OlogyInstance.class);
 			object = service.create(object);
 			return buildResponse(object);
 		} catch (DeserialiserException ex) {
@@ -80,9 +96,26 @@ public class InstanceRestService {
 	@Path("/{type}/{id}")
 	@Consumes(MediaType.TEXT_XML)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response update(@PathParam("id") String id, String json) {
+	public Response updateFromXML(@PathParam("id") String id, String xml) {
 		try {
-			OlogyInstance object = xmlObjectMapper.deserialise(json, OlogyInstance.class);
+			OlogyInstance object = xmlObjectMapper.deserialise(xml, OlogyInstance.class);
+			object.setId(id);
+			object = service.update(object);
+			return buildResponse(object);
+		} catch (DeserialiserException ex) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		} catch (DaoException ex) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	@POST
+	@Path("/{type}/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateFromJSON(@PathParam("id") String id, String json) {
+		try {
+			OlogyInstance object = jsonObjectMapper.deserialise(json, OlogyInstance.class);
 			object.setId(id);
 			object = service.update(object);
 			return buildResponse(object);

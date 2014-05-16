@@ -37,7 +37,10 @@ public class JSONOlogyInstanceDeserialiser extends JSONObjectDeserialiser<OlogyI
 		}
 		OlogyInstance instance = new OlogyInstance();
 		instance.setTemplate(template);
-		instance.setId(json.getString("id"));
+		String id = json.optString("id");
+		if (id != null && !id.isEmpty()) {
+			instance.setId(id);
+		}
 		json.remove("template");
 		for (Object key : json.keySet()) {
 			String attributeName = (String) key;
