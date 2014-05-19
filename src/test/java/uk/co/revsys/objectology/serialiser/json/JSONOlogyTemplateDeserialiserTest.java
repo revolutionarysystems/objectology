@@ -1,6 +1,7 @@
 
-package uk.co.revsys.objectology.serialiser.xml;
+package uk.co.revsys.objectology.serialiser.json;
 
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -16,9 +17,9 @@ import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
 import uk.co.revsys.objectology.serialiser.ObjectMapper;
 
-public class XMLOlogyTemplateDeserialiserTest {
+public class JSONOlogyTemplateDeserialiserTest {
 
-    public XMLOlogyTemplateDeserialiserTest() {
+    public JSONOlogyTemplateDeserialiserTest() {
     }
 
     @BeforeClass
@@ -38,30 +39,18 @@ public class XMLOlogyTemplateDeserialiserTest {
     }
 
 	/**
-	 * Test of deserialise method, of class XMLOlogyTemplateDeserialiser.
+	 * Test of doDeserialiseJSON method, of class JSONOlogyTemplateDeserialiser.
 	 */
 	@Test
-	public void testDeserialise() throws Exception {
-		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultXMLDeserialiserFactory(null));
-		StringBuilder source = new StringBuilder();
-		source.append("<subscription xmlns:o=\"http://test/\">");
-		source.append("<status o:nature='property'>Template</status>");
-		source.append("<startTime o:nature='time'></startTime>");
-		source.append("<limit o:nature='measurement'></limit>");
-		source.append("<limits o:nature='collection' o:memberNature='measurement'>");
-		source.append("<limit/>");
-		source.append("</limits>");
-		source.append("<accountHolder o:nature='object'>");
-		source.append("<permissions o:nature='property'></permissions>");
-		source.append("<user o:nature='link'/>");
-		source.append("</accountHolder>");
-		source.append("</subscription>");
-		OlogyTemplate result = objectMapper.deserialise(source.toString(), OlogyTemplate.class);
+	public void testDoDeserialiseJSON() throws Exception {
+		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultJSONDeserialiserFactory(null));
+		String json = "{\"id\":\"1234\",\"nature\":\"uk.co.revsys.objectology.model.template.OlogyTemplate\",\"attributes\":{\"startTime\":{\"nature\":\"uk.co.revsys.objectology.model.template.TimeTemplate\"},\"limit\":{\"nature\":\"uk.co.revsys.objectology.model.template.MeasurementTemplate\"},\"limits\":{\"memberTemplate\":{\"nature\":\"uk.co.revsys.objectology.model.template.MeasurementTemplate\"},\"nature\":\"uk.co.revsys.objectology.model.template.CollectionTemplate\"},\"status\":{\"nature\":\"uk.co.revsys.objectology.model.template.PropertyTemplate\",\"value\":\"{status}\"},\"accountHolder\":{\"nature\":\"uk.co.revsys.objectology.model.template.OlogyTemplate\",\"attributes\":{\"permissions\":{\"nature\":\"uk.co.revsys.objectology.model.template.PropertyTemplate\"},\"user\":{\"nature\":\"uk.co.revsys.objectology.model.template.LinkTemplate\"}}},\"features\":{\"memberTemplate\":{\"nature\":\"uk.co.revsys.objectology.model.template.OlogyTemplate\",\"attributes\":{\"name\":{\"nature\":\"uk.co.revsys.objectology.model.template.PropertyTemplate\"}}},\"nature\":\"uk.co.revsys.objectology.model.template.CollectionTemplate\"}},\"type\":\"subscription\"}";
+		OlogyTemplate result = objectMapper.deserialise(json, OlogyTemplate.class);
 		assertNotNull(result);
 		assertEquals("subscription", result.getType());
 		assertTrue(result.getAttributeTemplate("status") instanceof PropertyTemplate);
 		assertTrue(result.getAttributeTemplate("startTime") instanceof TimeTemplate);
-		assertEquals("Template", ((Property)result.getAttributeTemplate("status", PropertyTemplate.class).getValue()).getValue());
+		assertEquals("{status}", ((Property)result.getAttributeTemplate("status", PropertyTemplate.class).getValue()).getValue());
 		assertTrue(result.getAttributeTemplate("limit") instanceof MeasurementTemplate);
 		assertTrue(result.getAttributeTemplate("accountHolder") instanceof OlogyTemplate);
 		assertNotNull(result.getAttributeTemplate("accountHolder", OlogyTemplate.class).getAttributeTemplate("permissions"));

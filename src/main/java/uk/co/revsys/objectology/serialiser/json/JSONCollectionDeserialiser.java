@@ -20,6 +20,7 @@ public class JSONCollectionDeserialiser extends JSONArrayDeserialiser<Collection
 	public Collection deserialiseJSON(ObjectMapper objectMapper, JSONArray jsonArray, Object... args) throws DeserialiserException {
 		CollectionTemplate template = (CollectionTemplate) args[0];
 		Collection collection = new Collection();
+		collection.setTemplate(template);
 		List members = new LinkedList();
 		for (int i = 0; i < jsonArray.length(); i++) {
 			try {

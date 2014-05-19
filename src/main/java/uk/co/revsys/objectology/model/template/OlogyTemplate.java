@@ -2,14 +2,27 @@ package uk.co.revsys.objectology.model.template;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import uk.co.revsys.objectology.model.OlogyObject;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 
-public class OlogyTemplate extends OlogyObject implements IdentifiedAttributeTemplate{
+public class OlogyTemplate implements OlogyObject, IdentifiedAttributeTemplate<OlogyInstance>{
 
+	private String id;
 	private String type;
+	private OlogyInstance value;
 	private Map<String, AttributeTemplate> attributeTemplates = new HashMap<String, AttributeTemplate>();	
+
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public String getType() {
 		return type;
@@ -17,6 +30,16 @@ public class OlogyTemplate extends OlogyObject implements IdentifiedAttributeTem
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	@Override
+	public OlogyInstance getValue() {
+		return value;
+	}
+
+	@Override
+	public void setValue(OlogyInstance value) {
+		this.value = value;
 	}
 	
 	public Map<String, AttributeTemplate> getAttributeTemplates() {
@@ -36,8 +59,39 @@ public class OlogyTemplate extends OlogyObject implements IdentifiedAttributeTem
 	}
 
 	@Override
-	public Class<? extends Attribute> getAttributeType() {
+	public Class<? extends OlogyInstance> getAttributeType() {
 		return OlogyInstance.class;
+	}
+
+	@Override
+	public Map<String, Attribute> getAttributes() {
+		Map<String, Attribute> attributes = new HashMap<String, Attribute>();
+		for(Entry<String, AttributeTemplate> entry: getAttributeTemplates().entrySet()){
+			attributes.put(entry.getKey(), entry.getValue().getValue());
+		}
+		return attributes;
+	}
+
+	@Override
+	public void setAttributes(Map<String, Attribute> attributes) {
+		for(Entry<String, Attribute> attribute: attributes.entrySet()){
+			getAttributeTemplate(attribute.getKey()).setValue(attribute.getValue());
+		}
+	}
+
+	@Override
+	public void setAttribute(String key, Attribute attribute) {
+		getAttributeTemplate(key).setValue(attribute);
+	}
+
+	@Override
+	public Attribute getAttribute(String key) {
+		return getAttributeTemplate(key).getValue();
+	}
+
+	@Override
+	public <A extends Attribute> A getAttribute(String key, Class<? extends A> type) {
+		return (A) getAttribute(key);
 	}
 
 }

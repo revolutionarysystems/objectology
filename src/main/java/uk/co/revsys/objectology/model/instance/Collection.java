@@ -3,7 +3,7 @@ package uk.co.revsys.objectology.model.instance;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Collection implements Attribute{
+public class Collection extends AbstractAttribute{
 
 	private List<Attribute> members = new ArrayList<Attribute>();
 

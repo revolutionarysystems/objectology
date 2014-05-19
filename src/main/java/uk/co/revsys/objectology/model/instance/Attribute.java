@@ -1,5 +1,11 @@
 package uk.co.revsys.objectology.model.instance;
 
-public interface Attribute {
+import uk.co.revsys.objectology.model.template.AttributeTemplate;
 
+public interface Attribute<T extends AttributeTemplate> {
+
+	public void setTemplate(T template);
+	
+	public T getTemplate();
+	
 }

@@ -2,8 +2,6 @@ package uk.co.revsys.objectology.serialiser.xml;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.dom4j.Node;
 import uk.co.revsys.objectology.model.instance.Collection;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
@@ -16,6 +14,7 @@ public class XMLCollectionDeserialiser extends XMLAttributeDeserialiser<Collecti
 	public Collection deserialise(ObjectMapper objectMapper, Node source, Object... args) throws DeserialiserException {
 		CollectionTemplate template = (CollectionTemplate)args[0];
 		Collection collection = new Collection();
+		collection.setTemplate(template);
 		List members = new LinkedList();
 		List<Node> nodes = source.selectNodes("*");
 		for(Node node: nodes){

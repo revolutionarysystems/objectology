@@ -1,6 +1,6 @@
 package uk.co.revsys.objectology.model.instance;
 
-public class Link implements Attribute{
+public class Link extends AbstractAttribute{
 
 	private String id;
 

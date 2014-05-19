@@ -18,21 +18,20 @@ import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.serialiser.DeserialiserException;
 import uk.co.revsys.objectology.serialiser.ObjectMapper;
+import uk.co.revsys.objectology.serialiser.SerialiserException;
 import uk.co.revsys.objectology.service.OlogyTemplateService;
 
 @Path("/templates")
 public class TemplateRestService {
 
 	private final OlogyTemplateService<OlogyTemplate> service;
-	private final ObjectMapper objectMapper;
-	private final com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper;
+	private final ObjectMapper xmlObjectMapper;
+	private final ObjectMapper jsonObjectMapper;
 
-	public TemplateRestService(OlogyTemplateService service, ObjectMapper objectMapper) {
+	public TemplateRestService(OlogyTemplateService service, ObjectMapper xmlObjectMapper, ObjectMapper jsonObjectMapper) {
 		this.service = service;
-		this.objectMapper = objectMapper;
-		this.jacksonObjectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
-		jacksonObjectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-		jacksonObjectMapper.enableDefaultTyping();
+		this.xmlObjectMapper = xmlObjectMapper;
+		this.jsonObjectMapper = jsonObjectMapper;
 	}
 
 	@GET
@@ -51,7 +50,7 @@ public class TemplateRestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response create(String json) {
 		try {
-			OlogyTemplate object = objectMapper.deserialise(json, OlogyTemplate.class);
+			OlogyTemplate object = xmlObjectMapper.deserialise(json, OlogyTemplate.class);
 			object = service.create(object);
 			return buildResponse(object);
 		} catch (DeserialiserException ex) {
@@ -82,7 +81,7 @@ public class TemplateRestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response update(@PathParam("id") String id, String json) {
 		try {
-			OlogyTemplate object = objectMapper.deserialise(json, OlogyTemplate.class);
+			OlogyTemplate object = xmlObjectMapper.deserialise(json, OlogyTemplate.class);
 			object.setId(id);
 			object = service.update(object);
 			return buildResponse(object);
@@ -107,8 +106,8 @@ public class TemplateRestService {
 
 	private Response buildResponse(Object entity) {
 		try {
-			return Response.ok(jacksonObjectMapper.writeValueAsString(entity)).build();
-		} catch (JsonProcessingException ex) {
+			return Response.ok(jsonObjectMapper.serialise(entity)).build();
+		} catch (SerialiserException ex) {
 			ex.printStackTrace();
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}

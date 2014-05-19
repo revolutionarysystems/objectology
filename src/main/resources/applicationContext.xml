@@ -18,6 +18,7 @@
 				<bean class="uk.co.revsys.objectology.service.rest.TemplateRestService">
 					<constructor-arg index="0" ref="templateService"/>
 					<constructor-arg index="1" ref="xmlObjectMapper"/>
+					<constructor-arg index="2" ref="jsonObjectMapper"/>
 				</bean>
 				<bean class="uk.co.revsys.objectology.service.rest.InstanceRestService">
 					<constructor-arg index="0" ref="instanceService"/>
@@ -42,10 +43,12 @@
 	
 	<!--bean id="instanceDaoFactory" class="uk.co.revsys.objectology.dao.InMemoryOlogyObjectDaoFactory"/-->
 	
-	<bean id="templateDao" class="uk.co.revsys.objectology.dao.mongo.SpringMongoDao">
-		<constructor-arg index="0" ref="mongo"/>
-		<constructor-arg index="1" value="uk.co.revsys.objectology.model.template.OlogyTemplate"/>
-		<constructor-arg index="2" value="template"/>
+	<bean id="templateDao" class="uk.co.revsys.objectology.dao.mongo.MongoDao">
+		<constructor-arg index="0" ref="mongoClient"/>
+		<constructor-arg index="1" value="objectology"/>
+		<constructor-arg index="2" value="uk.co.revsys.objectology.model.template.OlogyTemplate"/>
+		<constructor-arg index="3" ref="jsonTemplateObjectMapper"/>
+		<constructor-arg index="4" value="template"/>
 	</bean>
 	
 	<bean id="instanceDaoFactory" class="uk.co.revsys.objectology.dao.mongo.MongoDaoFactory">
@@ -82,10 +85,19 @@
 		<constructor-arg index="1" ref="jsonDeserialiserFactory"/>
 	</bean>
 	
+	<bean id="jsonTemplateObjectMapper" class="uk.co.revsys.objectology.serialiser.ObjectMapper">
+		<constructor-arg index="0" ref="jsonSerialiserFactory"/>
+		<constructor-arg index="1" ref="jsonTemplateDeserialiserFactory"/>
+	</bean>
+	
 	<bean id="jsonSerialiserFactory" class="uk.co.revsys.objectology.serialiser.json.DefaultJSONSerialiserFactory"></bean>
 	
 	<bean id="jsonDeserialiserFactory" class="uk.co.revsys.objectology.serialiser.json.DefaultJSONDeserialiserFactory">
 		<constructor-arg index="0" ref="templateService"/>
+	</bean>
+	
+	<bean id="jsonTemplateDeserialiserFactory" class="uk.co.revsys.objectology.serialiser.json.DefaultJSONDeserialiserFactory">
+		<constructor-arg index="0"><null/></constructor-arg>
 	</bean>
 
 </beans>

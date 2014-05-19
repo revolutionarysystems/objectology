@@ -59,7 +59,8 @@ public class JSONOlogyInstanceDeserialiserTest {
 		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultJSONDeserialiserFactory(templateService));
 		OlogyTemplate template = new OlogyTemplate();
 		template.setType("subscription");
-		template.getAttributeTemplates().put("status", new PropertyTemplate());
+		PropertyTemplate statusTemplate = new PropertyTemplate();
+		template.getAttributeTemplates().put("status", statusTemplate);
 		template.getAttributeTemplates().put("startTime", new TimeTemplate());
 		template.getAttributeTemplates().put("limit", new MeasurementTemplate());
 		template.getAttributeTemplates().put("limits", new CollectionTemplate(new MeasurementTemplate()));
@@ -72,6 +73,7 @@ public class JSONOlogyInstanceDeserialiserTest {
 		OlogyInstance result = objectMapper.deserialise(json, OlogyInstance.class);
 		assertEquals(template.getId(), result.getTemplate().getId());
 		assertEquals("Created", result.getAttribute("status", Property.class).getValue());
+		assertEquals(statusTemplate, result.getAttribute("status").getTemplate());
 		assertEquals("01/01/2001 00:00:00", result.getAttribute("startTime", Time.class).getValue());
 		assertEquals("1000", result.getAttribute("limit", Measurement.class).getValue());
 		assertEquals("all", result.getAttribute("accountHolder", OlogyInstance.class).getAttribute("permissions", Property.class).getValue());

@@ -1,6 +1,6 @@
 package uk.co.revsys.objectology.model.instance;
 
-public class AtomicAttribute implements Attribute{
+public class AtomicAttribute extends AbstractAttribute{
 
 	private String value;
 

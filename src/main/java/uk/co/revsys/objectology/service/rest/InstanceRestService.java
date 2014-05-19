@@ -1,8 +1,6 @@
 package uk.co.revsys.objectology.service.rest;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -14,7 +12,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
-import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.serialiser.DeserialiserException;
 import uk.co.revsys.objectology.serialiser.ObjectMapper;
 import uk.co.revsys.objectology.serialiser.SerialiserException;
