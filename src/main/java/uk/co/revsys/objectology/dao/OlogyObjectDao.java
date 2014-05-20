@@ -11,6 +11,8 @@ public interface OlogyObjectDao<O extends OlogyObject> {
 	
 	public O findById(String id) throws DaoException;
 	
+	public O findByName(String name) throws DaoException;
+	
 	public O update(O object) throws DaoException;
 	
 	public void delete(O object) throws DaoException;

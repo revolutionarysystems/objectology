@@ -13,6 +13,7 @@ public class JSONOlogyTemplateSerialiser extends JSONAttributeTemplateSerialiser
 	@Override
 	public JSONObject doSerialiseJSON(JSONObject json, ObjectMapper objectMapper, OlogyTemplate object, Object args) throws SerialiserException{
 		json.put("id", object.getId());
+		json.put("name", object.getName());
 		json.put("type", object.getType());
 		JSONObject attributeTemplates = new JSONObject();
 		json.put("attributes", attributeTemplates);

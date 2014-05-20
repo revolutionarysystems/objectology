@@ -26,6 +26,11 @@ public class OlogyTemplateServiceImpl<T extends OlogyTemplate> implements OlogyT
 	}
 
 	@Override
+	public T findByName(String name) throws DaoException{
+		return dao.findByName(name);
+	}
+
+	@Override
 	public T create(T object) throws DaoException{
 		object = validator.validate(object);
 		return dao.create(object);

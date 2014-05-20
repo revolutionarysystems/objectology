@@ -70,4 +70,19 @@ public class XMLOlogyTemplateDeserialiserTest {
 		assertEquals(MeasurementTemplate.class, result.getAttributeTemplate("limits", CollectionTemplate.class).getMemberTemplate().getClass());
 	}
 
+	/**
+	 * Test of deserialise method, of class XMLOlogyTemplateDeserialiser.
+	 */
+	@Test
+	public void testDeserialiseNamed() throws Exception {
+		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultXMLDeserialiserFactory(null));
+		StringBuilder source = new StringBuilder();
+		source.append("<subscription name=\"Test Template A\" xmlns:o=\"http://test/\">");
+		source.append("<status o:nature='property'>Template</status>");
+		source.append("</subscription>");
+		OlogyTemplate result = objectMapper.deserialise(source.toString(), OlogyTemplate.class);
+		assertNotNull(result);
+		assertEquals("Test Template A", result.getName());
+	}
+
 }

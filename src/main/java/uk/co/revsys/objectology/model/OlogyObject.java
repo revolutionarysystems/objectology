@@ -10,6 +10,10 @@ public interface OlogyObject {
 
 	public void setId(String id);
 
+	public String getName();
+
+	public void setName(String name);
+
 	public Map<String, Attribute> getAttributes();
 
 	public void setAttributes(Map<String, Attribute> attributes);

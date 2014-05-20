@@ -45,4 +45,10 @@ public class SpringMongoDao<O extends OlogyObject> extends AbstractOlogyObjectDa
 		return mongoOps.findById(id, objectClass, getObjectType());
 	}
 
+      	@Override
+	public O findByName(String name){
+            //todo
+		return null;
+	}
+
 }

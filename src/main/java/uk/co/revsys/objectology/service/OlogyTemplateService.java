@@ -10,4 +10,5 @@ public interface OlogyTemplateService<T extends OlogyTemplate> extends OlogyObje
 	
 	public T findById(String id) throws DaoException;
 	
+	public T findByName(String name) throws DaoException;
 }

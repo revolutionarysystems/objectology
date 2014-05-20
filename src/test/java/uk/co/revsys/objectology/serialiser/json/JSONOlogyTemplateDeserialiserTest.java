@@ -59,4 +59,17 @@ public class JSONOlogyTemplateDeserialiserTest {
 		assertEquals(MeasurementTemplate.class, result.getAttributeTemplate("limits", CollectionTemplate.class).getMemberTemplate().getClass());
 	}
 
+        	/**
+	 * Test of doDeserialiseJSON method, of class JSONOlogyTemplateDeserialiser.
+	 */
+	@Test
+	public void testDoDeserialiseNamedJSON() throws Exception {
+		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultJSONDeserialiserFactory(null));
+		String json = "{\"id\":\"1234\",\"name\":\"Test Template B\",\"nature\":\"uk.co.revsys.objectology.model.template.OlogyTemplate\",\"attributes\":{\"startTime\":{\"nature\":\"uk.co.revsys.objectology.model.template.TimeTemplate\"},\"limit\":{\"nature\":\"uk.co.revsys.objectology.model.template.MeasurementTemplate\"},\"limits\":{\"memberTemplate\":{\"nature\":\"uk.co.revsys.objectology.model.template.MeasurementTemplate\"},\"nature\":\"uk.co.revsys.objectology.model.template.CollectionTemplate\"},\"status\":{\"nature\":\"uk.co.revsys.objectology.model.template.PropertyTemplate\",\"value\":\"{status}\"},\"accountHolder\":{\"nature\":\"uk.co.revsys.objectology.model.template.OlogyTemplate\",\"attributes\":{\"permissions\":{\"nature\":\"uk.co.revsys.objectology.model.template.PropertyTemplate\"},\"user\":{\"nature\":\"uk.co.revsys.objectology.model.template.LinkTemplate\"}}},\"features\":{\"memberTemplate\":{\"nature\":\"uk.co.revsys.objectology.model.template.OlogyTemplate\",\"attributes\":{\"name\":{\"nature\":\"uk.co.revsys.objectology.model.template.PropertyTemplate\"}}},\"nature\":\"uk.co.revsys.objectology.model.template.CollectionTemplate\"}},\"type\":\"subscription\"}";
+		OlogyTemplate result = objectMapper.deserialise(json, OlogyTemplate.class);
+		assertNotNull(result);
+		assertEquals("Test Template B", result.getName());
+	}
+
+        
 }

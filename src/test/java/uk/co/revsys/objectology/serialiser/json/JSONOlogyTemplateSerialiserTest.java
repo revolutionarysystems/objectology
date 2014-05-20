@@ -73,4 +73,23 @@ public class JSONOlogyTemplateSerialiserTest {
 		assertEquals(MeasurementTemplate.class.getName(), json.getJSONObject("attributes").getJSONObject("limits").getJSONObject("memberTemplate").getString("nature"));
 	}
 
+
+	/**
+	 * Test of serialiseJSON method, of class JSONOlogyTemplateSerialiser.
+	 */
+	@Test
+	public void testSerialiseNamedJSON() throws SerialiserException {
+		ObjectMapper objectMapper = new ObjectMapper(new DefaultJSONSerialiserFactory(), null);
+		OlogyTemplate template = new OlogyTemplate();
+		template.setId("1234");
+                template.setName("Test Template X");
+		template.setType("subscription");
+		String result = objectMapper.serialise(template, OlogyTemplate.class);
+		System.out.println("result = " + result);
+		JSONObject json = new JSONObject(result);
+		assertEquals("1234", json.get("id"));
+		assertEquals("subscription", json.get("type"));
+		assertEquals("Test Template X", json.get("name"));
+	}
+
 }

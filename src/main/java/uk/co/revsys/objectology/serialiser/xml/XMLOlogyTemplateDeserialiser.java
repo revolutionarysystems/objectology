@@ -1,6 +1,8 @@
 package uk.co.revsys.objectology.serialiser.xml;
 
 import java.util.List;
+import org.dom4j.Attribute;
+import org.dom4j.Element;
 import org.dom4j.Node;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
@@ -14,6 +16,10 @@ public class XMLOlogyTemplateDeserialiser extends XMLAttributeTemplateDeserialis
 		System.out.println("source = " + source.asXML());
 		OlogyTemplate template = new OlogyTemplate();
 		template.setType(source.getName());
+                Attribute nameAt =((Element)source).attribute("name"); 
+                if (nameAt!=null){
+                    template.setName(nameAt.getText());
+                }
 		List<Node> nodes = source.selectNodes("*");
 		for(Node node: nodes){
 			System.out.println("node = " + node.asXML());

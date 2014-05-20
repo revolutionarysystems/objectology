@@ -94,4 +94,17 @@ public class MongoDao<O extends OlogyObject> extends AbstractOlogyObjectDao<O> {
 		}
 	}
 
+	@Override
+	public O findByName(String name) throws DaoException{
+		try {
+			DBObject result = dbCollection.findOne(new BasicDBObject("name", name));
+			if (result == null) {
+				return null;
+			}
+			return objectMapper.deserialise(result.toString().replace("\"_id\"", "\"id\""), objectClass);
+		} catch (DeserialiserException ex) {
+			throw new DaoException(ex);
+		}
+	}
+
 }

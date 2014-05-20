@@ -19,6 +19,10 @@ public class JSONOlogyTemplateDeserialiser extends JSONAttributeTemplateDeserial
 		if (type != null && !type.isEmpty()) {
 			object.setType(type);
 		}
+		String name = json.optString("name");
+		if (name != null && !name.isEmpty()) {
+			object.setName(name);
+		}
 		JSONObject attributes = json.getJSONObject("attributes");
 		for (Object attributeKey : attributes.keySet()) {
 			try {

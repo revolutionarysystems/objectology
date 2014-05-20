@@ -51,7 +51,17 @@ public class TemplateRestService {
 	public Response create(String json) {
 		try {
 			OlogyTemplate object = xmlObjectMapper.deserialise(json, OlogyTemplate.class);
-			object = service.create(object);
+                        OlogyTemplate previous = null;
+                        String name = object.getName();
+                        if (name!=null){
+                            previous = service.findByName(name);
+                        }
+                        if (previous!=null){
+                            object.setId(previous.getId());
+                            object = service.update(object);
+                        } else {
+                            object = service.create(object);
+                        }
 			return buildResponse(object);
 		} catch (DeserialiserException ex) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -66,6 +76,21 @@ public class TemplateRestService {
 	public Response findById(@PathParam("id") String id) {
 		try {
 			OlogyTemplate result = service.findById(id);
+			if (result == null) {
+				return Response.status(Response.Status.NOT_FOUND).build();
+			}
+			return buildResponse(result);
+		} catch (DaoException ex) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@GET
+	@Path("/name/{name}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response findByName(@PathParam("name") String name) {
+		try {
+			OlogyTemplate result = service.findByName(name);
 			if (result == null) {
 				return Response.status(Response.Status.NOT_FOUND).build();
 			}
@@ -92,11 +117,41 @@ public class TemplateRestService {
 		}
 	}
 
+	@POST
+	@Path("/name/{name}")
+	@Consumes(MediaType.TEXT_XML)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateByName(@PathParam("name") String name, String json) {
+		try {
+			OlogyTemplate previous = service.findByName(name);
+			OlogyTemplate object = xmlObjectMapper.deserialise(json, OlogyTemplate.class);
+			object.setId(previous.getId());
+			object = service.update(object);
+			return buildResponse(object);
+		} catch (DeserialiserException ex) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		} catch (DaoException ex) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
 	@DELETE
 	@Path("/{id}")
 	public Response delete(@PathParam("id") String id) {
 		try {
 			OlogyTemplate result = service.findById(id);
+			service.delete(result);
+			return Response.status(Response.Status.NO_CONTENT).build();
+		} catch (DaoException ex) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@DELETE
+	@Path("/name/{name}")
+	public Response deleteByName(@PathParam("name") String name) {
+		try {
+			OlogyTemplate result = service.findByName(name);
 			service.delete(result);
 			return Response.status(Response.Status.NO_CONTENT).build();
 		} catch (DaoException ex) {

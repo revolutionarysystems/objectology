@@ -54,4 +54,27 @@ public class OlogyTemplateServiceImplTest {
 		assertEquals(template1Id, result2.getId());
 	}
 
+	@Test
+	public void testTemplateName() throws DaoException{
+		OlogyObjectDao<OlogyTemplate> templateDao = new InMemoryOlogyObjectDao<OlogyTemplate>();
+		OlogyTemplateServiceImpl<OlogyTemplate> templateService = new OlogyTemplateServiceImpl<OlogyTemplate>(templateDao, new OlogyTemplateValidator());
+		OlogyTemplate template1 = new OlogyTemplate();
+                template1.setName("Test template");
+		OlogyTemplate result1 = templateService.create(template1);
+		assertNotNull(result1);
+		String template1Id = result1.getId();
+		assertNotNull(template1Id);
+		String template1Name = result1.getName();
+		assertNotNull(template1Name);
+		assertEquals(template1Name, "Test template");
+		OlogyTemplate result2 = templateService.findById(template1Id);
+		assertNotNull(result2);
+		assertEquals(template1Id, result2.getId());
+		assertEquals(template1Name, result2.getName());
+		OlogyTemplate result3 = templateService.findByName("Test template");
+		assertNotNull(result3);
+		assertEquals(template1Id, result3.getId());
+		assertEquals(template1Name, result3.getName());
+	}
+
 }
