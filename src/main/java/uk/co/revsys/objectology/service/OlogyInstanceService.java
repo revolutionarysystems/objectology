@@ -8,6 +8,8 @@ public interface OlogyInstanceService<I extends OlogyInstance> extends OlogyObje
 
 	public List<I> findAll(String type) throws DaoException;
 	
+	public I findMatch(String type, String property, String value) throws DaoException;
+	
 	public I findById(String type, String id) throws DaoException;
 	
 }

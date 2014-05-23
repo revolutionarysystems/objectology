@@ -22,6 +22,11 @@ public class OlogyInstanceServiceImpl<I extends OlogyInstance> implements OlogyI
 	}
 
 	@Override
+	public I findMatch(String type, String property, String value) throws DaoException{
+		return getDao(type).findMatch(property, value);
+	}
+
+	@Override
 	public I findById(String type, String id) throws DaoException{
 		return getDao(type).findById(id);
 	}

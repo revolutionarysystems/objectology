@@ -41,6 +41,16 @@ public class InMemoryOlogyObjectDao<O extends OlogyObject> extends AbstractOlogy
 	}
 
 	@Override
+	public O findMatch(String property, String value) throws DaoException{
+            for (O valueObject : objectsByName.values()){
+                if (valueObject.getAttribute(property).equals(value)){
+                    return valueObject;
+                }
+            }
+            return null;
+	}
+
+	@Override
 	public O update(O object) throws DaoException{
 		objects.put(object.getId(), object);
 		return object;

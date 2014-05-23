@@ -9,7 +9,9 @@ public interface OlogyObjectDao<O extends OlogyObject> {
 	
 	public List<O> findAll() throws DaoException;
 	
-	public O findById(String id) throws DaoException;
+	public O findMatch(String property, String value) throws DaoException;
+
+        public O findById(String id) throws DaoException;
 	
 	public O findByName(String name) throws DaoException;
 	
