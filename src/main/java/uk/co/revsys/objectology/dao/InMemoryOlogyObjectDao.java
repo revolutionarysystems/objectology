@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import uk.co.revsys.objectology.model.OlogyObject;
 
 public class InMemoryOlogyObjectDao<O extends OlogyObject> extends AbstractOlogyObjectDao<O>{
@@ -28,6 +27,11 @@ public class InMemoryOlogyObjectDao<O extends OlogyObject> extends AbstractOlogy
 	@Override
 	public List<O> findAll() throws DaoException{
 		return new ArrayList<O>(objects.values());
+	}
+
+	@Override
+	public List<O> findAll(Class view) throws DaoException {
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override

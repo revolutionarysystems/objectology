@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.data.mongodb.core.MongoOperations;
 import uk.co.revsys.objectology.dao.AbstractOlogyObjectDao;
+import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.OlogyObject;
 
 public class SpringMongoDao<O extends OlogyObject> extends AbstractOlogyObjectDao<O>{
@@ -27,6 +28,11 @@ public class SpringMongoDao<O extends OlogyObject> extends AbstractOlogyObjectDa
 	@Override
 	public List<O> findAll() {
 		return (List<O>) mongoOps.findAll(objectClass, getObjectType());
+	}
+
+	@Override
+	public <V> List<V> findAll(Class<? extends V> view) throws DaoException {
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
