@@ -59,6 +59,8 @@ curl -X DELETE http://localhost:8080/objectology/templates/name/{templateName}
 ### Update a template
 
 Requires the whole template to be submitted otherwise data will be lost
+Template may be updated by name using:  
+http://localhost:8080/objectology/templates/name/{templateName}
 
 ```sh
 curl -X POST -d '<subscription xmlns:o="http://test/"><status o:nature="property"/><startTime o:nature="time"/><limit o:nature="measurement"/><permissions o:nature="collection" o:memberNature="property"><permission/></permissions><features o:nature="collection" o:memberNature="object"><feature><name o:nature="property"/><limit o:nature="measurement"/><status o:nature="property"/></feature></features><accountHolder o:nature="object"><status o:nature="property"/><user o:nature="link"/></accountHolder></subscription>' -H "Content-Type: text/xml" http://localhost:8080/objectology/templates/{templateId}
@@ -151,6 +153,12 @@ curl http://localhost:8080/objectology/{type}
 
 ```sh
 curl http://localhost:8080/objectology/{type}/{id}
+```
+
+### Retrieve instances matching a particular property
+
+```sh
+curl http://localhost:8080/objectology/{type}/{property}/{value}
 ```
 
 ### Delete an instance
