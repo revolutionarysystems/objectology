@@ -155,7 +155,7 @@ curl http://localhost:8080/objectology/{type}
 curl http://localhost:8080/objectology/{type}/{id}
 ```
 
-### Retrieve instances matching a particular property
+### Retrieve instances matching a single property
 
 ```sh
 curl http://localhost:8080/objectology/{type}/{property}/{value}
