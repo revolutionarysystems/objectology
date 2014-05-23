@@ -47,11 +47,8 @@ public class InstanceRestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response findMatches(@PathParam("type") String type, @PathParam("property") String property, @PathParam("value") String value) {
 		try {
-			OlogyInstance result = service.findMatch(type, property, value);
-			if(result==null){
-				return Response.status(Response.Status.NOT_FOUND).build();
-			}
-			return buildResponse(result);
+			List<OlogyInstance> results = service.findMatches(type, property, value);
+			return buildResponse(results);
 		} catch (DaoException ex) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}

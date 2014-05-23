@@ -56,4 +56,13 @@ public class SpringMongoDao<O extends OlogyObject> extends AbstractOlogyObjectDa
             //todo
 		return null;
 	}
+        
+
+        @Override
+	public List<O> findMatches(String property, String value){
+            //todo
+       		return null;
+	}
+
+        
 }
