@@ -120,6 +120,27 @@ public class MongoDao<O extends OlogyObject> extends AbstractOlogyObjectDao<O> {
 		}
 	}
 
+	@Override
+	public List<O> findMatches(String property, String value) throws DaoException{
+		try {
+                        HashMap match = new HashMap();
+                        match.put(property, value);
+			DBCursor cursor = dbCollection.find((DBObject) JSON.parse(jacksonObjectMapper.writeValueAsString(match)));
+			List<O> results = new LinkedList<O>();
+			while (cursor.hasNext()) {
+				DBObject next = cursor.next();
+				try {
+					results.add(objectMapper.deserialise(next.toString().replace("\"_id\"", "\"id\""), objectClass));
+				} catch (DeserialiserException ex) {
+					throw new DaoException(ex);
+				}
+			}
+			return results;
+		} catch (JsonProcessingException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
 
 
 }

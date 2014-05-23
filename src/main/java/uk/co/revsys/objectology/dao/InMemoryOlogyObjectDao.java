@@ -42,7 +42,7 @@ public class InMemoryOlogyObjectDao<O extends OlogyObject> extends AbstractOlogy
 
 	@Override
 	public O findMatch(String property, String value) throws DaoException{
-            for (O valueObject : objectsByName.values()){
+            for (O valueObject : objects.values()){
                 if (valueObject.getAttribute(property).equals(value)){
                     return valueObject;
                 }
@@ -50,6 +50,18 @@ public class InMemoryOlogyObjectDao<O extends OlogyObject> extends AbstractOlogy
             return null;
 	}
 
+	@Override
+	public List<O> findMatches(String property, String value) throws DaoException{
+            List<O> hits = new ArrayList<O>();
+            for (O valueObject : objects.values()){
+                if (valueObject.getAttribute(property).equals(value)){
+                    hits.add(valueObject);
+                }
+            }
+            return hits;
+	}
+        
+        
 	@Override
 	public O update(O object) throws DaoException{
 		objects.put(object.getId(), object);
