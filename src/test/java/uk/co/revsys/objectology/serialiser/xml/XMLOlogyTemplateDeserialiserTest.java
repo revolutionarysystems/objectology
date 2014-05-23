@@ -74,6 +74,34 @@ public class XMLOlogyTemplateDeserialiserTest {
 	 * Test of deserialise method, of class XMLOlogyTemplateDeserialiser.
 	 */
 	@Test
+	public void testDeserialiseDefault() throws Exception {
+		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultXMLDeserialiserFactory(null));
+		StringBuilder source = new StringBuilder();
+		source.append("<subscription xmlns:o=\"http://test/\">");
+		source.append("<status>Template</status>");
+		source.append("<ref></ref>");
+		source.append("<startTime o:nature='time'></startTime>");
+		source.append("<limit o:nature='measurement'></limit>");
+		source.append("<limits o:nature='collection' o:memberNature='measurement'>");
+		source.append("<limit/>");
+		source.append("</limits>");
+		source.append("<accountHolder o:nature='object'>");
+		source.append("<permissions></permissions>");
+		source.append("<user o:nature='link'/>");
+		source.append("</accountHolder>");
+		source.append("</subscription>");
+		OlogyTemplate result = objectMapper.deserialise(source.toString(), OlogyTemplate.class);
+		assertNotNull(result);
+		assertEquals("subscription", result.getType());
+		assertTrue(result.getAttributeTemplate("status") instanceof PropertyTemplate);
+		assertEquals("Template", ((Property)result.getAttributeTemplate("status", PropertyTemplate.class).getValue()).getValue());
+		assertTrue(result.getAttributeTemplate("ref") instanceof PropertyTemplate);
+	}
+
+	/**
+	 * Test of deserialise method, of class XMLOlogyTemplateDeserialiser.
+	 */
+	@Test
 	public void testDeserialiseNamed() throws Exception {
 		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultXMLDeserialiserFactory(null));
 		StringBuilder source = new StringBuilder();

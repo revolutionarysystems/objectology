@@ -24,7 +24,10 @@ public class XMLOlogyTemplateDeserialiser extends XMLAttributeTemplateDeserialis
 		for(Node node: nodes){
 			System.out.println("node = " + node.asXML());
 			String name = node.getName();
-			String nature = node.selectSingleNode("@o:nature").getText();
+                        String nature = "property";
+                        if (node.selectSingleNode("@o:nature")!=null){
+                            nature = node.selectSingleNode("@o:nature").getText();
+                        }
 			XMLAttributeTemplateDeserialiser<AttributeTemplate> attributeTemplateDeserialiser = (XMLAttributeTemplateDeserialiser) objectMapper.getDeserialiser(nature);
 			AttributeTemplate attributeTemplate = attributeTemplateDeserialiser.deserialise(objectMapper, node);
 			template.getAttributeTemplates().put(name, attributeTemplate);
