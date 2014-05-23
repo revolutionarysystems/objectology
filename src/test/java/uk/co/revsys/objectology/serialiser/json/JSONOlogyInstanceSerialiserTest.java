@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import uk.co.revsys.objectology.dao.InMemoryOlogyObjectDao;
 import uk.co.revsys.objectology.model.instance.Collection;
 import uk.co.revsys.objectology.model.instance.Link;
 import uk.co.revsys.objectology.model.instance.Measurement;
@@ -24,9 +23,6 @@ import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
 import uk.co.revsys.objectology.serialiser.ObjectMapper;
-import uk.co.revsys.objectology.service.OlogyTemplateService;
-import uk.co.revsys.objectology.service.OlogyTemplateServiceImpl;
-import uk.co.revsys.objectology.service.OlogyTemplateValidator;
 
 public class JSONOlogyInstanceSerialiserTest {
 

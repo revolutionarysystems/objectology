@@ -12,4 +12,6 @@ public interface OlogyInstanceService<I extends OlogyInstance> extends OlogyObje
 	
 	public I findById(String type, String id) throws DaoException;
 	
+	public I findByName(String type, String name) throws DaoException;
+	
 }

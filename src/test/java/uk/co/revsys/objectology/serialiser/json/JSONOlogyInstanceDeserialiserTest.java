@@ -1,7 +1,6 @@
 
 package uk.co.revsys.objectology.serialiser.json;
 
-import org.json.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -22,8 +21,6 @@ import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
-import uk.co.revsys.objectology.serialiser.DefaultTemplateMap;
-import uk.co.revsys.objectology.serialiser.DefaultTemplateNatureMap;
 import uk.co.revsys.objectology.serialiser.ObjectMapper;
 import uk.co.revsys.objectology.service.OlogyTemplateServiceImpl;
 import uk.co.revsys.objectology.service.OlogyTemplateValidator;
@@ -77,7 +74,7 @@ public class JSONOlogyInstanceDeserialiserTest {
 		assertEquals("01/01/2001 00:00:00", result.getAttribute("startTime", Time.class).getValue());
 		assertEquals("1000", result.getAttribute("limit", Measurement.class).getValue());
 		assertEquals("all", result.getAttribute("accountHolder", OlogyInstance.class).getAttribute("permissions", Property.class).getValue());
-		assertEquals("1234", result.getAttribute("accountHolder", OlogyInstance.class).getAttribute("user", Link.class).getId());
+		assertEquals("1234", result.getAttribute("accountHolder", OlogyInstance.class).getAttribute("user", Link.class).getReference());
 		assertEquals("123", ((Measurement)result.getAttribute("limits", Collection.class).getMembers().get(0)).getValue());
 	}
 

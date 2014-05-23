@@ -32,6 +32,11 @@ public class OlogyInstanceServiceImpl<I extends OlogyInstance> implements OlogyI
 	}
 
 	@Override
+	public I findByName(String type, String name) throws DaoException {
+		return getDao(type).findByName(name);
+	}
+
+	@Override
 	public I create(I object) throws DaoException{
 		object = validator.validate(object);
 		return getDao(object.getType()).create(object);

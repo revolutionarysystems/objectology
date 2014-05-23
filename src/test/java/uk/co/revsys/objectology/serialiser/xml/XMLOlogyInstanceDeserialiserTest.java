@@ -100,7 +100,7 @@ public class XMLOlogyInstanceDeserialiserTest {
 		assertNull(instance.getAttribute("endTime"));
 		assertNotNull(instance.getAttribute("accountHolder"));
 		assertEquals("all", instance.getAttribute("accountHolder", OlogyInstance.class).getAttribute("permissions", Property.class).getValue());
-		assertEquals("1234", instance.getAttribute("accountHolder", OlogyInstance.class).getAttribute("user", Link.class).getId());
+		assertEquals("1234", instance.getAttribute("accountHolder", OlogyInstance.class).getAttribute("user", Link.class).getReference());
 		assertEquals(1, instance.getAttribute("limits", Collection.class).getMembers().size());
 		assertEquals("1", ((Measurement)instance.getAttribute("limits", Collection.class).getMembers().get(0)).getValue());
 		assertEquals("Feature 1", ((OlogyInstance)instance.getAttribute("features", Collection.class).getMembers().get(0)).getAttribute("name", Property.class).getValue());

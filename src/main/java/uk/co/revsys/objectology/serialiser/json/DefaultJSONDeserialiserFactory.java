@@ -30,10 +30,10 @@ public class DefaultJSONDeserialiserFactory extends DeserialiserFactory {
 				put(Measurement.class, new JSONAtomicAttributeDeserialiser(Measurement.class));
 				put(OlogyInstance.class, new JSONOlogyInstanceDeserialiser(templateService));
 				put(OlogyTemplate.class, new JSONOlogyTemplateDeserialiser());
-				put(PropertyTemplate.class, new JSONPropertyTemplateDeserialiser());
-				put(MeasurementTemplate.class, new JSONMeasurementTemplateDeserialiser());
-				put(TimeTemplate.class, new JSONTimeTemplateDeserialiser());
-				put(LinkTemplate.class, new JSONLinkTemplateDeserialiser());
+				put(PropertyTemplate.class, new JSONJacksonAttributeTemplateDeserialiser(PropertyTemplate.class));
+				put(MeasurementTemplate.class, new JSONJacksonAttributeTemplateDeserialiser(MeasurementTemplate.class));
+				put(TimeTemplate.class, new JSONJacksonAttributeTemplateDeserialiser(TimeTemplate.class));
+				put(LinkTemplate.class, new JSONJacksonAttributeTemplateDeserialiser(LinkTemplate.class));
 				put(CollectionTemplate.class, new JSONCollectionTemplateDeserialiser());
 			}
 		}, new DefaultTemplateNatureMap());

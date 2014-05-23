@@ -8,7 +8,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import uk.co.revsys.objectology.model.ReferenceType;
 import uk.co.revsys.objectology.model.instance.Property;
+import uk.co.revsys.objectology.model.template.AttributeTemplate;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.model.template.MeasurementTemplate;
@@ -44,7 +46,7 @@ public class JSONOlogyTemplateDeserialiserTest {
 	@Test
 	public void testDoDeserialiseJSON() throws Exception {
 		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultJSONDeserialiserFactory(null));
-		String json = "{\"id\":\"1234\",\"nature\":\"uk.co.revsys.objectology.model.template.OlogyTemplate\",\"attributes\":{\"startTime\":{\"nature\":\"uk.co.revsys.objectology.model.template.TimeTemplate\"},\"limit\":{\"nature\":\"uk.co.revsys.objectology.model.template.MeasurementTemplate\"},\"limits\":{\"memberTemplate\":{\"nature\":\"uk.co.revsys.objectology.model.template.MeasurementTemplate\"},\"nature\":\"uk.co.revsys.objectology.model.template.CollectionTemplate\"},\"status\":{\"nature\":\"uk.co.revsys.objectology.model.template.PropertyTemplate\",\"value\":\"{status}\"},\"accountHolder\":{\"nature\":\"uk.co.revsys.objectology.model.template.OlogyTemplate\",\"attributes\":{\"permissions\":{\"nature\":\"uk.co.revsys.objectology.model.template.PropertyTemplate\"},\"user\":{\"nature\":\"uk.co.revsys.objectology.model.template.LinkTemplate\"}}},\"features\":{\"memberTemplate\":{\"nature\":\"uk.co.revsys.objectology.model.template.OlogyTemplate\",\"attributes\":{\"name\":{\"nature\":\"uk.co.revsys.objectology.model.template.PropertyTemplate\"}}},\"nature\":\"uk.co.revsys.objectology.model.template.CollectionTemplate\"}},\"type\":\"subscription\"}";
+		String json = "{\"id\":\"1234\",\"nature\":\"uk.co.revsys.objectology.model.template.OlogyTemplate\",\"attributes\":{\"startTime\":{\"nature\":\"uk.co.revsys.objectology.model.template.TimeTemplate\"},\"limit\":{\"nature\":\"uk.co.revsys.objectology.model.template.MeasurementTemplate\"},\"limits\":{\"memberTemplate\":{\"nature\":\"uk.co.revsys.objectology.model.template.MeasurementTemplate\"},\"nature\":\"uk.co.revsys.objectology.model.template.CollectionTemplate\"},\"status\":{\"nature\":\"uk.co.revsys.objectology.model.template.PropertyTemplate\",\"value\":\"{status}\"},\"accountHolder\":{\"nature\":\"uk.co.revsys.objectology.model.template.OlogyTemplate\",\"attributes\":{\"permissions\":{\"nature\":\"uk.co.revsys.objectology.model.template.PropertyTemplate\"},\"user\":{\"nature\":\"uk.co.revsys.objectology.model.template.LinkTemplate\", \"referenceType\": \"name\", \"associatedType\": \"user\"}}},\"features\":{\"memberTemplate\":{\"nature\":\"uk.co.revsys.objectology.model.template.OlogyTemplate\",\"attributes\":{\"name\":{\"nature\":\"uk.co.revsys.objectology.model.template.PropertyTemplate\"}}},\"nature\":\"uk.co.revsys.objectology.model.template.CollectionTemplate\"}},\"type\":\"subscription\"}";
 		OlogyTemplate result = objectMapper.deserialise(json, OlogyTemplate.class);
 		assertNotNull(result);
 		assertEquals("subscription", result.getType());
@@ -54,7 +56,9 @@ public class JSONOlogyTemplateDeserialiserTest {
 		assertTrue(result.getAttributeTemplate("limit") instanceof MeasurementTemplate);
 		assertTrue(result.getAttributeTemplate("accountHolder") instanceof OlogyTemplate);
 		assertNotNull(result.getAttributeTemplate("accountHolder", OlogyTemplate.class).getAttributeTemplate("permissions"));
-		assertTrue(result.getAttributeTemplate("accountHolder", OlogyTemplate.class).getAttributeTemplate("user") instanceof LinkTemplate);
+		LinkTemplate userLinkTemplate = (LinkTemplate) result.getAttributeTemplate("accountHolder", OlogyTemplate.class).getAttributeTemplate("user");
+		assertEquals("user", userLinkTemplate.getAssociatedType());
+		assertEquals(ReferenceType.name, userLinkTemplate.getReferenceType());
 		assertTrue(result.getAttributeTemplate("limits") instanceof CollectionTemplate);
 		assertEquals(MeasurementTemplate.class, result.getAttributeTemplate("limits", CollectionTemplate.class).getMemberTemplate().getClass());
 	}

@@ -1,7 +1,6 @@
 package uk.co.revsys.objectology.serialiser.json;
 
 import java.util.Map.Entry;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
