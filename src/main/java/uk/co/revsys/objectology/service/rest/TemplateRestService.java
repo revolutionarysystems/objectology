@@ -14,6 +14,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.serialiser.DeserialiserException;
@@ -23,6 +25,8 @@ import uk.co.revsys.objectology.service.OlogyTemplateService;
 
 @Path("/templates")
 public class TemplateRestService {
+	
+	private static final Log LOG = LogFactory.getLog(TemplateRestService.class);
 
 	private final OlogyTemplateService<OlogyTemplate> service;
 	private final ObjectMapper xmlObjectMapper;
@@ -41,6 +45,7 @@ public class TemplateRestService {
 			List<OlogyTemplate> results = service.findAll();
 			return buildResponse(results);
 		} catch (DaoException ex) {
+			LOG.error("Error retrieving all templates", ex);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
@@ -64,8 +69,10 @@ public class TemplateRestService {
                         }
 			return buildResponse(object);
 		} catch (DeserialiserException ex) {
+			LOG.error("Error creating template", ex);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		} catch (DaoException ex) {
+			LOG.error("Error creating template", ex);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
@@ -81,6 +88,7 @@ public class TemplateRestService {
 			}
 			return buildResponse(result);
 		} catch (DaoException ex) {
+			LOG.error("Error retrieving template by id", ex);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
@@ -96,6 +104,7 @@ public class TemplateRestService {
 			}
 			return buildResponse(result);
 		} catch (DaoException ex) {
+			LOG.error("Error retrieving template by name", ex);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
@@ -111,8 +120,10 @@ public class TemplateRestService {
 			object = service.update(object);
 			return buildResponse(object);
 		} catch (DeserialiserException ex) {
+			LOG.error("Error updating template", ex);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		} catch (DaoException ex) {
+			LOG.error("Error updating template", ex);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
@@ -129,8 +140,10 @@ public class TemplateRestService {
 			object = service.update(object);
 			return buildResponse(object);
 		} catch (DeserialiserException ex) {
+			LOG.error("Error updating template", ex);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		} catch (DaoException ex) {
+			LOG.error("Error updating template", ex);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
@@ -143,6 +156,7 @@ public class TemplateRestService {
 			service.delete(result);
 			return Response.status(Response.Status.NO_CONTENT).build();
 		} catch (DaoException ex) {
+			LOG.error("Error deleting template", ex);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
@@ -155,6 +169,7 @@ public class TemplateRestService {
 			service.delete(result);
 			return Response.status(Response.Status.NO_CONTENT).build();
 		} catch (DaoException ex) {
+			LOG.error("Error deleting template", ex);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
@@ -163,7 +178,7 @@ public class TemplateRestService {
 		try {
 			return Response.ok(jsonObjectMapper.serialise(entity)).build();
 		} catch (SerialiserException ex) {
-			ex.printStackTrace();
+			LOG.error("Error building response", ex);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}

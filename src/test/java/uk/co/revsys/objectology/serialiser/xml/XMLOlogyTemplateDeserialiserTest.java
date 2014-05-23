@@ -53,7 +53,7 @@ public class XMLOlogyTemplateDeserialiserTest {
 		source.append("</limits>");
 		source.append("<accountHolder o:nature='object'>");
 		source.append("<permissions o:nature='property'></permissions>");
-		source.append("<user o:nature='link'/>");
+		source.append("<user o:nature='link' o:assocType='user'/>");
 		source.append("</accountHolder>");
 		source.append("</subscription>");
 		OlogyTemplate result = objectMapper.deserialise(source.toString(), OlogyTemplate.class);

@@ -8,7 +8,7 @@ public class JSONLinkSerialiser extends JSONAttributeSerialiser<Link>{
 
 	@Override
 	public Object serialiseJSON(ObjectMapper objectMapper, Link object, Object... args) throws SerialiserException {
-		return object.getId();
+		return object.getReference();
 	}
 
 }

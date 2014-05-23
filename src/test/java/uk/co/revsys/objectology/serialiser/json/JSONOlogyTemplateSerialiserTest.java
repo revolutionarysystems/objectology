@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import uk.co.revsys.objectology.model.ReferenceType;
 import uk.co.revsys.objectology.model.instance.Property;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
@@ -68,6 +69,8 @@ public class JSONOlogyTemplateSerialiserTest {
 		JSONObject json = new JSONObject(result);
 		assertEquals("1234", json.get("id"));
 		assertEquals("subscription", json.get("type"));
+		System.out.println(json.getJSONObject("attributes").getJSONObject("accountHolder").getJSONObject("attributes").getJSONObject("user"));
+		assertEquals("id", json.getJSONObject("attributes").getJSONObject("accountHolder").getJSONObject("attributes").getJSONObject("user").getString("referenceType"));
 		assertEquals(PropertyTemplate.class.getName(), json.getJSONObject("attributes").getJSONObject("status").get("nature"));
 		assertEquals("{status}", json.getJSONObject("attributes").getJSONObject("status").getString("value"));
 		assertEquals(MeasurementTemplate.class.getName(), json.getJSONObject("attributes").getJSONObject("limits").getJSONObject("memberTemplate").getString("nature"));

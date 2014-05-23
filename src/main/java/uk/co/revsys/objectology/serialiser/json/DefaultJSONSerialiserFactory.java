@@ -32,10 +32,10 @@ public class DefaultJSONSerialiserFactory extends SerialiserFactory {
 				put(OlogyInstance.class, new JSONOlogyInstanceSerialiser());
 				put(OlogyTemplate.class, new JSONOlogyTemplateSerialiser());
 				put(CollectionTemplate.class, new JSONCollectionTemplateSerialiser());
-				put(MeasurementTemplate.class, new JSONMeasurementTemplateSerialiser());
-				put(PropertyTemplate.class, new JSONPropertyTemplateSerialiser());
-				put(TimeTemplate.class, new JSONTimeTemplateSerialiser());
-				put(LinkTemplate.class, new JSONLinkTemplateSerialiser());
+				put(MeasurementTemplate.class, new JSONAttributeTemplateSerialiser());
+				put(PropertyTemplate.class, new JSONAttributeTemplateSerialiser());
+				put(TimeTemplate.class, new JSONAttributeTemplateSerialiser());
+				put(LinkTemplate.class, new JSONAttributeTemplateSerialiser());
 			}
 		}, new DefaultTemplateNatureMap());
 	}
