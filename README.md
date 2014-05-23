@@ -43,10 +43,17 @@ curl http://localhost:8080/objectology/templates/
 curl http://localhost:8080/objectology/templates/{templateId}
 ```
 
+### Retrieve a template by name
+
+```sh
+curl http://localhost:8080/objectology/templates/name/{templateName}
+```
+
 ### Delete a template
 
 ```sh
 curl -X DELETE http://localhost:8080/objectology/templates/{templateId}
+curl -X DELETE http://localhost:8080/objectology/templates/name/{templateName}
 ```
 
 ### Update a template
