@@ -1,11 +1,12 @@
 package uk.co.revsys.objectology.model.instance;
 
 import uk.co.revsys.objectology.dao.DaoException;
+import uk.co.revsys.objectology.model.OlogyObject;
 import uk.co.revsys.objectology.model.ReferenceType;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
 
-public class Link extends AbstractAttribute<LinkTemplate>{
+public class Link extends AbstractAttribute<LinkTemplate> {
 
 	private String reference;
 
@@ -23,16 +24,25 @@ public class Link extends AbstractAttribute<LinkTemplate>{
 	public void setReference(String reference) {
 		this.reference = reference;
 	}
-	
-	public OlogyInstance getAssociatedObject() throws DaoException{
+
+	public OlogyObject getAssociatedObject() throws DaoException {
 		ReferenceType referenceType = getTemplate().getReferenceType();
-		if(referenceType.equals(ReferenceType.id)){
-			return OlogyObjectServiceFactory.getOlogyInstanceService().findById(getTemplate().getAssociatedType(), getReference());
-		}else if(referenceType.equals(ReferenceType.name)){
-			return OlogyObjectServiceFactory.getOlogyInstanceService().findByName(getTemplate().getAssociatedType(), getReference());
-		}else{
+		String associatedType = getTemplate().getAssociatedType();
+		if (referenceType.equals(ReferenceType.id)) {
+			if (associatedType.equals("template")) {
+				return OlogyObjectServiceFactory.getOlogyTemplateService().findById(getReference());
+			} else {
+				return OlogyObjectServiceFactory.getOlogyInstanceService().findById(associatedType, getReference());
+			}
+		} else if (referenceType.equals(ReferenceType.name)) {
+			if (associatedType.equals("template")) {
+				return OlogyObjectServiceFactory.getOlogyTemplateService().findByName(getReference());
+			} else {
+				return OlogyObjectServiceFactory.getOlogyInstanceService().findByName(associatedType, getReference());
+			}
+		} else {
 			return null;
 		}
 	}
-	
+
 }

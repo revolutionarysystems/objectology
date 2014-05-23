@@ -10,6 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
+import uk.co.revsys.objectology.model.OlogyObject;
 import uk.co.revsys.objectology.model.ReferenceType;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
@@ -51,7 +52,7 @@ public class LinkTest {
 		OlogyInstance instance1 = new OlogyInstance();
 		expect(mockOlogyInstanceService.findById("user", "1234")).andReturn(instance1);
 		mocksControl.replay();
-		OlogyInstance result = link.getAssociatedObject();
+		OlogyObject result = link.getAssociatedObject();
 		assertEquals(instance1, result);
 		mocksControl.verify();
 	}
@@ -66,7 +67,7 @@ public class LinkTest {
 		OlogyInstance instance1 = new OlogyInstance();
 		expect(mockOlogyInstanceService.findByName("user", "Fred")).andReturn(instance1);
 		mocksControl.replay();
-		OlogyInstance result = link.getAssociatedObject();
+		OlogyObject result = link.getAssociatedObject();
 		assertEquals(instance1, result);
 		mocksControl.verify();
 	}
