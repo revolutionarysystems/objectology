@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import uk.co.revsys.objectology.dao.AbstractOlogyObjectDao;
 import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.OlogyObject;
@@ -49,13 +47,18 @@ public class MongoDao<O extends OlogyObject> extends AbstractOlogyObjectDao<O> {
 
 	@Override
 	public List<O> findAll() throws DaoException{
+		return findAll(objectClass);
+	}
+
+	@Override
+	public <V extends Object> List<V> findAll(Class<? extends V> view) throws DaoException{
 		try {
 			DBCursor cursor = dbCollection.find((DBObject) JSON.parse(jacksonObjectMapper.writeValueAsString(new HashMap())));
-			List<O> results = new LinkedList<O>();
+			List<V> results = new LinkedList<V>();
 			while (cursor.hasNext()) {
 				DBObject next = cursor.next();
 				try {
-					results.add(objectMapper.deserialise(next.toString().replace("\"_id\"", "\"id\""), objectClass));
+					results.add(objectMapper.deserialise(next.toString().replace("\"_id\"", "\"id\""), view));
 				} catch (DeserialiserException ex) {
 					throw new DaoException(ex);
 				}

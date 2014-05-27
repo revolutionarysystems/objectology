@@ -1,27 +1,37 @@
 package uk.co.revsys.objectology.model;
 
-import java.util.HashMap;
 import java.util.Map;
 import uk.co.revsys.objectology.model.instance.Attribute;
 
-public interface OlogyObject {
+public abstract class OlogyObject {
 
-	public String getId();
-
-	public void setId(String id);
-
-	public String getName();
-
-	public void setName(String name);
-
-	public Map<String, Attribute> getAttributes();
-
-	public void setAttributes(Map<String, Attribute> attributes);
+	private String id;
+	private String name;
 	
-	public void setAttribute(String key, Attribute attribute);
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
 	
-	public Attribute getAttribute(String key);
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public abstract Map<String, Attribute> getAttributes();
+
+	public abstract void setAttributes(Map<String, Attribute> attributes);
 	
-	public <A extends Attribute> A getAttribute(String key, Class<? extends A> type);
+	public abstract void setAttribute(String key, Attribute attribute);
+	
+	public abstract Attribute getAttribute(String key);
+	
+	public abstract <A extends Attribute> A getAttribute(String key, Class<? extends A> type);
 	
 }

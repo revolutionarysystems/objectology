@@ -2,36 +2,13 @@ package uk.co.revsys.objectology.model.instance;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.data.annotation.Transient;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.OlogyObject;
 
-public class OlogyInstance implements OlogyObject,Attribute<OlogyTemplate>{
+public class OlogyInstance extends OlogyObject implements Attribute<OlogyTemplate>{
 
-	private String id;
-	private String name;
 	private OlogyTemplate template;
 	private Map<String, Attribute> attributes = new HashMap<String, Attribute>();
-
-	@Override
-	public String getId() {
-		return id;
-	}
-
-	@Override
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	@Override
 	public OlogyTemplate getTemplate() {

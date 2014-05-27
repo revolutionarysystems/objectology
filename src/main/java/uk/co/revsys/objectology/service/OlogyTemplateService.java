@@ -8,6 +8,8 @@ public interface OlogyTemplateService<T extends OlogyTemplate> extends OlogyObje
 
 	public List<T> findAll() throws DaoException;
 	
+	public <V extends Object> List<V> findAll(Class<? extends V> view) throws DaoException;
+	
 	public T findById(String id) throws DaoException;
 	
 	public T findByName(String name) throws DaoException;

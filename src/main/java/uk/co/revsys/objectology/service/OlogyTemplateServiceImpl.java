@@ -21,6 +21,11 @@ public class OlogyTemplateServiceImpl<T extends OlogyTemplate> implements OlogyT
 	}
 
 	@Override
+	public <V> List<V> findAll(Class<? extends V> view) throws DaoException {
+		return dao.findAll(view);
+	}
+
+	@Override
 	public T findById(String id) throws DaoException{
 		return dao.findById(id);
 	}

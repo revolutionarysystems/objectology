@@ -7,33 +7,11 @@ import uk.co.revsys.objectology.model.OlogyObject;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 
-public class OlogyTemplate implements OlogyObject, IdentifiedAttributeTemplate<OlogyInstance>{
+public class OlogyTemplate extends OlogyObject implements AttributeTemplate<OlogyInstance>{
 
-	private String id;
-	private String name;
 	private String type;
 	private OlogyInstance value;
 	private Map<String, AttributeTemplate> attributeTemplates = new HashMap<String, AttributeTemplate>();	
-
-	@Override
-	public String getId() {
-		return id;
-	}
-
-	@Override
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	public String getType() {
 		return type;
