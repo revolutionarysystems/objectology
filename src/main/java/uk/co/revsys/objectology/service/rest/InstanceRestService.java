@@ -2,6 +2,9 @@ package uk.co.revsys.objectology.service.rest;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -10,58 +13,89 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
+import uk.co.revsys.objectology.query.JSONQuery;
+import uk.co.revsys.objectology.query.Query;
+import uk.co.revsys.objectology.query.QueryImpl;
 import uk.co.revsys.objectology.serialiser.DeserialiserException;
 import uk.co.revsys.objectology.serialiser.ObjectMapper;
-import uk.co.revsys.objectology.serialiser.SerialiserException;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
+import uk.co.revsys.objectology.view.ViewNotFoundException;
 
 @Path("/")
-public class InstanceRestService {
+public class InstanceRestService extends AbstractRestService{
 
 	private final OlogyInstanceService<OlogyInstance> service;
 	private final ObjectMapper xmlObjectMapper;
-	private final ObjectMapper jsonObjectMapper;
-	private final HashMap<String, Class> viewMap;
 
 	public InstanceRestService(OlogyInstanceService service, ObjectMapper xmlObjectMapper, ObjectMapper jsonObjectMapper, HashMap<String, Class> viewMap) {
+		super(jsonObjectMapper, viewMap);
 		this.service = service;
 		this.xmlObjectMapper = xmlObjectMapper;
-		this.jsonObjectMapper = jsonObjectMapper;
-		this.viewMap = viewMap;
 	}
 
 	@GET
 	@Path("/{type}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response findAll(@PathParam("type") String type, @QueryParam("view") String view) {
+	public Response findAll(@PathParam("type") String type, @QueryParam("view") String viewName) {
 		try {
-			if(view == null){
-				view = "default";
-			}
-			List<OlogyInstance> results = service.findAll(type, viewMap.get(view));
+			Class view = getView(viewName);
+			List<OlogyInstance> results = service.findAll(type, view);
 			return buildResponse(results);
 		} catch (DaoException ex) {
-			ex.printStackTrace();
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		} catch (ViewNotFoundException ex) {
+			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 	}
-
-	@GET
-	@Path("/{type}/{property}/{value}")
+	
+	@POST
+	@Path("/{type}/query")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response findMatches(@PathParam("type") String type, @PathParam("property") String property, @PathParam("value") String value) {
+	public Response query(@PathParam("type") String type, @QueryParam("view") String viewName, String json){
 		try {
-			List<OlogyInstance> results = service.findMatches(type, property, value);
+			Class view = getView(viewName);
+			Query query = new QueryImpl(json);
+			List<OlogyInstance> results = service.find(type, query, view);
 			return buildResponse(results);
 		} catch (DaoException ex) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		} catch (ViewNotFoundException ex) {
+			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 	}
-
+	
+	@GET
+	@Path("/{type}/query")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response query(@PathParam("type") String type, @QueryParam("view") String viewName, @Context UriInfo ui){
+		MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
+		queryParams.remove("view");
+		if(queryParams.isEmpty()){
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		JSONQuery query = new JSONQuery();
+		for(Entry<String, List<String>> queryParam: queryParams.entrySet()){
+			query.put(queryParam.getKey(), queryParam.getValue().get(0));
+		}
+		try {
+			Class view = getView(viewName);
+			List<OlogyInstance> results = service.find(type, query, view);
+			return buildResponse(results);
+		} catch (DaoException ex) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		} catch (ViewNotFoundException ex) {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+	}
+	
 	@POST
 	@Path("/{type}")
 	@Consumes(MediaType.TEXT_XML)
@@ -84,7 +118,7 @@ public class InstanceRestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createFromJSON(String json) {
 		try {
-			OlogyInstance object = jsonObjectMapper.deserialise(json, OlogyInstance.class);
+			OlogyInstance object = getJsonObjectMapper().deserialise(json, OlogyInstance.class);
 			object = service.create(object);
 			return buildResponse(object);
 		} catch (DeserialiserException ex) {
@@ -132,7 +166,7 @@ public class InstanceRestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateFromJSON(@PathParam("id") String id, String json) {
 		try {
-			OlogyInstance object = jsonObjectMapper.deserialise(json, OlogyInstance.class);
+			OlogyInstance object = getJsonObjectMapper().deserialise(json, OlogyInstance.class);
 			object.setId(id);
 			object = service.update(object);
 			return buildResponse(object);
@@ -155,12 +189,6 @@ public class InstanceRestService {
 		}
 	}
 
-	private Response buildResponse(Object entity) {
-		try {
-			return Response.ok(jsonObjectMapper.serialise(entity)).build();
-		} catch (SerialiserException ex) {
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-		}
-	}
+	
 
 }

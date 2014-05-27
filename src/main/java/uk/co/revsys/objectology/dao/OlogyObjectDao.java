@@ -2,6 +2,7 @@ package uk.co.revsys.objectology.dao;
 
 import java.util.List;
 import uk.co.revsys.objectology.model.OlogyObject;
+import uk.co.revsys.objectology.query.Query;
 
 public interface OlogyObjectDao<O extends OlogyObject> {
 
@@ -10,10 +11,10 @@ public interface OlogyObjectDao<O extends OlogyObject> {
 	public List<O> findAll() throws DaoException;
 	
 	public <V extends Object> List<V> findAll(Class<? extends V> view) throws DaoException;
-
-	public O findMatch(String property, String value) throws DaoException;
-
-	public List<O> findMatches(String property, String value) throws DaoException;
+	
+	public List<O> find(Query query) throws DaoException;
+	
+	public <V extends Object> List<V> find(Query query, Class<? extends V> view) throws DaoException;
 
 	public O findById(String id) throws DaoException;
 

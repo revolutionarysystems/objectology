@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import uk.co.revsys.objectology.model.OlogyObject;
+import uk.co.revsys.objectology.query.Query;
 
 public class InMemoryOlogyObjectDao<O extends OlogyObject> extends AbstractOlogyObjectDao<O>{
 
@@ -35,6 +36,11 @@ public class InMemoryOlogyObjectDao<O extends OlogyObject> extends AbstractOlogy
 	}
 
 	@Override
+	public List<O> find(Query query) throws DaoException {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
 	public O findById(String id) throws DaoException{
 		return objects.get(id);
 	}
@@ -45,26 +51,9 @@ public class InMemoryOlogyObjectDao<O extends OlogyObject> extends AbstractOlogy
 	}
 
 	@Override
-	public O findMatch(String property, String value) throws DaoException{
-            for (O valueObject : objects.values()){
-                if (valueObject.getAttribute(property).equals(value)){
-                    return valueObject;
-                }
-            }
-            return null;
-	}
-
-	@Override
-	public List<O> findMatches(String property, String value) throws DaoException{
-            List<O> hits = new ArrayList<O>();
-            for (O valueObject : objects.values()){
-                if (valueObject.getAttribute(property).equals(value)){
-                    hits.add(valueObject);
-                }
-            }
-            return hits;
-	}
-        
+	public <V> List<V> find(Query query, Class<? extends V> view) throws DaoException {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}   
         
 	@Override
 	public O update(O object) throws DaoException{

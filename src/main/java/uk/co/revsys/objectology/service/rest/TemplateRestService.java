@@ -2,6 +2,7 @@ package uk.co.revsys.objectology.service.rest;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -10,46 +11,90 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
+import uk.co.revsys.objectology.query.JSONQuery;
+import uk.co.revsys.objectology.query.Query;
+import uk.co.revsys.objectology.query.QueryImpl;
 import uk.co.revsys.objectology.serialiser.DeserialiserException;
 import uk.co.revsys.objectology.serialiser.ObjectMapper;
-import uk.co.revsys.objectology.serialiser.SerialiserException;
 import uk.co.revsys.objectology.service.OlogyTemplateService;
+import uk.co.revsys.objectology.view.ViewNotFoundException;
 
 @Path("/templates")
-public class TemplateRestService {
-	
+public class TemplateRestService extends AbstractRestService {
+
 	private static final Log LOG = LogFactory.getLog(TemplateRestService.class);
 
 	private final OlogyTemplateService<OlogyTemplate> service;
 	private final ObjectMapper xmlObjectMapper;
-	private final ObjectMapper jsonObjectMapper;
-	private final HashMap<String, Class> viewMap;
 
 	public TemplateRestService(OlogyTemplateService service, ObjectMapper xmlObjectMapper, ObjectMapper jsonObjectMapper, HashMap<String, Class> viewMap) {
+		super(jsonObjectMapper, viewMap);
 		this.service = service;
 		this.xmlObjectMapper = xmlObjectMapper;
-		this.jsonObjectMapper = jsonObjectMapper;
-		this.viewMap = viewMap;
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response findAll(@QueryParam("view") String view) {
+	public Response findAll(@QueryParam("view") String viewName) {
 		try {
-			if(view == null){
-				view = "default";
-			}
-			List<OlogyTemplate> results = service.findAll(viewMap.get(view));
+			Class view = getView(viewName);
+			List<OlogyTemplate> results = service.findAll(view);
 			return buildResponse(results);
 		} catch (DaoException ex) {
 			LOG.error("Error retrieving all templates", ex);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		} catch (ViewNotFoundException ex) {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+	}
+	
+	@POST
+	@Path("/query")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response query(@QueryParam("view") String viewName, String json){
+		try {
+			Class view = getView(viewName);
+			Query query = new QueryImpl(json);
+			List<OlogyTemplate> results = service.find(query, view);
+			return buildResponse(results);
+		} catch (DaoException ex) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		} catch (ViewNotFoundException ex) {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+	}
+	
+	@GET
+	@Path("/query")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response query(@QueryParam("view") String viewName, @Context UriInfo ui){
+		MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
+		queryParams.remove("view");
+		if(queryParams.isEmpty()){
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		JSONQuery query = new JSONQuery();
+		for(Map.Entry<String, List<String>> queryParam: queryParams.entrySet()){
+			query.put(queryParam.getKey(), queryParam.getValue().get(0));
+		}
+		try {
+			Class view = getView(viewName);
+			List<OlogyTemplate> results = service.find(query, view);
+			return buildResponse(results);
+		} catch (DaoException ex) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		} catch (ViewNotFoundException ex) {
+			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 	}
 
@@ -59,17 +104,17 @@ public class TemplateRestService {
 	public Response create(String json) {
 		try {
 			OlogyTemplate object = xmlObjectMapper.deserialise(json, OlogyTemplate.class);
-                        OlogyTemplate previous = null;
-                        String name = object.getName();
-                        if (name!=null){
-                            previous = service.findByName(name);
-                        }
-                        if (previous!=null){
-                            object.setId(previous.getId());
-                            object = service.update(object);
-                        } else {
-                            object = service.create(object);
-                        }
+			OlogyTemplate previous = null;
+			String name = object.getName();
+			if (name != null) {
+				previous = service.findByName(name);
+			}
+			if (previous != null) {
+				object.setId(previous.getId());
+				object = service.update(object);
+			} else {
+				object = service.create(object);
+			}
 			return buildResponse(object);
 		} catch (DeserialiserException ex) {
 			LOG.error("Error creating template", ex);
@@ -173,15 +218,6 @@ public class TemplateRestService {
 			return Response.status(Response.Status.NO_CONTENT).build();
 		} catch (DaoException ex) {
 			LOG.error("Error deleting template", ex);
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-		}
-	}
-
-	private Response buildResponse(Object entity) {
-		try {
-			return Response.ok(jsonObjectMapper.serialise(entity)).build();
-		} catch (SerialiserException ex) {
-			LOG.error("Error building response", ex);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}

@@ -4,6 +4,7 @@ import java.util.List;
 import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.dao.OlogyObjectDao;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
+import uk.co.revsys.objectology.query.Query;
 
 public class OlogyTemplateServiceImpl<T extends OlogyTemplate> implements OlogyTemplateService<T>{
 
@@ -23,6 +24,16 @@ public class OlogyTemplateServiceImpl<T extends OlogyTemplate> implements OlogyT
 	@Override
 	public <V> List<V> findAll(Class<? extends V> view) throws DaoException {
 		return dao.findAll(view);
+	}
+
+	@Override
+	public List<T> find(Query query) throws DaoException {
+		return dao.find(query);
+	}
+
+	@Override
+	public <V> List<V> find(Query query, Class<? extends V> view) throws DaoException {
+		return dao.find(query, view);
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.dao.OlogyObjectDao;
 import uk.co.revsys.objectology.dao.OlogyObjectDaoFactory;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
+import uk.co.revsys.objectology.query.Query;
 
 public class OlogyInstanceServiceImpl<I extends OlogyInstance> implements OlogyInstanceService<I>{
 
@@ -27,13 +28,13 @@ public class OlogyInstanceServiceImpl<I extends OlogyInstance> implements OlogyI
 	}
 
 	@Override
-	public I findMatch(String type, String property, String value) throws DaoException{
-		return getDao(type).findMatch(property, value);
+	public List<I> find(String type, Query query) throws DaoException {
+		return getDao(type).find(query);
 	}
 
 	@Override
-	public List<I> findMatches(String type, String property, String value) throws DaoException{
-		return getDao(type).findMatches(property, value);
+	public <V> List<V> find(String type, Query query, Class<? extends V> view) throws DaoException {
+		return getDao(type).find(query, view);
 	}
 
 	@Override
