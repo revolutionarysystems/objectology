@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import uk.co.revsys.objectology.model.OlogyObject;
 import uk.co.revsys.objectology.query.Query;
 
@@ -18,6 +19,7 @@ public class InMemoryOlogyObjectDao<O extends OlogyObject> extends AbstractOlogy
 	
 	@Override
 	public O create(O object) throws DaoException{
+        object.setId(UUID.randomUUID().toString());
 		objects.put(object.getId(), object);
                 if (object.getName()!=null){
                     objectsByName.put(object.getName(), object);

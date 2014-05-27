@@ -48,7 +48,6 @@ public class OlogyTemplateServiceImplTest {
 		assertNotNull(template1Id);
 		assertNotNull(result1.getAttributeTemplate("property1"));
 		assertNotNull(result1.getAttributeTemplate("part1"));
-		assertNotNull(result1.getAttributeTemplate("part1", OlogyTemplate.class).getId());
 		OlogyTemplate result2 = templateService.findById(template1Id);
 		assertNotNull(result2);
 		assertEquals(template1Id, result2.getId());
