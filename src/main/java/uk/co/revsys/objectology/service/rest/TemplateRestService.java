@@ -28,7 +28,7 @@ import uk.co.revsys.objectology.serialiser.ObjectMapper;
 import uk.co.revsys.objectology.service.OlogyTemplateService;
 import uk.co.revsys.objectology.view.ViewNotFoundException;
 
-@Path("/templates")
+@Path("/template")
 public class TemplateRestService extends AbstractRestService {
 
 	private static final Log LOG = LogFactory.getLog(TemplateRestService.class);
