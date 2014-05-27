@@ -19,6 +19,7 @@
 					<constructor-arg index="0" ref="templateService"/>
 					<constructor-arg index="1" ref="xmlObjectMapper"/>
 					<constructor-arg index="2" ref="jsonObjectMapper"/>
+					<constructor-arg index="3" ref="templateViewMap"/>
 				</bean>
 				<bean class="uk.co.revsys.objectology.service.rest.InstanceRestService">
 					<constructor-arg index="0" ref="instanceService"/>
@@ -100,6 +101,8 @@
 	<bean id="jsonTemplateDeserialiserFactory" class="uk.co.revsys.objectology.serialiser.json.DefaultJSONDeserialiserFactory">
 		<constructor-arg index="0"><null/></constructor-arg>
 	</bean>
+	
+	<bean id="templateViewMap" class="uk.co.revsys.objectology.view.DefaultTemplateViewMap"/>
 	
 	<bean id="instanceViewMap" class="uk.co.revsys.objectology.view.DefaultInstanceViewMap"/>
 

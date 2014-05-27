@@ -1,10 +1,7 @@
 package uk.co.revsys.objectology.service.rest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -12,6 +9,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.logging.Log;
@@ -31,18 +29,23 @@ public class TemplateRestService {
 	private final OlogyTemplateService<OlogyTemplate> service;
 	private final ObjectMapper xmlObjectMapper;
 	private final ObjectMapper jsonObjectMapper;
+	private final HashMap<String, Class> viewMap;
 
-	public TemplateRestService(OlogyTemplateService service, ObjectMapper xmlObjectMapper, ObjectMapper jsonObjectMapper) {
+	public TemplateRestService(OlogyTemplateService service, ObjectMapper xmlObjectMapper, ObjectMapper jsonObjectMapper, HashMap<String, Class> viewMap) {
 		this.service = service;
 		this.xmlObjectMapper = xmlObjectMapper;
 		this.jsonObjectMapper = jsonObjectMapper;
+		this.viewMap = viewMap;
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response findAll() {
+	public Response findAll(@QueryParam("view") String view) {
 		try {
-			List<OlogyTemplate> results = service.findAll();
+			if(view == null){
+				view = "default";
+			}
+			List<OlogyTemplate> results = service.findAll(viewMap.get(view));
 			return buildResponse(results);
 		} catch (DaoException ex) {
 			LOG.error("Error retrieving all templates", ex);
