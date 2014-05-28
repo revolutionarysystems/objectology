@@ -38,7 +38,7 @@ public class MongoDao<O extends OlogyObject> extends AbstractOlogyObjectDao<O> {
 	public O create(O object) throws DaoException {
 		try {
 			object.setId(UUID.randomUUID().toString());
-			WriteResult writeResult = dbCollection.insert((DBObject) JSON.parse(objectMapper.serialise(object)));
+			WriteResult writeResult = dbCollection.insert((DBObject) JSON.parse(objectMapper.serialise(object).replace("\"id\"", "\"_id\"")));
 			return object;
 		} catch (SerialiserException ex) {
 			throw new DaoException(ex);
@@ -67,7 +67,7 @@ public class MongoDao<O extends OlogyObject> extends AbstractOlogyObjectDao<O> {
 		while (cursor.hasNext()) {
 			DBObject next = cursor.next();
 			try {
-				results.add(objectMapper.deserialise(next.toString(), view));
+				results.add(objectMapper.deserialise(next.toString().replace("\"_id\"", "\"id\""), view));
 			} catch (DeserialiserException ex) {
 				throw new DaoException(ex);
 			}
@@ -78,7 +78,7 @@ public class MongoDao<O extends OlogyObject> extends AbstractOlogyObjectDao<O> {
 	@Override
 	public O update(O object) throws DaoException {
 		try {
-			WriteResult writeResult = dbCollection.save((DBObject) JSON.parse(objectMapper.serialise(object)));
+			WriteResult writeResult = dbCollection.save((DBObject) JSON.parse(objectMapper.serialise(object).replace("\"id\"", "\"_id\"")));
 			return object;
 		} catch (SerialiserException ex) {
 			throw new DaoException(ex);
@@ -93,11 +93,11 @@ public class MongoDao<O extends OlogyObject> extends AbstractOlogyObjectDao<O> {
 	@Override
 	public O findById(String id) throws DaoException {
 		try {
-			DBObject result = dbCollection.findOne(new BasicDBObject("id", id));
+			DBObject result = dbCollection.findOne(new BasicDBObject("_id", id));
 			if (result == null) {
 				return null;
 			}
-			return objectMapper.deserialise(result.toString(), objectClass);
+			return objectMapper.deserialise(result.toString().replace("\"_id\"", "\"id\""), objectClass);
 		} catch (DeserialiserException ex) {
 			throw new DaoException(ex);
 		}
@@ -110,7 +110,7 @@ public class MongoDao<O extends OlogyObject> extends AbstractOlogyObjectDao<O> {
 			if (result == null) {
 				return null;
 			}
-			return objectMapper.deserialise(result.toString(), objectClass);
+			return objectMapper.deserialise(result.toString().replace("\"_id\"", "\"id\""), objectClass);
 		} catch (DeserialiserException ex) {
 			throw new DaoException(ex);
 		}
