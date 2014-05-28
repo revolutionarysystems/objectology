@@ -2,6 +2,7 @@ package uk.co.revsys.objectology.serialiser.json;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.commons.collections4.BidiMap;
 import org.json.JSONObject;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
@@ -10,9 +11,11 @@ import uk.co.revsys.objectology.serialiser.SerialiserException;
 
 public class JSONAttributeTemplateSerialiser<A extends AttributeTemplate> extends JSONSerialiser<A> {
 
-	private com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper;
+	private final com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper;
+    private final BidiMap<String, Class<? extends AttributeTemplate>> templateNatureMap;
 
-	public JSONAttributeTemplateSerialiser() {
+	public JSONAttributeTemplateSerialiser(BidiMap<String, Class<? extends AttributeTemplate>> templateNatureMap) {
+        this.templateNatureMap = templateNatureMap;
 		jacksonObjectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
 		jacksonObjectMapper.addMixInAnnotations(AttributeTemplate.class, JacksonAttributeTemplateMixin.class);
 		jacksonObjectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
@@ -21,7 +24,7 @@ public class JSONAttributeTemplateSerialiser<A extends AttributeTemplate> extend
 	@Override
 	public Object serialiseJSON(ObjectMapper objectMapper, A object, Object... args) throws SerialiserException {
 		JSONObject json = new JSONObject();
-		json.put("nature", object.getClass().getName());
+		json.put("nature", templateNatureMap.getKey(object.getClass()));
 		Attribute value = object.getValue();
 		if (value != null) {
 			JSONSerialiser valueSerialiser = (JSONSerialiser) objectMapper.getSerialiser(value.getClass());

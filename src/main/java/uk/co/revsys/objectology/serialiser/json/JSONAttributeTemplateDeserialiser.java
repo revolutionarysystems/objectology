@@ -1,18 +1,20 @@
 package uk.co.revsys.objectology.serialiser.json;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.commons.collections4.BidiMap;
 import org.json.JSONObject;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
-import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.serialiser.DeserialiserException;
 import uk.co.revsys.objectology.serialiser.ObjectMapper;
 
 public abstract class JSONAttributeTemplateDeserialiser<A extends AttributeTemplate> extends JSONObjectDeserialiser<A> {
 
+    private final BidiMap<String, Class<? extends AttributeTemplate>> templateNatureMap;
+
+    public JSONAttributeTemplateDeserialiser(BidiMap<String, Class<? extends AttributeTemplate>> templateNatureMap) {
+        this.templateNatureMap = templateNatureMap;
+    }
+    
 	@Override
 	public A deserialiseJSON(ObjectMapper objectMapper, JSONObject source, Object... args) throws DeserialiserException {
 		String nature = source.getString("nature");
@@ -33,14 +35,19 @@ public abstract class JSONAttributeTemplateDeserialiser<A extends AttributeTempl
 	public A createObject(ObjectMapper objectMapper, JSONObject source, Object... args) throws DeserialiserException{
 		try {
 			String nature = source.getString("nature");
-			return (A) Class.forName(nature).newInstance();
-		} catch (ClassNotFoundException ex) {
-			throw new DeserialiserException(ex);
+            System.out.println("nature = " + nature);
+            Class<? extends AttributeTemplate> objectClass = templateNatureMap.get(nature);
+            System.out.println("objectClass = " + objectClass);
+			return (A) objectClass.newInstance();
 		} catch (InstantiationException ex) {
 			throw new DeserialiserException(ex);
 		} catch (IllegalAccessException ex) {
 			throw new DeserialiserException(ex);
 		}
 	}
+
+    public BidiMap<String, Class<? extends AttributeTemplate>> getTemplateNatureMap() {
+        return templateNatureMap;
+    }
 
 }

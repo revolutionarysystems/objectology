@@ -71,9 +71,9 @@ public class JSONOlogyTemplateSerialiserTest {
 		assertEquals("subscription", json.get("type"));
 		System.out.println(json.getJSONObject("attributes").getJSONObject("accountHolder").getJSONObject("attributes").getJSONObject("user"));
 		assertEquals("id", json.getJSONObject("attributes").getJSONObject("accountHolder").getJSONObject("attributes").getJSONObject("user").getString("referenceType"));
-		assertEquals(PropertyTemplate.class.getName(), json.getJSONObject("attributes").getJSONObject("status").get("nature"));
+		assertEquals("property", json.getJSONObject("attributes").getJSONObject("status").get("nature"));
 		assertEquals("{status}", json.getJSONObject("attributes").getJSONObject("status").getString("value"));
-		assertEquals(MeasurementTemplate.class.getName(), json.getJSONObject("attributes").getJSONObject("limits").getJSONObject("memberTemplate").getString("nature"));
+		assertEquals("measurement", json.getJSONObject("attributes").getJSONObject("limits").getJSONObject("memberTemplate").getString("nature"));
 	}
 
 

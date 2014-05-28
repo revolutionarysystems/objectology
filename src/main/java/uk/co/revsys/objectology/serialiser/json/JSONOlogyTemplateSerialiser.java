@@ -1,6 +1,7 @@
 package uk.co.revsys.objectology.serialiser.json;
 
 import java.util.Map.Entry;
+import org.apache.commons.collections4.BidiMap;
 import org.json.JSONObject;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
@@ -8,6 +9,10 @@ import uk.co.revsys.objectology.serialiser.ObjectMapper;
 import uk.co.revsys.objectology.serialiser.SerialiserException;
 
 public class JSONOlogyTemplateSerialiser extends JSONAttributeTemplateSerialiser<OlogyTemplate> {
+
+    public JSONOlogyTemplateSerialiser(BidiMap<String, Class<? extends AttributeTemplate>> templateNatureMap) {
+        super(templateNatureMap);
+    }
 
 	@Override
 	public JSONObject doSerialiseJSON(JSONObject json, ObjectMapper objectMapper, OlogyTemplate object, Object args) throws SerialiserException{

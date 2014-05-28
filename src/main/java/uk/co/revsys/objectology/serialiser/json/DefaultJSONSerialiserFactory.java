@@ -20,7 +20,7 @@ import uk.co.revsys.objectology.serialiser.SerialiserFactory;
 import uk.co.revsys.objectology.view.IdentifiedObjectView;
 
 public class DefaultJSONSerialiserFactory extends SerialiserFactory {
-
+    
 	public DefaultJSONSerialiserFactory() {
 		super(new HashMap<Class, Serialiser>() {
 			{
@@ -31,12 +31,12 @@ public class DefaultJSONSerialiserFactory extends SerialiserFactory {
 				put(Collection.class, new JSONCollectionSerialiser());
 				put(Measurement.class, new JSONAtomicAttributeSerialiser());
 				put(OlogyInstance.class, new JSONOlogyInstanceSerialiser());
-				put(OlogyTemplate.class, new JSONOlogyTemplateSerialiser());
-				put(CollectionTemplate.class, new JSONCollectionTemplateSerialiser());
-				put(MeasurementTemplate.class, new JSONAttributeTemplateSerialiser());
-				put(PropertyTemplate.class, new JSONAttributeTemplateSerialiser());
-				put(TimeTemplate.class, new JSONAttributeTemplateSerialiser());
-				put(LinkTemplate.class, new JSONAttributeTemplateSerialiser());
+				put(OlogyTemplate.class, new JSONOlogyTemplateSerialiser(new DefaultTemplateNatureMap()));
+				put(CollectionTemplate.class, new JSONCollectionTemplateSerialiser(new DefaultTemplateNatureMap()));
+				put(MeasurementTemplate.class, new JSONAttributeTemplateSerialiser(new DefaultTemplateNatureMap()));
+				put(PropertyTemplate.class, new JSONAttributeTemplateSerialiser(new DefaultTemplateNatureMap()));
+				put(TimeTemplate.class, new JSONAttributeTemplateSerialiser(new DefaultTemplateNatureMap()));
+				put(LinkTemplate.class, new JSONAttributeTemplateSerialiser(new DefaultTemplateNatureMap()));
 				put(IdentifiedObjectView.class, new DefaultJSONObjectSerialiser());
 			}
 		}, new DefaultTemplateNatureMap());
