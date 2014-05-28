@@ -3,6 +3,8 @@ package uk.co.revsys.objectology.service.rest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -155,9 +157,12 @@ public class InstanceRestService extends AbstractRestService {
     public Response updateFromXML(@PathParam("type") String type, @PathParam("id") String id, String xml) {
         try {
             OlogyInstance existingObject = service.findById(type, id);
-            Node existingObjectXML = DocumentHelper.parseText(xmlObjectMapper.serialise(xml)).getRootElement();
+            Node existingObjectXML = DocumentHelper.parseText(xmlObjectMapper.serialise(existingObject)).getRootElement();
+            System.out.println("existingObjectXML = " + existingObjectXML.asXML());
             Node newObjectXML = DocumentHelper.parseText(xml).getRootElement();
+            System.out.println("newObjectXML = " + newObjectXML.asXML());
             Node combinedXML = mergeXML(existingObjectXML, newObjectXML);
+            System.out.println("combinedXML = " + combinedXML.asXML());
             OlogyInstance object = xmlObjectMapper.deserialise(combinedXML.asXML(), OlogyInstance.class);
             object.setId(id);
             object = service.update(object);
@@ -237,16 +242,22 @@ public class InstanceRestService extends AbstractRestService {
         if (children.isEmpty()) {
             return xml2;
         }
+        String action = null;
+        Node actionNode = ((Element)xml2).attribute("action");
+        if (actionNode != null) {
+            action = actionNode.getText();
+        }
         for (Node xml2Child : children) {
             String path = xml2Child.getName();
             Node xml1Child = xml1.selectSingleNode(path);
-            if (xml1Child != null) {
+            if (xml1Child == null || (action!=null && action.equals("add"))) {
+                xml2Child.detach();
+                ((Element) xml1).add(xml2Child);
+            } else {
                 xml2Child.detach();
                 xml1Child.detach();
                 ((Element) xml1).add(mergeXML(xml1Child, xml2Child));
-            } else {
-                xml2Child.detach();
-                ((Element) xml1).add(xml2Child);
+
             }
         }
         return xml1;

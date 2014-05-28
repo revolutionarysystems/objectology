@@ -8,6 +8,9 @@ public class JSONAtomicAttributeSerialiser<A extends AtomicAttribute> extends JS
 
 	@Override
 	public Object serialiseJSON(ObjectMapper objectMapper, A object, Object... args) throws SerialiserException {
+        if(object==null){
+            return null;
+        }
 		return object.getValue();
 	}
 

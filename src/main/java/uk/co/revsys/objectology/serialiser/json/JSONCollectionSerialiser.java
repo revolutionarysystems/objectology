@@ -8,14 +8,16 @@ import uk.co.revsys.objectology.serialiser.SerialiserException;
 
 public class JSONCollectionSerialiser extends JSONAttributeSerialiser<Collection> {
 
-	@Override
-	public Object serialiseJSON(ObjectMapper objectMapper, Collection object, Object... args) throws SerialiserException {
-		JSONArray json = new JSONArray();
-		for (Attribute member : object.getMembers()) {
-			JSONAttributeSerialiser memberSerialiser = (JSONAttributeSerialiser) objectMapper.getSerialiser(member.getClass());
-			json.put(memberSerialiser.serialiseJSON(objectMapper, member));
-		}
-		return json;
-	}
+    @Override
+    public Object serialiseJSON(ObjectMapper objectMapper, Collection object, Object... args) throws SerialiserException {
+        JSONArray json = new JSONArray();
+        if (object != null) {
+            for (Attribute member : object.getMembers()) {
+                JSONAttributeSerialiser memberSerialiser = (JSONAttributeSerialiser) objectMapper.getSerialiser(member.getClass());
+                json.put(memberSerialiser.serialiseJSON(objectMapper, member));
+            }
+        }
+        return json;
+    }
 
 }
