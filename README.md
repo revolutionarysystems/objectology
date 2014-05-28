@@ -139,7 +139,7 @@ curl -X POST -d '<subscription><template>{templateId}</template><status>Created<
 
 ### Create an instance from JSON
 
-```json
+```sh
 curl -X POST -d '{"limit":"1000","startTime":"01/01/2001 00:00:00","template":"45e98874-659c-472d-a9f7-e7c5c1259986","accountHolder":{"template":"72cd730f-badb-44ba-8abd-3b14264a45b3","user":"9729c936-e520-4d0a-be29-952d92a76673"},"status":"Created","features":[{"limit":"456","status":"Enabled","name":"Feature 1"},{"limit":"7834359","status":"Disabled","name":"Feature 2"}],"permissions":["p1","p2"]}' -H "Content-Type: application/json" http://localhost:8080/objectology/subscription
 ```
 
@@ -155,11 +155,23 @@ curl http://localhost:8080/objectology/{type}
 curl http://localhost:8080/objectology/{type}/{id}
 ```
 
-### Retrieve instances matching a single property
+### Retrieve instances matching a certain properties
 
 ```sh
-curl http://localhost:8080/objectology/{type}/{property}/{value}
+curl http://localhost:8080/objectology/{type}/query?{property1}={value1}&{property2}={value2}
 ```
+
+### Retrieve instances matching a certain query
+
+Queries are posted as JSON objects. These follow the same structure and rules as used by MongoDB http://docs.mongodb.org/manual/tutorial/query-documents/
+
+```sh
+curl -X POST -d '{"limit": "1000"}' -H "Content-Type: application/json" http://localhost:8080/objectology/{type}/query
+```
+
+### Retrieving different views
+
+You can add ?view=identifier to the end of the url to return only a list of ids rather than the full json for each result.
 
 ### Delete an instance
 
@@ -167,18 +179,32 @@ curl http://localhost:8080/objectology/{type}/{property}/{value}
 curl -X DELETE http://localhost:8080/objectology/{type}/{id}
 ```
 
-### Update an instance from XML
+### Update an instance
 
-Requires the whole instance to be submitted otherwise data will be lost
+XML
 
 ```sh
 curl -X POST -d '<subscription><template>{templateId}</template><status>Created</status><startTime>01/01/2001 00:00:00</startTime><limit>1000</limit><permissions><permission>p1</permission>        <permission>p2</permission></permissions><features><feature><name>Feature 1</name><status>Enabled</status><limit>456</limit></feature><feature><name>Feature 2</name><status>Disabled</status><limit>789</limit></feature></features><other>1000</other><accountHolder><status>Active</status><user>9729c936-e520-4d0a-be29-952d92a76673</user>    </accountHolder></subscription>' -H "Content-Type: text/xml" http://localhost:8080/objectology/subscription/{id}
 ```
 
-### Update an instance from JSON
+JSON
 
-Requires the whole instance to be submitted otherwise data will be lost
-
-```json
+```sh
 curl -X POST -d '{"limit":"1000","startTime":"01/01/2001 00:00:00","template":"45e98874-659c-472d-a9f7-e7c5c1259986","accountHolder":{"template":"72cd730f-badb-44ba-8abd-3b14264a45b3","user":"9729c936-e520-4d0a-be29-952d92a76673"},"status":"Created","features":[{"limit":"456","status":"Enabled","name":"Feature 1"},{"limit":"7834359","status":"Disabled","name":"Feature 2"}],"permissions":["p1","p2"]}' -H "Content-Type: application/json" http://localhost:8080/objectology/subscription/{id}
+```
+
+You can submit as much or as little of the instance as required and only those bits will be updated.
+
+You can add items to an existing collection without submitting the whole collection as follows
+
+XML
+
+```sh
+curl -X POST -d '<subscription o:action="add"><permissions><permission>p3</permission><permission>p4</permission></permissions></subscription>' -H "Content-Type: text/xml" http://localhost:8080/objectology/subscription/{id}
+```
+
+JSON
+
+```sh
+curl -X POST -d '{"permissions": {"$add": ["p3", "p4"]}}' -H "Content-Type: application/json" http://localhost:8080/objectology/subscription/{id}
 ```
