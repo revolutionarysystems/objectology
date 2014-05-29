@@ -40,7 +40,6 @@ public class DefaultJSONSerialiserFactory extends SerialiserFactory {
 				put(TimeTemplate.class, new JSONAttributeTemplateSerialiser(new DefaultTemplateNatureMap()));
 				put(LinkTemplate.class, new JSONAttributeTemplateSerialiser(new DefaultTemplateNatureMap()));
 				put(IdentifiedObjectView.class, new DefaultJSONObjectSerialiser());
-				put(SummaryObjectView.class, new DefaultJSONObjectSerialiser());
                                 put(RawView.class, new JSONRawViewSerialiser());
 			}
 		}, new DefaultTemplateNatureMap());
