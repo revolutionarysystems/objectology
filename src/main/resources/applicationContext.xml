@@ -74,9 +74,11 @@
 	<bean id="instanceValidator" class="uk.co.revsys.objectology.service.OlogyInstanceValidator"/>
 	
 	<bean id="xmlObjectMapper" class="uk.co.revsys.objectology.serialiser.ObjectMapper">
-		<constructor-arg index="0"><null/></constructor-arg>
+		<constructor-arg index="0" ref="xmlSerialiserFactory"/>
 		<constructor-arg index="1" ref="xmlDeserialiserFactory"/>
 	</bean>
+    
+    <bean id="xmlSerialiserFactory" class="uk.co.revsys.objectology.serialiser.xml.DefaultXMLSerialiserFactory"/>
 	
 	<bean id="xmlDeserialiserFactory" class="uk.co.revsys.objectology.serialiser.xml.DefaultXMLDeserialiserFactory">
 		<constructor-arg index="0" ref="templateService"/>
