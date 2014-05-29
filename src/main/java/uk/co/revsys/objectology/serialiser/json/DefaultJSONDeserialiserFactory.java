@@ -18,6 +18,7 @@ import uk.co.revsys.objectology.serialiser.Deserialiser;
 import uk.co.revsys.objectology.serialiser.DeserialiserFactory;
 import uk.co.revsys.objectology.service.OlogyTemplateService;
 import uk.co.revsys.objectology.view.IdentifiedObjectView;
+import uk.co.revsys.objectology.view.RawView;
 
 public class DefaultJSONDeserialiserFactory extends DeserialiserFactory {
 
@@ -37,6 +38,7 @@ public class DefaultJSONDeserialiserFactory extends DeserialiserFactory {
 				put(LinkTemplate.class, new JSONJacksonAttributeTemplateDeserialiser(LinkTemplate.class));
 				put(CollectionTemplate.class, new JSONCollectionTemplateDeserialiser(new DefaultTemplateNatureMap()));
 				put(IdentifiedObjectView.class, new DefaultJSONObjectDeserialiser(IdentifiedObjectView.class));
+                put(RawView.class, new JSONRawViewDeserialiser());
 			}
 		}, new DefaultTemplateNatureMap());
 	}
