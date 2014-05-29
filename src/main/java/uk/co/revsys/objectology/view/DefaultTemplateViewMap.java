@@ -8,7 +8,8 @@ public class DefaultTemplateViewMap extends HashMap<String, Class>{
 	public DefaultTemplateViewMap() {
 		put("default", OlogyTemplate.class);
 		put("identifier", IdentifiedObjectView.class);
-        put("raw", RawView.class);
+		put("summary", SummaryObjectView.class);
+                put("raw", RawView.class);
 	}
 
 }

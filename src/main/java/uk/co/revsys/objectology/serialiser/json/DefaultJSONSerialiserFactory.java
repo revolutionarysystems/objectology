@@ -18,6 +18,7 @@ import uk.co.revsys.objectology.serialiser.DefaultTemplateNatureMap;
 import uk.co.revsys.objectology.serialiser.Serialiser;
 import uk.co.revsys.objectology.serialiser.SerialiserFactory;
 import uk.co.revsys.objectology.view.IdentifiedObjectView;
+import uk.co.revsys.objectology.view.SummaryObjectView;
 import uk.co.revsys.objectology.view.RawView;
 
 public class DefaultJSONSerialiserFactory extends SerialiserFactory {
@@ -39,7 +40,8 @@ public class DefaultJSONSerialiserFactory extends SerialiserFactory {
 				put(TimeTemplate.class, new JSONAttributeTemplateSerialiser(new DefaultTemplateNatureMap()));
 				put(LinkTemplate.class, new JSONAttributeTemplateSerialiser(new DefaultTemplateNatureMap()));
 				put(IdentifiedObjectView.class, new DefaultJSONObjectSerialiser());
-                put(RawView.class, new JSONRawViewSerialiser());
+				put(SummaryObjectView.class, new DefaultJSONObjectSerialiser());
+                                put(RawView.class, new JSONRawViewSerialiser());
 			}
 		}, new DefaultTemplateNatureMap());
 	}

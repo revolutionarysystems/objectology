@@ -8,7 +8,8 @@ public class DefaultInstanceViewMap extends HashMap<String, Class>{
 	public DefaultInstanceViewMap() {
 		put("default", OlogyInstance.class);
 		put("identifier", IdentifiedObjectView.class);
-        put("raw", RawView.class);
+		put("summary", SummaryObjectView.class);
+                put("raw", RawView.class);
 	}
 
 }
