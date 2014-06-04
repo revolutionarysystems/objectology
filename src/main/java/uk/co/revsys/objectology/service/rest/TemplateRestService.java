@@ -26,6 +26,7 @@ import uk.co.revsys.objectology.query.QueryImpl;
 import uk.co.revsys.objectology.serialiser.DeserialiserException;
 import uk.co.revsys.objectology.serialiser.ObjectMapper;
 import uk.co.revsys.objectology.service.OlogyTemplateService;
+import uk.co.revsys.objectology.service.TemplateLoader;
 import uk.co.revsys.objectology.view.ViewNotFoundException;
 
 @Path("/template")
@@ -35,11 +36,13 @@ public class TemplateRestService extends AbstractRestService {
 
 	private final OlogyTemplateService<OlogyTemplate> service;
 	private final ObjectMapper xmlObjectMapper;
+    private final TemplateLoader templateLoader;
 
-	public TemplateRestService(OlogyTemplateService service, ObjectMapper xmlObjectMapper, ObjectMapper jsonObjectMapper, HashMap<String, Class> viewMap) {
+	public TemplateRestService(OlogyTemplateService service, TemplateLoader templateLoader, ObjectMapper xmlObjectMapper, ObjectMapper jsonObjectMapper, HashMap<String, Class> viewMap) {
 		super(jsonObjectMapper, viewMap);
 		this.service = service;
 		this.xmlObjectMapper = xmlObjectMapper;
+        this.templateLoader = templateLoader;
 	}
 
 	@GET
@@ -101,20 +104,9 @@ public class TemplateRestService extends AbstractRestService {
 	@POST
 	@Consumes(MediaType.TEXT_XML)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response create(String json) {
+	public Response create(String xml) {
 		try {
-			OlogyTemplate object = xmlObjectMapper.deserialise(json, OlogyTemplate.class);
-			OlogyTemplate previous = null;
-			String name = object.getName();
-			if (name != null) {
-				previous = service.findByName(name);
-			}
-			if (previous != null) {
-				object.setId(previous.getId());
-				object = service.update(object);
-			} else {
-				object = service.create(object);
-			}
+			OlogyTemplate object = templateLoader.loadTemplateFromXML(xml);
 			return buildResponse(object);
 		} catch (DeserialiserException ex) {
 			LOG.error("Error creating template", ex);
@@ -161,9 +153,9 @@ public class TemplateRestService extends AbstractRestService {
 	@Path("/{id}")
 	@Consumes(MediaType.TEXT_XML)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response update(@PathParam("id") String id, String json) {
+	public Response update(@PathParam("id") String id, String xml) {
 		try {
-			OlogyTemplate object = xmlObjectMapper.deserialise(json, OlogyTemplate.class);
+			OlogyTemplate object = xmlObjectMapper.deserialise(xml, OlogyTemplate.class);
 			object.setId(id);
 			object = service.update(object);
 			return buildResponse(object);
@@ -180,10 +172,10 @@ public class TemplateRestService extends AbstractRestService {
 	@Path("/name/{name}")
 	@Consumes(MediaType.TEXT_XML)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateByName(@PathParam("name") String name, String json) {
+	public Response updateByName(@PathParam("name") String name, String xml) {
 		try {
 			OlogyTemplate previous = service.findByName(name);
-			OlogyTemplate object = xmlObjectMapper.deserialise(json, OlogyTemplate.class);
+			OlogyTemplate object = xmlObjectMapper.deserialise(xml, OlogyTemplate.class);
 			object.setId(previous.getId());
 			object = service.update(object);
 			return buildResponse(object);

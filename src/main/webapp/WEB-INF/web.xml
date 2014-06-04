@@ -11,6 +11,16 @@
 			/WEB-INF/classes/applicationContext.xml
 		</param-value>
     </context-param>
+    <servlet>
+		<servlet-name>refreshTemplatesServlet</servlet-name>
+		<servlet-class>uk.co.revsys.resource.repository.provider.ResourceRefreshServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>refreshTemplatesServlet</servlet-name>
+		<url-pattern>/refreshTemplates</url-pattern>
+	</servlet-mapping>
+    
 	<servlet>
 		<servlet-name>restServlet</servlet-name>
 		<servlet-class>org.apache.wink.server.internal.servlet.RestServlet</servlet-class>
