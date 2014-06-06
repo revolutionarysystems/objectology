@@ -1,186 +1,92 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>uk.co.revsys.objectology</groupId>
-    <artifactId>objectology</artifactId>
-    <packaging>war</packaging>
-    <version>1.0-SNAPSHOT</version>
-    <name>Objectology</name>
-    <description>Objectology</description>
-	
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-	
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>uk.co.revsys.objectology</groupId>
+	<artifactId>objectology-parent</artifactId>
+	<packaging>pom</packaging>
+	<version>0.1.0-SNAPSHOT</version>
+
+	<name>Objectology - Parent POM</name>
+
+	<modules>
+        <module>core</module>
+	</modules>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
+	<dependencies>
+		
+	</dependencies>
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+    
     <distributionManagement>
-        <snapshotRepository>
-            <id>revsysSnapshot</id>
-            <name>Revolutionary Systems Snapshots</name>
-            <url>http://build.revsys.co.uk/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <uniqueVersion>false</uniqueVersion>
-            <id>revsysRelease</id>
-            <name>Revolutionary Systems Release</name>
-            <url>http://build.revsys.co.uk/nexus/content/repositories/releases</url>
-            <layout>default</layout>
-        </repository>
-    </distributionManagement>
+		<snapshotRepository>
+			<id>revsysSnapshot</id>
+			<name>Revolutionary Systems Snapshots</name>
+			<url>http://build.revsys.co.uk/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+		<repository>
+			<uniqueVersion>false</uniqueVersion>
+			<id>revsysRelease</id>
+			<name>Revolutionary Systems Release</name>
+			<url>http://build.revsys.co.uk/nexus/content/repositories/releases</url>
+			<layout>default</layout>
+		</repository>
+	</distributionManagement>
 	
-    <repositories>
-        <repository>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-                <checksumPolicy>warn</checksumPolicy>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>revsysRelease</id>
-            <name>Revolutionary Systems Repository</name>
-            <url>http://build.revsys.co.uk/nexus/content/repositories/releases</url>
-            <layout>default</layout>
-        </repository>
-        <repository>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>warn</checksumPolicy>
-            </snapshots>
-            <id>revsysSnapshot</id>
-            <name>Revolutionary Systems Snapshot Repository</name>
-            <url>http://build.revsys.co.uk/nexus/content/repositories/snapshots/</url>
-            <layout>default</layout>
-        </repository>
-        <repository>
-            <id>revsys3rdParty</id>
-            <name>3rd party repository</name>
-            <url>http://build.revsys.co.uk/nexus/content/repositories/thirdparty/</url>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-      
-    </pluginRepositories>
-   
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-version>3.2.8.RELEASE</spring-version>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>${spring-version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring-version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring-version}</version>
-        </dependency>
-		
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-mongodb</artifactId>
-            <version>1.4.2.RELEASE</version>
-        </dependency>
-        
-         <dependency>
-            <groupId>uk.co.revsys.resource-repository</groupId>
-            <artifactId>resource-repository-provider</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-		
-        <dependency>
-            <groupId>org.apache.wink</groupId>
-            <artifactId>wink-server</artifactId>
-            <version>1.4</version>
-        </dependency>
-		
-        <dependency>
-            <groupId>org.apache.wink</groupId>
-            <artifactId>wink-spring-support</artifactId>
-            <version>1.4</version>
-        </dependency>
-		
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20140107</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>4.0</version>
-        </dependency>
-		
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.3.3</version>
-        </dependency>
-		
-        <dependency>
-            <groupId>dom4j</groupId>
-            <artifactId>dom4j</artifactId>
-            <version>1.6.1</version>
-        </dependency>
-		
-        <dependency>
-            <groupId>jaxen</groupId>
-            <artifactId>jaxen</artifactId>
-            <version>1.1.6</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>2.12.0</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.github.fakemongo</groupId>
-            <artifactId>fongo</artifactId>
-            <version>1.5.0</version>
-            <scope>test</scope>
-        </dependency>
-		
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-            <version>3.1</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-
+	<repositories>
+		<repository>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>revsysRelease</id>
+			<name>Revolutionary Systems Repository</name>
+			<url>http://build.revsys.co.uk/nexus/content/repositories/releases</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</snapshots>
+			<id>revsysSnapshot</id>
+			<name>Revolutionary Systems Snapshot Repository</name>
+			<url>http://build.revsys.co.uk/nexus/content/repositories/snapshots/</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>revsys3rdParty</id>
+			<name>3rd party repository</name>
+			<url>http://build.revsys.co.uk/nexus/content/repositories/thirdparty/</url>
+		</repository>
+	</repositories>
 
 </project>
