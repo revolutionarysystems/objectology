@@ -7,6 +7,7 @@ import uk.co.revsys.objectology.model.instance.Link;
 import uk.co.revsys.objectology.model.instance.Measurement;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.instance.Property;
+import uk.co.revsys.objectology.model.instance.Sequence;
 import uk.co.revsys.objectology.model.instance.Time;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
@@ -14,6 +15,7 @@ import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
+import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
 
 public class DefaultTemplateMap extends HashMap<Class<? extends AttributeTemplate>, Class<? extends Attribute>>{
@@ -25,6 +27,7 @@ public class DefaultTemplateMap extends HashMap<Class<? extends AttributeTemplat
 		put(LinkTemplate.class, Link.class);
 		put(CollectionTemplate.class, Collection.class);
 		put(OlogyTemplate.class, OlogyInstance.class);
+        put(SequenceTemplate.class, Sequence.class);
 	}
 
 }

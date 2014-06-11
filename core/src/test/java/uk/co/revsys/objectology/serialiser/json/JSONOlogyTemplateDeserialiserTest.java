@@ -16,6 +16,7 @@ import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
+import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
 import uk.co.revsys.objectology.serialiser.ObjectMapper;
 
@@ -45,11 +46,14 @@ public class JSONOlogyTemplateDeserialiserTest {
 	 */
 	@Test
 	public void testDoDeserialiseJSON() throws Exception {
-		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultJSONDeserialiserFactory(null));
-		String json = "{\"id\":\"1234\",\"nature\":\"object\",\"attributes\":{\"startTime\":{\"nature\":\"time\"},\"limit\":{\"nature\":\"measurement\"},\"limits\":{\"memberTemplate\":{\"nature\":\"measurement\"},\"nature\":\"collection\"},\"status\":{\"nature\":\"property\",\"value\":\"{status}\"},\"accountHolder\":{\"nature\":\"object\",\"attributes\":{\"permissions\":{\"nature\":\"property\"},\"user\":{\"nature\":\"link\", \"referenceType\": \"name\", \"associatedType\": \"user\"}}},\"features\":{\"memberTemplate\":{\"nature\":\"object\",\"attributes\":{\"name\":{\"nature\":\"property\"}}},\"nature\":\"collection\"}},\"type\":\"subscription\"}";
+		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultJSONDeserialiserFactory(null, null));
+		String json = "{\"id\":\"1234\",\"nature\":\"object\",\"attributes\":{\"seq\": {\"nature\": \"sequence\", \"name\": \"seq1\", \"length\": 4}, \"startTime\":{\"nature\":\"time\"},\"limit\":{\"nature\":\"measurement\"},\"limits\":{\"memberTemplate\":{\"nature\":\"measurement\"},\"nature\":\"collection\"},\"status\":{\"nature\":\"property\",\"value\":\"{status}\"},\"accountHolder\":{\"nature\":\"object\",\"attributes\":{\"permissions\":{\"nature\":\"property\"},\"user\":{\"nature\":\"link\", \"referenceType\": \"name\", \"associatedType\": \"user\"}}},\"features\":{\"memberTemplate\":{\"nature\":\"object\",\"attributes\":{\"name\":{\"nature\":\"property\"}}},\"nature\":\"collection\"}},\"type\":\"subscription\"}";
 		OlogyTemplate result = objectMapper.deserialise(json, OlogyTemplate.class);
 		assertNotNull(result);
 		assertEquals("subscription", result.getType());
+        assertTrue(result.getAttributeTemplate("seq") instanceof SequenceTemplate);
+        assertEquals("seq1", result.getAttributeTemplate("seq", SequenceTemplate.class).getName());
+        assertEquals(4, result.getAttributeTemplate("seq", SequenceTemplate.class).getLength());
 		assertTrue(result.getAttributeTemplate("status") instanceof PropertyTemplate);
 		assertTrue(result.getAttributeTemplate("startTime") instanceof TimeTemplate);
 		assertEquals("{status}", ((Property)result.getAttributeTemplate("status", PropertyTemplate.class).getValue()).getValue());
@@ -68,7 +72,7 @@ public class JSONOlogyTemplateDeserialiserTest {
 	 */
 	@Test
 	public void testDoDeserialiseNamedJSON() throws Exception {
-		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultJSONDeserialiserFactory(null));
+		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultJSONDeserialiserFactory(null, null));
 		String json = "{\"id\":\"1234\",\"name\":\"Test Template B\",\"nature\":\"object\",\"attributes\":{\"startTime\":{\"nature\":\"time\"},\"limit\":{\"nature\":\"measurement\"},\"limits\":{\"memberTemplate\":{\"nature\":\"measurement\"},\"nature\":\"collection\"},\"status\":{\"nature\":\"property\",\"value\":\"{status}\"},\"accountHolder\":{\"nature\":\"object\",\"attributes\":{\"permissions\":{\"nature\":\"property\"},\"user\":{\"nature\":\"link\"}}},\"features\":{\"memberTemplate\":{\"nature\":\"object\",\"attributes\":{\"name\":{\"nature\":\"property\"}}},\"nature\":\"collection\"}},\"type\":\"subscription\"}";
 		OlogyTemplate result = objectMapper.deserialise(json, OlogyTemplate.class);
 		assertNotNull(result);

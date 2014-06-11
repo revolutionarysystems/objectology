@@ -1,14 +1,12 @@
 package uk.co.revsys.objectology.serialiser.json;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.json.JSONArray;
+import java.util.Map.Entry;
 import org.json.JSONObject;
+import static org.springframework.data.mongodb.core.mapreduce.GroupBy.key;
 import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
-import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.serialiser.DeserialiserException;
 import uk.co.revsys.objectology.serialiser.ObjectMapper;
@@ -55,17 +53,25 @@ public class JSONOlogyInstanceDeserialiser extends JSONObjectDeserialiser<OlogyI
             instance.setId(id);
         }
         json.remove("template");
-        for (Object key : json.keySet()) {
-            String attributeName = (String) key;
-            AttributeTemplate attributeTemplate = template.getAttributeTemplate(attributeName);
-            if (attributeTemplate != null) {
-                JSONDeserialiser instanceSerialiser = (JSONDeserialiser) objectMapper.getDeserialiser(attributeTemplate.getAttributeType());
-                Object attributeJson = json.get(attributeName);
-                Attribute attribute;
-                attribute = (Attribute) instanceSerialiser.deserialiseJSON(objectMapper, attributeJson, attributeTemplate);
-                instance.setAttribute(attributeName, attribute);
-            }
+        for (Entry<String, AttributeTemplate> attributeTemplateEntry : template.getAttributeTemplates().entrySet()) {
+            String attributeName = attributeTemplateEntry.getKey();
+            AttributeTemplate attributeTemplate = attributeTemplateEntry.getValue();
+            JSONDeserialiser instanceSerialiser = (JSONDeserialiser) objectMapper.getDeserialiser(attributeTemplate.getAttributeType());
+            Object attributeJson = json.opt(attributeName);
+            Attribute attribute = (Attribute) instanceSerialiser.deserialiseJSON(objectMapper, attributeJson, attributeTemplate);
+            instance.setAttribute(attributeName, attribute);
         }
+//        for (Object key : json.keySet()) {
+//            String attributeName = (String) key;
+//            AttributeTemplate attributeTemplate = template.getAttributeTemplate(attributeName);
+//            if (attributeTemplate != null) {
+//                JSONDeserialiser instanceSerialiser = (JSONDeserialiser) objectMapper.getDeserialiser(attributeTemplate.getAttributeType());
+//                Object attributeJson = json.get(attributeName);
+//                Attribute attribute;
+//                attribute = (Attribute) instanceSerialiser.deserialiseJSON(objectMapper, attributeJson, attributeTemplate);
+//                instance.setAttribute(attributeName, attribute);
+//            }
+//        }
         return instance;
     }
 

@@ -68,5 +68,4 @@ public class SpringMongoDao<O extends OlogyObject> extends AbstractOlogyObjectDa
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-
 }

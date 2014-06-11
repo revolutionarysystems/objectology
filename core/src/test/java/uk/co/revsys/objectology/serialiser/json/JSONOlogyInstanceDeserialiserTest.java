@@ -8,6 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import uk.co.revsys.objectology.dao.InMemoryOlogyObjectDao;
+import uk.co.revsys.objectology.dao.InMemorySequenceGenerator;
 import uk.co.revsys.objectology.dao.OlogyObjectDao;
 import uk.co.revsys.objectology.model.instance.Collection;
 import uk.co.revsys.objectology.model.instance.Link;
@@ -20,6 +21,7 @@ import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
+import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
 import uk.co.revsys.objectology.serialiser.ObjectMapper;
 import uk.co.revsys.objectology.service.OlogyTemplateServiceImpl;
@@ -53,11 +55,12 @@ public class JSONOlogyInstanceDeserialiserTest {
 	public void testDeserialiseJSON() throws Exception {
 		OlogyObjectDao dao = new InMemoryOlogyObjectDao();
 		OlogyTemplateServiceImpl templateService = new OlogyTemplateServiceImpl(dao, new OlogyTemplateValidator());
-		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultJSONDeserialiserFactory(templateService));
+		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultJSONDeserialiserFactory(templateService, new InMemorySequenceGenerator()));
 		OlogyTemplate template = new OlogyTemplate();
 		template.setType("subscription");
 		PropertyTemplate statusTemplate = new PropertyTemplate();
 		template.getAttributeTemplates().put("status", statusTemplate);
+        template.getAttributeTemplates().put("seq", new SequenceTemplate("seq1", 4));
 		template.getAttributeTemplates().put("startTime", new TimeTemplate());
 		template.getAttributeTemplates().put("limit", new MeasurementTemplate());
 		template.getAttributeTemplates().put("limits", new CollectionTemplate(new MeasurementTemplate()));
@@ -70,6 +73,7 @@ public class JSONOlogyInstanceDeserialiserTest {
 		OlogyInstance result = objectMapper.deserialise(json, OlogyInstance.class);
 		assertEquals(template.getId(), result.getTemplate().getId());
 		assertEquals("Created", result.getAttribute("status", Property.class).getValue());
+        assertEquals("0001", result.getAttribute("seq").toString());
 		assertEquals(statusTemplate, result.getAttribute("status").getTemplate());
 		assertEquals("2001-01-01T00:00:00+0000", result.getAttribute("startTime", Time.class).toString());
 		assertEquals("1000", result.getAttribute("limit", Measurement.class).toString());

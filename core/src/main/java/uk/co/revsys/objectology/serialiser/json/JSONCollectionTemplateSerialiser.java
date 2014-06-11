@@ -9,10 +9,6 @@ import uk.co.revsys.objectology.serialiser.SerialiserException;
 
 public class JSONCollectionTemplateSerialiser extends JSONAttributeTemplateSerialiser<CollectionTemplate>{
 
-    public JSONCollectionTemplateSerialiser(BidiMap<String, Class<? extends AttributeTemplate>> templateNatureMap) {
-        super(templateNatureMap);
-    }
-
 	@Override
 	public JSONObject doSerialiseJSON(JSONObject json, ObjectMapper objectMapper, CollectionTemplate object, Object args) throws SerialiserException {
 		AttributeTemplate memberTemplate = object.getMemberTemplate();

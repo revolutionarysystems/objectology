@@ -15,7 +15,7 @@ public class JSONJacksonAttributeTemplateDeserialiser<A extends AttributeTemplat
 	private final com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper;
 
 	public JSONJacksonAttributeTemplateDeserialiser(Class<? extends A> type) {
-        super(null);
+        super();
 		this.type = type;
 		jacksonObjectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
 		jacksonObjectMapper.addMixInAnnotations(AttributeTemplate.class, JacksonAttributeTemplateMixin.class);

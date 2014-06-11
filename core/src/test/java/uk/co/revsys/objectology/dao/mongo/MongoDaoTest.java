@@ -41,7 +41,7 @@ public class MongoDaoTest {
     public void setUp() {
         mocksControl = EasyMock.createControl();
         mongoClient = new Fongo("Test Mongo Server 1").getMongo();
-        objectMapper = new ObjectMapper(new DefaultJSONSerialiserFactory(), new DefaultJSONDeserialiserFactory(null));
+        objectMapper = new ObjectMapper(new DefaultJSONSerialiserFactory(), new DefaultJSONDeserialiserFactory(null, null));
         mongoDao = new MongoDao<OlogyTemplate>(mongoClient, "test", OlogyTemplate.class, objectMapper, "template");
     }
 

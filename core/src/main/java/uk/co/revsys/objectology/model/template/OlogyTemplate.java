@@ -1,12 +1,17 @@
 package uk.co.revsys.objectology.model.template;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import uk.co.revsys.objectology.model.OlogyObject;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
+import uk.co.revsys.objectology.serialiser.jackson.AttributeTemplatesDeserialiser;
 
+//@JsonDeserialize(using = TemplateDeserialiser.class)
 public class OlogyTemplate extends OlogyObject implements AttributeTemplate<OlogyInstance>{
 
 	private String type;
@@ -31,10 +36,13 @@ public class OlogyTemplate extends OlogyObject implements AttributeTemplate<Olog
 		this.value = value;
 	}
 	
+    @JsonProperty("attributes")
 	public Map<String, AttributeTemplate> getAttributeTemplates() {
 		return attributeTemplates;
 	}
 
+    @JsonProperty("attributes")
+    @JsonDeserialize(using = AttributeTemplatesDeserialiser.class)
 	public void setAttributeTemplates(Map<String, AttributeTemplate> attributeTemplates) {
 		this.attributeTemplates = attributeTemplates;
 	}
@@ -53,6 +61,7 @@ public class OlogyTemplate extends OlogyObject implements AttributeTemplate<Olog
 	}
 
 	@Override
+    @JsonIgnore
 	public Map<String, Attribute> getAttributes() {
 		Map<String, Attribute> attributes = new HashMap<String, Attribute>();
 		for(Entry<String, AttributeTemplate> entry: getAttributeTemplates().entrySet()){

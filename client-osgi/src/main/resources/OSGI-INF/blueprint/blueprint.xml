@@ -19,7 +19,7 @@
     
     <bean id="instanceClient" class="uk.co.revsys.objectology.client.InstanceClient">
         <argument ref="httpClient"/>
-        <argument value="http://localhost:8080/objectology"/>
+        <argument value="http://live.echo-central.com/subscription-manager"/>
     </bean>
     
     <bean id="httpClient" class="uk.co.revsys.utils.http.HttpClientImpl"/>

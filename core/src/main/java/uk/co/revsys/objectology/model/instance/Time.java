@@ -43,5 +43,13 @@ public class Time extends AtomicAttribute<Date> {
             return outputFormat.format(value);
         }
     }
+    
+    public static Time getNow(){
+        return new Time(new Date());
+    }
+    
+    public static Time getFarFuture(){
+        return new Time(new Date(9999, 11, 31, 23, 59, 59));
+    }
 
 }

@@ -1,18 +1,15 @@
 package uk.co.revsys.objectology.serialiser.json;
 
-import org.apache.commons.collections4.BidiMap;
 import org.json.JSONObject;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
 import uk.co.revsys.objectology.serialiser.DeserialiserException;
+import uk.co.revsys.objectology.serialiser.NatureMap;
 import uk.co.revsys.objectology.serialiser.ObjectMapper;
 
 public abstract class JSONAttributeTemplateDeserialiser<A extends AttributeTemplate> extends JSONObjectDeserialiser<A> {
 
-    private final BidiMap<String, Class<? extends AttributeTemplate>> templateNatureMap;
-
-    public JSONAttributeTemplateDeserialiser(BidiMap<String, Class<? extends AttributeTemplate>> templateNatureMap) {
-        this.templateNatureMap = templateNatureMap;
+    public JSONAttributeTemplateDeserialiser() {
     }
     
 	@Override
@@ -36,7 +33,7 @@ public abstract class JSONAttributeTemplateDeserialiser<A extends AttributeTempl
 		try {
 			String nature = source.getString("nature");
             System.out.println("nature = " + nature);
-            Class<? extends AttributeTemplate> objectClass = templateNatureMap.get(nature);
+            Class<? extends AttributeTemplate> objectClass = NatureMap.getTemplateType(nature);
             System.out.println("objectClass = " + objectClass);
 			return (A) objectClass.newInstance();
 		} catch (InstantiationException ex) {
@@ -45,9 +42,5 @@ public abstract class JSONAttributeTemplateDeserialiser<A extends AttributeTempl
 			throw new DeserialiserException(ex);
 		}
 	}
-
-    public BidiMap<String, Class<? extends AttributeTemplate>> getTemplateNatureMap() {
-        return templateNatureMap;
-    }
 
 }

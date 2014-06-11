@@ -1,5 +1,6 @@
 package uk.co.revsys.objectology.model.instance;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
 
 public class AbstractAttribute<T extends AttributeTemplate> implements Attribute<T> {
@@ -12,6 +13,7 @@ public class AbstractAttribute<T extends AttributeTemplate> implements Attribute
 	}
 
 	@Override
+    @JsonIgnore
 	public T getTemplate() {
 		return template;
 	}

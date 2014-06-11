@@ -15,6 +15,7 @@ import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
+import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
 import uk.co.revsys.objectology.serialiser.ObjectMapper;
 import uk.co.revsys.objectology.serialiser.SerialiserException;
@@ -53,6 +54,7 @@ public class JSONOlogyTemplateSerialiserTest {
 		Property statusProperty = new Property("{status}");
 		statusProperty.setTemplate(statusTemplate);
 		statusTemplate.setValue(statusProperty);
+        template.getAttributeTemplates().put("seq", new SequenceTemplate("seq1", 4));
 		template.getAttributeTemplates().put("status", statusTemplate);
 		template.getAttributeTemplates().put("startTime", new TimeTemplate());
 		template.getAttributeTemplates().put("limit", new MeasurementTemplate());
@@ -71,6 +73,10 @@ public class JSONOlogyTemplateSerialiserTest {
 		assertEquals("subscription", json.get("type"));
 		System.out.println(json.getJSONObject("attributes").getJSONObject("accountHolder").getJSONObject("attributes").getJSONObject("user"));
 		assertEquals("id", json.getJSONObject("attributes").getJSONObject("accountHolder").getJSONObject("attributes").getJSONObject("user").getString("referenceType"));
+        JSONObject seqJson = json.getJSONObject("attributes").getJSONObject("seq");
+        assertEquals("sequence", seqJson.getString("nature"));
+        assertEquals("seq1", seqJson.getString("name"));
+        assertEquals(4, seqJson.getInt("length"));
 		assertEquals("property", json.getJSONObject("attributes").getJSONObject("status").get("nature"));
 		assertEquals("{status}", json.getJSONObject("attributes").getJSONObject("status").getString("value"));
 		assertEquals("measurement", json.getJSONObject("attributes").getJSONObject("limits").getJSONObject("memberTemplate").getString("nature"));

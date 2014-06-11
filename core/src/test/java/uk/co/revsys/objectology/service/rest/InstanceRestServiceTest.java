@@ -14,6 +14,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 import uk.co.revsys.objectology.dao.DaoException;
+import uk.co.revsys.objectology.dao.InMemorySequenceGenerator;
 import uk.co.revsys.objectology.model.instance.Collection;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.instance.Property;
@@ -57,7 +58,7 @@ public class InstanceRestServiceTest {
         IMocksControl mocksControl = EasyMock.createControl();
         OlogyInstanceService mockInstanceService = mocksControl.createMock(OlogyInstanceService.class);
         OlogyTemplateService mockTemplateService = mocksControl.createMock(OlogyTemplateService.class);
-        InstanceRestService instanceRestService = new InstanceRestService(mockInstanceService, null, new ObjectMapper(new DefaultJSONSerialiserFactory(), new DefaultJSONDeserialiserFactory(mockTemplateService)), null);
+        InstanceRestService instanceRestService = new InstanceRestService(mockInstanceService, null, new ObjectMapper(new DefaultJSONSerialiserFactory(), new DefaultJSONDeserialiserFactory(mockTemplateService, new InMemorySequenceGenerator())), null);
         OlogyTemplate template = new OlogyTemplate();
         template.setId("abcd");
         template.getAttributeTemplates().put("prop1", new PropertyTemplate());
@@ -108,7 +109,7 @@ public class InstanceRestServiceTest {
         IMocksControl mocksControl = EasyMock.createControl();
         OlogyInstanceService mockInstanceService = mocksControl.createMock(OlogyInstanceService.class);
         OlogyTemplateService mockTemplateService = mocksControl.createMock(OlogyTemplateService.class);
-        InstanceRestService instanceRestService = new InstanceRestService(mockInstanceService, new ObjectMapper(new DefaultXMLSerialiserFactory(), new DefaultXMLDeserialiserFactory(mockTemplateService)), new ObjectMapper(new DefaultJSONSerialiserFactory(), new DefaultJSONDeserialiserFactory(mockTemplateService)), null);
+        InstanceRestService instanceRestService = new InstanceRestService(mockInstanceService, new ObjectMapper(new DefaultXMLSerialiserFactory(), new DefaultXMLDeserialiserFactory(mockTemplateService)), new ObjectMapper(new DefaultJSONSerialiserFactory(), new DefaultJSONDeserialiserFactory(mockTemplateService, new InMemorySequenceGenerator())), null);
         OlogyTemplate template = new OlogyTemplate();
         template.setId("abcd");
         template.setType("subscription");

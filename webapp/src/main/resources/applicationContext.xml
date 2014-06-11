@@ -99,10 +99,14 @@
 	
     <bean id="jsonDeserialiserFactory" class="uk.co.revsys.objectology.serialiser.json.DefaultJSONDeserialiserFactory">
         <constructor-arg index="0" ref="templateService"/>
+        <constructor-arg index="1" ref="sequenceGenerator"/>
     </bean>
 	
     <bean id="jsonTemplateDeserialiserFactory" class="uk.co.revsys.objectology.serialiser.json.DefaultJSONDeserialiserFactory">
         <constructor-arg index="0">
+            <null/>
+        </constructor-arg>
+        <constructor-arg index="1">
             <null/>
         </constructor-arg>
     </bean>
@@ -124,6 +128,12 @@
     <bean id="templateLoader" class="uk.co.revsys.objectology.service.TemplateLoader">
         <constructor-arg index="0" ref="templateService"/>
         <constructor-arg index="1" ref="xmlObjectMapper"/>
+    </bean>
+    
+    <bean id="sequenceGenerator" class="uk.co.revsys.objectology.dao.mongo.MongoSequenceGenerator">
+        <constructor-arg index="0" ref="mongoClient"/>
+        <constructor-arg index="1" value="objectology"/>
+        <constructor-arg index="2" value="sequence"/>
     </bean>
 
 </beans>

@@ -1,5 +1,6 @@
 package uk.co.revsys.objectology.model.instance;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.text.ParseException;
 
 public abstract class AtomicAttribute<V extends Object> extends AbstractAttribute{
@@ -28,6 +29,7 @@ public abstract class AtomicAttribute<V extends Object> extends AbstractAttribut
     public abstract void setValueFromString(String value) throws ParseException;
 
     @Override
+    @JsonValue
     public String toString() {
         V value = getValue();
         if(value == null){

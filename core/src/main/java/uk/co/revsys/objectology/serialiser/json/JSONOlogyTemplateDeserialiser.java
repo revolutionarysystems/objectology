@@ -5,13 +5,10 @@ import org.json.JSONObject;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.serialiser.DeserialiserException;
+import uk.co.revsys.objectology.serialiser.NatureMap;
 import uk.co.revsys.objectology.serialiser.ObjectMapper;
 
 public class JSONOlogyTemplateDeserialiser extends JSONAttributeTemplateDeserialiser<OlogyTemplate> {
-
-    public JSONOlogyTemplateDeserialiser(BidiMap<String, Class<? extends AttributeTemplate>> templateNatureMap) {
-        super(templateNatureMap);
-    }
 
     @Override
     public OlogyTemplate doDeserialiseJSON(OlogyTemplate object, ObjectMapper objectMapper, JSONObject json, Object... args) throws DeserialiserException {
@@ -32,7 +29,7 @@ public class JSONOlogyTemplateDeserialiser extends JSONAttributeTemplateDeserial
         for (Object attributeKey : attributes.keySet()) {
             String attributeName = (String) attributeKey;
             JSONObject attribute = attributes.getJSONObject(attributeName);
-            JSONDeserialiser attributeDeserialiser = (JSONDeserialiser) objectMapper.getDeserialiser(getTemplateNatureMap().get(attribute.getString("nature")));
+            JSONDeserialiser attributeDeserialiser = (JSONDeserialiser) objectMapper.getDeserialiser(NatureMap.getTemplateType(attribute.getString("nature")));
             object.getAttributeTemplates().put(attributeName, (AttributeTemplate) attributeDeserialiser.deserialiseJSON(objectMapper, attribute, args));
         }
         return object;

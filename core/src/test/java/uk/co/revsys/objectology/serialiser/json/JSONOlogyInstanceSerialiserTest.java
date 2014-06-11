@@ -15,12 +15,14 @@ import uk.co.revsys.objectology.model.instance.Link;
 import uk.co.revsys.objectology.model.instance.Measurement;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.instance.Property;
+import uk.co.revsys.objectology.model.instance.Sequence;
 import uk.co.revsys.objectology.model.instance.Time;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
+import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
 import uk.co.revsys.objectology.serialiser.ObjectMapper;
 
@@ -55,6 +57,7 @@ public class JSONOlogyInstanceSerialiserTest {
 		template.setId("1234");
 		template.setType("subscription");
 		template.getAttributeTemplates().put("status", new PropertyTemplate());
+        template.getAttributeTemplates().put("seq", new SequenceTemplate("seq1", 4));
 		template.getAttributeTemplates().put("startTime", new TimeTemplate());
 		template.getAttributeTemplates().put("limit", new MeasurementTemplate());
 		template.getAttributeTemplates().put("limits", new CollectionTemplate(new MeasurementTemplate()));
@@ -67,6 +70,7 @@ public class JSONOlogyInstanceSerialiserTest {
 		template.getAttributeTemplates().put("features", new CollectionTemplate(featureTemplate));
 		OlogyInstance object = new OlogyInstance();
 		object.setTemplate(template);
+        object.setAttribute("seq", new Sequence("0001"));
 		object.setAttribute("status", new Property("Created"));
 		object.setAttribute("startTime", new Time("01/01/2001 00:00:00"));
 		object.setAttribute("limit", new Measurement("1000"));
@@ -91,6 +95,7 @@ public class JSONOlogyInstanceSerialiserTest {
 		JSONObject jsonObject = new JSONObject(json);
 		assertEquals("1234", jsonObject.get("template"));
 		assertEquals("Created", jsonObject.get("status"));
+        assertEquals("0001", jsonObject.get("seq"));
 		assertEquals("2001-01-01T00:00:00+0000", jsonObject.get("startTime"));
 		assertEquals("1000", jsonObject.get("limit"));
 		assertEquals("all", jsonObject.getJSONObject("accountHolder").getString("permissions"));

@@ -17,7 +17,7 @@ public abstract class AbstractFactory<O extends Object> {
 	}
 	
 	public O getInstance(String alias){
-		return objectMap.get(aliasMap.get(alias));
+		return objectMap.get(NatureMap.getTemplateType(alias));
 	}
 	
 }

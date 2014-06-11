@@ -1,5 +1,7 @@
 package uk.co.revsys.objectology.model.instance;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
 import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.OlogyObject;
 import uk.co.revsys.objectology.model.ReferenceType;
@@ -17,6 +19,7 @@ public class Link extends AbstractAttribute<LinkTemplate> {
 	public Link() {
 	}
 
+    @JsonValue
 	public String getReference() {
 		return reference;
 	}
@@ -25,6 +28,7 @@ public class Link extends AbstractAttribute<LinkTemplate> {
 		this.reference = reference;
 	}
 
+    @JsonIgnore
 	public OlogyObject getAssociatedObject() throws DaoException {
 		ReferenceType referenceType = getTemplate().getReferenceType();
 		String associatedType = getTemplate().getAssociatedType();

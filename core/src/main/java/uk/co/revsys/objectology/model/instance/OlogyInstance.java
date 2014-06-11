@@ -1,10 +1,18 @@
 package uk.co.revsys.objectology.model.instance;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
 import java.util.Map;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.OlogyObject;
+import uk.co.revsys.objectology.serialiser.jackson.OlogyInstanceDeserialiser;
 
+
+@JsonDeserialize(using = OlogyInstanceDeserialiser.class)
 public class OlogyInstance extends OlogyObject implements Attribute<OlogyTemplate>{
 
 	private OlogyTemplate template;
@@ -25,6 +33,8 @@ public class OlogyInstance extends OlogyObject implements Attribute<OlogyTemplat
 	}
 
 	@Override
+    @JsonAnyGetter
+    @JsonUnwrapped
 	public Map<String, Attribute> getAttributes() {
 		return attributes;
 	}
@@ -35,6 +45,7 @@ public class OlogyInstance extends OlogyObject implements Attribute<OlogyTemplat
 	}
 
 	@Override
+    @JsonAnySetter
 	public void setAttribute(String key, Attribute attribute) {
 		attributes.put(key, attribute);
 	}
@@ -49,6 +60,7 @@ public class OlogyInstance extends OlogyObject implements Attribute<OlogyTemplat
 		return (A) getAttribute(key);
 	}
 	
+    @JsonIgnore
 	public Map<String, Attribute> getAllAttributes(){
 		Map<String, Attribute> combinedAttributes = new HashMap<String, Attribute>();
 		combinedAttributes.putAll(getTemplate().getAttributes());

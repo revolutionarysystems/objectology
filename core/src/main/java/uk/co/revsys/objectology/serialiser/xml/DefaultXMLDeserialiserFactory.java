@@ -13,7 +13,6 @@ import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
-import uk.co.revsys.objectology.serialiser.DefaultTemplateNatureMap;
 import uk.co.revsys.objectology.serialiser.Deserialiser;
 import uk.co.revsys.objectology.serialiser.DeserialiserFactory;
 import uk.co.revsys.objectology.service.OlogyTemplateService;
@@ -36,7 +35,7 @@ public class DefaultXMLDeserialiserFactory extends DeserialiserFactory {
 				put(Collection.class, new XMLCollectionDeserialiser());
 				put(Measurement.class, new XMLAtomicAttributeDeserialiser(Measurement.class));
 			}
-		}, new DefaultTemplateNatureMap());
+		}, null);
 	}
 
 }

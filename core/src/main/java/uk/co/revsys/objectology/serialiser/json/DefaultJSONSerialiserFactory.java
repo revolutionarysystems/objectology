@@ -7,14 +7,15 @@ import uk.co.revsys.objectology.model.instance.Link;
 import uk.co.revsys.objectology.model.instance.Measurement;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.instance.Property;
+import uk.co.revsys.objectology.model.instance.Sequence;
 import uk.co.revsys.objectology.model.instance.Time;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
+import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
-import uk.co.revsys.objectology.serialiser.DefaultTemplateNatureMap;
 import uk.co.revsys.objectology.serialiser.Serialiser;
 import uk.co.revsys.objectology.serialiser.SerialiserFactory;
 import uk.co.revsys.objectology.view.IdentifiedObjectView;
@@ -32,18 +33,20 @@ public class DefaultJSONSerialiserFactory extends SerialiserFactory {
 				put(Link.class, new JSONLinkSerialiser());
 				put(Collection.class, new JSONCollectionSerialiser());
 				put(Measurement.class, new JSONAtomicAttributeSerialiser());
+                put(Sequence.class, new JSONAtomicAttributeSerialiser());
 				put(OlogyInstance.class, new JSONOlogyInstanceSerialiser());
-				put(OlogyTemplate.class, new JSONOlogyTemplateSerialiser(new DefaultTemplateNatureMap()));
-				put(CollectionTemplate.class, new JSONCollectionTemplateSerialiser(new DefaultTemplateNatureMap()));
-				put(MeasurementTemplate.class, new JSONAttributeTemplateSerialiser(new DefaultTemplateNatureMap()));
-				put(PropertyTemplate.class, new JSONAttributeTemplateSerialiser(new DefaultTemplateNatureMap()));
-				put(TimeTemplate.class, new JSONAttributeTemplateSerialiser(new DefaultTemplateNatureMap()));
-				put(LinkTemplate.class, new JSONAttributeTemplateSerialiser(new DefaultTemplateNatureMap()));
+				put(OlogyTemplate.class, new JSONOlogyTemplateSerialiser());
+				put(CollectionTemplate.class, new JSONCollectionTemplateSerialiser());
+				put(MeasurementTemplate.class, new JSONAttributeTemplateSerialiser());
+                put(SequenceTemplate.class, new JSONAttributeTemplateSerialiser());
+				put(PropertyTemplate.class, new JSONAttributeTemplateSerialiser());
+				put(TimeTemplate.class, new JSONAttributeTemplateSerialiser());
+				put(LinkTemplate.class, new JSONAttributeTemplateSerialiser());
 				put(IdentifiedObjectView.class, new DefaultJSONObjectSerialiser());
 				put(SummaryObjectView.class, new DefaultJSONObjectSerialiser());
                                 put(RawView.class, new JSONRawViewSerialiser());
 			}
-		}, new DefaultTemplateNatureMap());
+		}, null);
 	}
 
 }

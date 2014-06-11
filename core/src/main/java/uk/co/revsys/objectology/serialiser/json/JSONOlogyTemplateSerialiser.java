@@ -10,10 +10,6 @@ import uk.co.revsys.objectology.serialiser.SerialiserException;
 
 public class JSONOlogyTemplateSerialiser extends JSONAttributeTemplateSerialiser<OlogyTemplate> {
 
-    public JSONOlogyTemplateSerialiser(BidiMap<String, Class<? extends AttributeTemplate>> templateNatureMap) {
-        super(templateNatureMap);
-    }
-
 	@Override
 	public JSONObject doSerialiseJSON(JSONObject json, ObjectMapper objectMapper, OlogyTemplate object, Object args) throws SerialiserException{
 		json.put("id", object.getId());
