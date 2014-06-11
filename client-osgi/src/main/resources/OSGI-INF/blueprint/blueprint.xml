@@ -8,6 +8,8 @@
        http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd
        http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
 
+    <cm:property-placeholder id="blueprint.placeholder" persistent-id="service_objectology" />
+    
     <camelContext xmlns="http://camel.apache.org/schema/blueprint">
 
         <route>
@@ -19,7 +21,7 @@
     
     <bean id="instanceClient" class="uk.co.revsys.objectology.client.InstanceClient">
         <argument ref="httpClient"/>
-        <argument value="http://live.echo-central.com/subscription-manager"/>
+        <argument value="${service.endpoint}"/>
     </bean>
     
     <bean id="httpClient" class="uk.co.revsys.utils.http.HttpClientImpl"/>
