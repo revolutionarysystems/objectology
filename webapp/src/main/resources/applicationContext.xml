@@ -118,11 +118,16 @@
     <bean id="resourceProvider" class="uk.co.revsys.resource.repository.provider.ResourceProvider">
         <constructor-arg index="0" ref="templateRepository"/>
         <constructor-arg index="1" value="/"/>
-        <constructor-arg index="2" ref="templateLoader"/>
+        <constructor-arg index="2" ref="templateFilter"/>
+        <constructor-arg index="3" ref="templateLoader"/>
     </bean>
     
     <bean id="templateRepository" class="uk.co.revsys.resource.repository.LocalDiskResourceRepository">
-        <constructor-arg index="0" value="C:\rsl\code\o-test\ec\xml\templates"/>
+        <constructor-arg index="0" value="C:\rsl\code\subscription-manager\templates"/>
+    </bean>
+    
+    <bean id="templateFilter" class="uk.co.revsys.resource.repository.provider.filter.ExtensionFilter">
+        <constructor-arg index="0" value=".xml"/>
     </bean>
     
     <bean id="templateLoader" class="uk.co.revsys.objectology.service.TemplateLoader">

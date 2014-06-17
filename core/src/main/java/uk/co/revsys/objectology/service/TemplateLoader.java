@@ -10,7 +10,7 @@ import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.serialiser.DeserialiserException;
 import uk.co.revsys.objectology.serialiser.ObjectMapper;
 import uk.co.revsys.resource.repository.model.Resource;
-import uk.co.revsys.resource.repository.provider.ResourceHandler;
+import uk.co.revsys.resource.repository.provider.handler.ResourceHandler;
 
 public class TemplateLoader implements ResourceHandler {
 
@@ -39,7 +39,7 @@ public class TemplateLoader implements ResourceHandler {
     }
 
     @Override
-    public void handle(Resource resource, InputStream contents) throws IOException {
+    public void handle(String path, Resource resource, InputStream contents) throws IOException {
         String source = IOUtils.toString(contents);
         try {
             loadTemplateFromXML(source);
@@ -48,11 +48,6 @@ public class TemplateLoader implements ResourceHandler {
         } catch (DaoException ex) {
             throw new IOException(ex);
         }
-    }
-
-    @Override
-    public boolean canHandle(Resource resource) {
-        return resource.getName().endsWith(".xml");
     }
 
 }

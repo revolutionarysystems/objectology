@@ -12,6 +12,7 @@ import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
+import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
 import uk.co.revsys.objectology.serialiser.Deserialiser;
 import uk.co.revsys.objectology.serialiser.DeserialiserFactory;
@@ -28,6 +29,7 @@ public class DefaultXMLDeserialiserFactory extends DeserialiserFactory {
 				put(TimeTemplate.class, new XMLAtomicAttributeTemplateDeserialiser(TimeTemplate.class));
 				put(CollectionTemplate.class, new XMLCollectionTemplateDeserialiser());
 				put(MeasurementTemplate.class, new XMLAtomicAttributeTemplateDeserialiser(MeasurementTemplate.class));
+                put(SequenceTemplate.class, new XMLSequenceTemplateDeserialiser());
 				put(OlogyInstance.class, new XMLOlogyInstanceDeserialiser(templateService));
 				put(Property.class, new XMLAtomicAttributeDeserialiser(Property.class));
 				put(Link.class, new XMLLinkDeserialiser());
