@@ -12,8 +12,8 @@
 
 	<modules>
         <module>core</module>
-        <!--module>client-java</module>
-        <module>client-osgi</module-->
+        <module>client-java</module>
+        <module>client-osgi</module>
         <module>webapp</module>
 	</modules>
 

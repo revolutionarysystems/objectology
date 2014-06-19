@@ -20,7 +20,7 @@
 	<dependencies>
         <dependency>
 			<groupId>uk.co.revsys.objectology</groupId>
-			<artifactId>objectology-model</artifactId>
+			<artifactId>objectology</artifactId>
 			<version>${project.version}</version>
 		</dependency>
         
