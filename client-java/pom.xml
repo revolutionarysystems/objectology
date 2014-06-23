@@ -18,12 +18,6 @@
 	</properties>
 
 	<dependencies>
-        <dependency>
-			<groupId>uk.co.revsys.objectology</groupId>
-			<artifactId>objectology</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-        
 		<dependency>
 			<groupId>uk.co.revsys.utils</groupId>
 			<artifactId>http-utils</artifactId>
