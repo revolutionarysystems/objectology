@@ -9,13 +9,13 @@ import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
-import uk.co.revsys.objectology.serialiser.ObjectMapper;
-import uk.co.revsys.objectology.serialiser.SerialiserException;
+import uk.co.revsys.objectology.mapping.xml.XMLObjectMapper;
+import uk.co.revsys.objectology.mapping.SerialiserException;
 
 public class XMLOlogyInstanceSerialiser extends XMLAttributeSerialiser<OlogyInstance> {
 
     @Override
-    public Node serialiseXML(ObjectMapper objectMapper, OlogyInstance object, Object... args) throws SerialiserException {
+    public Node serialiseXML(XMLObjectMapper objectMapper, OlogyInstance object, Object... args) throws SerialiserException {
         Document document = DocumentFactory.getInstance().createDocument();
         OlogyTemplate template = object.getTemplate();
         String type = template.getType();

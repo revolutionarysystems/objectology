@@ -6,13 +6,13 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
-import uk.co.revsys.objectology.serialiser.DeserialiserException;
-import uk.co.revsys.objectology.serialiser.ObjectMapper;
+import uk.co.revsys.objectology.mapping.DeserialiserException;
+import uk.co.revsys.objectology.mapping.xml.XMLObjectMapper;
 
 public class XMLOlogyTemplateDeserialiser extends XMLAttributeTemplateDeserialiser<OlogyTemplate>{
 
 	@Override
-	public OlogyTemplate deserialise(ObjectMapper objectMapper, Node source, Object... args) throws DeserialiserException {
+	public OlogyTemplate deserialise(XMLObjectMapper objectMapper, Node source, Object... args) throws DeserialiserException {
 		System.out.println("source = " + source.asXML());
 		OlogyTemplate template = new OlogyTemplate();
 		template.setType(source.getName());

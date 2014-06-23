@@ -1,7 +1,6 @@
 package uk.co.revsys.objectology.serialiser.json;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -9,6 +8,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import uk.co.revsys.objectology.mapping.ObjectMapper;
 import uk.co.revsys.objectology.model.instance.Property;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
@@ -17,8 +17,8 @@ import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
-import uk.co.revsys.objectology.serialiser.SerialiserException;
-import uk.co.revsys.objectology.serialiser.jackson.JacksonTemplateSerialiser;
+import uk.co.revsys.objectology.mapping.SerialiserException;
+import uk.co.revsys.objectology.mapping.json.JsonObjectMapper;
 
 public class JacksonTemplateSerialiserTest {
 
@@ -46,7 +46,7 @@ public class JacksonTemplateSerialiserTest {
      */
     @Test
     public void testSerialiseJSON() throws SerialiserException, JsonProcessingException {
-        ObjectMapper objectMapper = new JacksonTemplateSerialiser();
+        ObjectMapper objectMapper = new JsonObjectMapper();
         OlogyTemplate template = new OlogyTemplate();
         template.setId("1234");
         template.setType("subscription");
@@ -66,7 +66,7 @@ public class JacksonTemplateSerialiserTest {
         OlogyTemplate featureTemplate = new OlogyTemplate();
         featureTemplate.getAttributeTemplates().put("name", new PropertyTemplate());
         template.getAttributeTemplates().put("features", new CollectionTemplate(featureTemplate));
-        String result = objectMapper.writeValueAsString(template);
+        String result = objectMapper.serialise(template);
         System.out.println("result = " + result);
         JSONObject json = new JSONObject(result);
         assertEquals("1234", json.get("id"));

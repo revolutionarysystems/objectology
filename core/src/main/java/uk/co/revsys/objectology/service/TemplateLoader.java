@@ -7,17 +7,17 @@ import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
 import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
-import uk.co.revsys.objectology.serialiser.DeserialiserException;
-import uk.co.revsys.objectology.serialiser.ObjectMapper;
+import uk.co.revsys.objectology.mapping.DeserialiserException;
+import uk.co.revsys.objectology.mapping.xml.XMLObjectMapper;
 import uk.co.revsys.resource.repository.model.Resource;
 import uk.co.revsys.resource.repository.provider.handler.ResourceHandler;
 
 public class TemplateLoader implements ResourceHandler {
 
     private final OlogyTemplateService<OlogyTemplate> service;
-	private final ObjectMapper xmlObjectMapper;
+	private final XMLObjectMapper xmlObjectMapper;
 
-    public TemplateLoader(OlogyTemplateService<OlogyTemplate> service, ObjectMapper xmlObjectMapper) {
+    public TemplateLoader(OlogyTemplateService<OlogyTemplate> service, XMLObjectMapper xmlObjectMapper) {
         this.service = service;
         this.xmlObjectMapper = xmlObjectMapper;
     }

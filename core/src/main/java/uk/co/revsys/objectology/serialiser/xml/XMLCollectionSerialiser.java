@@ -7,13 +7,13 @@ import org.dom4j.Node;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.Collection;
 import uk.co.revsys.objectology.serialiser.NatureMap;
-import uk.co.revsys.objectology.serialiser.ObjectMapper;
-import uk.co.revsys.objectology.serialiser.SerialiserException;
+import uk.co.revsys.objectology.mapping.xml.XMLObjectMapper;
+import uk.co.revsys.objectology.mapping.SerialiserException;
 
 public class XMLCollectionSerialiser extends XMLAttributeSerialiser<Collection> {
     
     @Override
-    public Node serialiseXML(ObjectMapper objectMapper, Collection object, Object... args) throws SerialiserException {
+    public Node serialiseXML(XMLObjectMapper objectMapper, Collection object, Object... args) throws SerialiserException {
         Document document = DocumentFactory.getInstance().createDocument();
         Element root = document.addElement((String) args[0]);
         for (Attribute member : object.getMembers()) {

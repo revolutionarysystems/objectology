@@ -1,7 +1,6 @@
 
 package uk.co.revsys.objectology.serialiser.json;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONObject;
@@ -11,6 +10,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import uk.co.revsys.objectology.mapping.ObjectMapper;
+import uk.co.revsys.objectology.mapping.json.JsonInstanceMapper;
 import uk.co.revsys.objectology.model.instance.Collection;
 import uk.co.revsys.objectology.model.instance.Link;
 import uk.co.revsys.objectology.model.instance.Measurement;
@@ -25,7 +26,6 @@ import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
-import uk.co.revsys.objectology.serialiser.jackson.OlogyTemplateMixin;
 
 public class JacksonInstanceSerialiserTest {
 
@@ -53,8 +53,7 @@ public class JacksonInstanceSerialiserTest {
 	 */
 	@Test
 	public void testSerialiseJSON() throws Exception {
-		ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.addMixInAnnotations(OlogyTemplate.class, OlogyTemplateMixin.class);
+		ObjectMapper objectMapper = new JsonInstanceMapper(null);
 		OlogyTemplate template = new OlogyTemplate();
 		template.setId("1234");
 		template.setType("subscription");
@@ -92,7 +91,7 @@ public class JacksonInstanceSerialiserTest {
 		feature.setTemplate(featureTemplate);
 		features.getMembers().add(feature);
 		object.setAttribute("features", features);
-		String json = objectMapper.writeValueAsString(object);
+		String json = objectMapper.serialise(object);
 		System.out.println("json = " + json);
 		JSONObject jsonObject = new JSONObject(json);
 		assertEquals("1234", jsonObject.get("template"));

@@ -2,8 +2,8 @@ package uk.co.revsys.objectology.service.rest;
 
 import java.util.HashMap;
 import javax.ws.rs.core.Response;
-import uk.co.revsys.objectology.serialiser.ObjectMapper;
-import uk.co.revsys.objectology.serialiser.SerialiserException;
+import uk.co.revsys.objectology.mapping.ObjectMapper;
+import uk.co.revsys.objectology.mapping.SerialiserException;
 import uk.co.revsys.objectology.view.ViewNotFoundException;
 
 public class AbstractRestService {

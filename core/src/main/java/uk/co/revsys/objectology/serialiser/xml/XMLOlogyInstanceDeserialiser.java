@@ -9,8 +9,8 @@ import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
-import uk.co.revsys.objectology.serialiser.DeserialiserException;
-import uk.co.revsys.objectology.serialiser.ObjectMapper;
+import uk.co.revsys.objectology.mapping.DeserialiserException;
+import uk.co.revsys.objectology.mapping.xml.XMLObjectMapper;
 import uk.co.revsys.objectology.service.OlogyTemplateService;
 
 public class XMLOlogyInstanceDeserialiser extends XMLAttributeDeserialiser<OlogyInstance> {
@@ -22,7 +22,7 @@ public class XMLOlogyInstanceDeserialiser extends XMLAttributeDeserialiser<Ology
     }
 
     @Override
-    public OlogyInstance deserialise(ObjectMapper objectMapper, Node source, Object... args) throws DeserialiserException {
+    public OlogyInstance deserialise(XMLObjectMapper objectMapper, Node source, Object... args) throws DeserialiserException {
         OlogyTemplate template;
         if (args == null || args.length == 0) {
             try {

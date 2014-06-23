@@ -14,7 +14,7 @@ import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
-import uk.co.revsys.objectology.serialiser.ObjectMapper;
+import uk.co.revsys.objectology.mapping.xml.XMLObjectMapper;
 
 public class XMLOlogyTemplateDeserialiserTest {
 
@@ -42,7 +42,7 @@ public class XMLOlogyTemplateDeserialiserTest {
 	 */
 	@Test
 	public void testDeserialise() throws Exception {
-		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultXMLDeserialiserFactory(null));
+		XMLObjectMapper objectMapper = new XMLObjectMapper(null, new DefaultXMLDeserialiserFactory(null));
 		StringBuilder source = new StringBuilder();
 		source.append("<subscription xmlns:o=\"http://test/\">");
 		source.append("<status o:nature='property'>Template</status>");
@@ -75,7 +75,7 @@ public class XMLOlogyTemplateDeserialiserTest {
 	 */
 	@Test
 	public void testDeserialiseDefault() throws Exception {
-		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultXMLDeserialiserFactory(null));
+		XMLObjectMapper objectMapper = new XMLObjectMapper(null, new DefaultXMLDeserialiserFactory(null));
 		StringBuilder source = new StringBuilder();
 		source.append("<subscription xmlns:o=\"http://test/\">");
 		source.append("<status>Template</status>");
@@ -103,7 +103,7 @@ public class XMLOlogyTemplateDeserialiserTest {
 	 */
 	@Test
 	public void testDeserialiseNamed() throws Exception {
-		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultXMLDeserialiserFactory(null));
+		XMLObjectMapper objectMapper = new XMLObjectMapper(null, new DefaultXMLDeserialiserFactory(null));
 		StringBuilder source = new StringBuilder();
 		source.append("<subscription name=\"Test Template A\" xmlns:o=\"http://test/\">");
 		source.append("<status o:nature='property'>Template</status>");

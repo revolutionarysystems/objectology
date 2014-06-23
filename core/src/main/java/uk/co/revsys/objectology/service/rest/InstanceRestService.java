@@ -3,8 +3,6 @@ package uk.co.revsys.objectology.service.rest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -29,9 +27,9 @@ import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.query.JSONQuery;
 import uk.co.revsys.objectology.query.Query;
 import uk.co.revsys.objectology.query.QueryImpl;
-import uk.co.revsys.objectology.serialiser.DeserialiserException;
-import uk.co.revsys.objectology.serialiser.ObjectMapper;
-import uk.co.revsys.objectology.serialiser.SerialiserException;
+import uk.co.revsys.objectology.mapping.DeserialiserException;
+import uk.co.revsys.objectology.mapping.ObjectMapper;
+import uk.co.revsys.objectology.mapping.SerialiserException;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
 import uk.co.revsys.objectology.view.ViewNotFoundException;
 
@@ -186,8 +184,11 @@ public class InstanceRestService extends AbstractRestService {
         try {
             OlogyInstance existingObject = service.findById(type, id);
             JSONObject existingObjectJSON = new JSONObject(getJsonObjectMapper().serialise(existingObject));
+            System.out.println("existingObjectJSON = " + existingObjectJSON);
             JSONObject newObjectJSON = new JSONObject(json);
+            System.out.println("newObjectJSON = " + newObjectJSON);
             JSONObject combinedJSON = mergeJSON(existingObjectJSON, newObjectJSON);
+            System.out.println("combinedJSON = " + combinedJSON);
             OlogyInstance object = getJsonObjectMapper().deserialise(combinedJSON.toString(), OlogyInstance.class);
             object.setId(id);
             object = service.update(object);

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
-import uk.co.revsys.objectology.serialiser.jackson.CollectionDeserialiser;
+import uk.co.revsys.objectology.mapping.json.deserialise.CollectionDeserialiser;
 
 @JsonDeserialize(using = CollectionDeserialiser.class)
 public class Collection extends AbstractAttribute<CollectionTemplate>{

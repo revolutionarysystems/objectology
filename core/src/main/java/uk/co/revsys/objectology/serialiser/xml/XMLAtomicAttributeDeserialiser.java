@@ -6,8 +6,8 @@ import java.util.logging.Logger;
 import org.dom4j.Node;
 import uk.co.revsys.objectology.model.instance.AtomicAttribute;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
-import uk.co.revsys.objectology.serialiser.DeserialiserException;
-import uk.co.revsys.objectology.serialiser.ObjectMapper;
+import uk.co.revsys.objectology.mapping.DeserialiserException;
+import uk.co.revsys.objectology.mapping.xml.XMLObjectMapper;
 
 public class XMLAtomicAttributeDeserialiser<A extends AtomicAttribute> extends XMLAttributeDeserialiser<A>{
 
@@ -18,7 +18,7 @@ public class XMLAtomicAttributeDeserialiser<A extends AtomicAttribute> extends X
 	}
 	
 	@Override
-	public A deserialise(ObjectMapper objectMapper, Node source, Object... args) throws DeserialiserException {
+	public A deserialise(XMLObjectMapper objectMapper, Node source, Object... args) throws DeserialiserException {
 		try {
 			A instance = type.newInstance();
 			instance.setValueFromString(source.getText());

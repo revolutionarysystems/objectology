@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import uk.co.revsys.objectology.model.OlogyObject;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
-import uk.co.revsys.objectology.serialiser.jackson.AttributeTemplatesDeserialiser;
+import uk.co.revsys.objectology.mapping.json.deserialise.AttributeTemplatesDeserialiser;
 
 //@JsonDeserialize(using = TemplateDeserialiser.class)
 public class OlogyTemplate extends OlogyObject implements AttributeTemplate<OlogyInstance>{

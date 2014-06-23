@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.OlogyObject;
-import uk.co.revsys.objectology.serialiser.jackson.OlogyInstanceDeserialiser;
+import uk.co.revsys.objectology.mapping.json.deserialise.OlogyInstanceDeserialiser;
 
 
 @JsonDeserialize(using = OlogyInstanceDeserialiser.class)

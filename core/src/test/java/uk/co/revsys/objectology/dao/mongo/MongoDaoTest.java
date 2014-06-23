@@ -12,18 +12,15 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import uk.co.revsys.objectology.model.OlogyObject;
+import uk.co.revsys.objectology.mapping.json.JsonObjectMapper;
+import uk.co.revsys.objectology.mapping.json.JsonTemplateMapper;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
-import uk.co.revsys.objectology.query.Query;
-import uk.co.revsys.objectology.serialiser.ObjectMapper;
-import uk.co.revsys.objectology.serialiser.json.DefaultJSONDeserialiserFactory;
-import uk.co.revsys.objectology.serialiser.json.DefaultJSONSerialiserFactory;
 
 public class MongoDaoTest {
 
     private IMocksControl mocksControl;
     private MongoClient mongoClient;
-    private ObjectMapper objectMapper;
+    private JsonObjectMapper objectMapper;
     private MongoDao<OlogyTemplate> mongoDao;
     
     public MongoDaoTest() {
@@ -41,7 +38,7 @@ public class MongoDaoTest {
     public void setUp() {
         mocksControl = EasyMock.createControl();
         mongoClient = new Fongo("Test Mongo Server 1").getMongo();
-        objectMapper = new ObjectMapper(new DefaultJSONSerialiserFactory(), new DefaultJSONDeserialiserFactory(null, null));
+        objectMapper = new JsonTemplateMapper();
         mongoDao = new MongoDao<OlogyTemplate>(mongoClient, "test", OlogyTemplate.class, objectMapper, "template");
     }
 

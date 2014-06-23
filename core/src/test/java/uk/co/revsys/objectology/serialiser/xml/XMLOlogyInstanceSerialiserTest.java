@@ -23,7 +23,7 @@ import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
-import uk.co.revsys.objectology.serialiser.ObjectMapper;
+import uk.co.revsys.objectology.mapping.xml.XMLObjectMapper;
 
 public class XMLOlogyInstanceSerialiserTest {
 
@@ -51,7 +51,7 @@ public class XMLOlogyInstanceSerialiserTest {
      */
     @Test
     public void testSerialiseXML() throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper(new DefaultXMLSerialiserFactory(), null);
+        XMLObjectMapper objectMapper = new XMLObjectMapper(new DefaultXMLSerialiserFactory(), null);
 		OlogyTemplate template = new OlogyTemplate();
 		template.setId("1234");
 		template.setType("subscription");

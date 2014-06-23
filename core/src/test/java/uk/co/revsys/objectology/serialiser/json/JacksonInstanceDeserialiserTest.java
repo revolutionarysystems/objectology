@@ -1,8 +1,6 @@
 
 package uk.co.revsys.objectology.serialiser.json;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -12,12 +10,12 @@ import static org.junit.Assert.*;
 import uk.co.revsys.objectology.dao.InMemoryOlogyObjectDao;
 import uk.co.revsys.objectology.dao.InMemorySequenceGenerator;
 import uk.co.revsys.objectology.dao.OlogyObjectDao;
+import uk.co.revsys.objectology.mapping.ObjectMapper;
 import uk.co.revsys.objectology.model.instance.Collection;
 import uk.co.revsys.objectology.model.instance.Link;
 import uk.co.revsys.objectology.model.instance.Measurement;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.instance.Property;
-import uk.co.revsys.objectology.model.instance.Sequence;
 import uk.co.revsys.objectology.model.instance.Time;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
@@ -26,8 +24,7 @@ import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
-import uk.co.revsys.objectology.serialiser.jackson.ContextualObjectMapper;
-import uk.co.revsys.objectology.serialiser.jackson.SequenceDeserialiser;
+import uk.co.revsys.objectology.mapping.json.JsonInstanceMapper;
 import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
 import uk.co.revsys.objectology.service.OlogyTemplateServiceImpl;
 import uk.co.revsys.objectology.service.OlogyTemplateValidator;
@@ -61,10 +58,7 @@ public class JacksonInstanceDeserialiserTest {
 		OlogyObjectDao dao = new InMemoryOlogyObjectDao();
 		OlogyTemplateServiceImpl templateService = new OlogyTemplateServiceImpl(dao, new OlogyTemplateValidator());
         OlogyObjectServiceFactory.setOlogyTemplateService(templateService);
-		ObjectMapper objectMapper = new ContextualObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(Sequence.class, new SequenceDeserialiser(new InMemorySequenceGenerator()));
-        objectMapper.registerModule(module);
+		ObjectMapper objectMapper = new JsonInstanceMapper(new InMemorySequenceGenerator());
 		OlogyTemplate template = new OlogyTemplate();
 		template.setType("subscription");
 		PropertyTemplate statusTemplate = new PropertyTemplate();
@@ -79,7 +73,7 @@ public class JacksonInstanceDeserialiserTest {
 		template.getAttributeTemplates().put("accountHolder", partTemplate);
 		templateService.create(template);
 		String json = "{\"id\": \"1234\", \"limit\":\"1000\", \"limits\": [\"123\"], \"startTime\":\"01/01/2001 00:00:00\",\"template\":\"" + template.getId() + "\",\"status\":\"Created\", \"accountHolder\": {\"id\": \"4321\", \"permissions\": \"all\", \"user\": \"1234\"}}";
-		OlogyInstance result = objectMapper.readValue(json, OlogyInstance.class);
+		OlogyInstance result = objectMapper.deserialise(json, OlogyInstance.class);
 		assertEquals(template.getId(), result.getTemplate().getId());
 		assertEquals("Created", result.getAttribute("status", Property.class).getValue());
         assertEquals("0001", result.getAttribute("seq").toString());

@@ -15,23 +15,21 @@ import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.OlogyObject;
 import uk.co.revsys.objectology.query.JSONQuery;
 import uk.co.revsys.objectology.query.Query;
-import uk.co.revsys.objectology.serialiser.DeserialiserException;
-import uk.co.revsys.objectology.serialiser.ObjectMapper;
-import uk.co.revsys.objectology.serialiser.SerialiserException;
+import uk.co.revsys.objectology.mapping.DeserialiserException;
+import uk.co.revsys.objectology.mapping.SerialiserException;
+import uk.co.revsys.objectology.mapping.json.JsonObjectMapper;
 
 public class MongoDao<O extends OlogyObject> extends AbstractOlogyObjectDao<O> {
 
 	private final DBCollection dbCollection;
 	private final Class<? extends O> objectClass;
-	private final ObjectMapper objectMapper;
-	private final com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper;
+	private final JsonObjectMapper objectMapper;
 
-	public MongoDao(MongoClient mongo, String database, Class<? extends O> objectClass, ObjectMapper objectMapper, String objectType) {
+	public MongoDao(MongoClient mongo, String database, Class<? extends O> objectClass, JsonObjectMapper objectMapper, String objectType) {
 		super(objectType);
 		this.dbCollection = mongo.getDB(database).getCollection(objectType);
 		this.objectClass = objectClass;
 		this.objectMapper = objectMapper;
-		this.jacksonObjectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
 	}
 
 	@Override

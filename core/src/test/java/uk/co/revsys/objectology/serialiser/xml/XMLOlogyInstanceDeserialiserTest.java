@@ -21,7 +21,7 @@ import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
-import uk.co.revsys.objectology.serialiser.ObjectMapper;
+import uk.co.revsys.objectology.mapping.xml.XMLObjectMapper;
 import uk.co.revsys.objectology.service.OlogyTemplateServiceImpl;
 import uk.co.revsys.objectology.service.OlogyTemplateValidator;
 
@@ -53,7 +53,7 @@ public class XMLOlogyInstanceDeserialiserTest {
 	public void testDeserialise() throws Exception {
 		OlogyObjectDao dao = new InMemoryOlogyObjectDao();
 		OlogyTemplateServiceImpl templateService = new OlogyTemplateServiceImpl(dao, new OlogyTemplateValidator());
-		ObjectMapper objectMapper = new ObjectMapper(null, new DefaultXMLDeserialiserFactory(templateService));
+		XMLObjectMapper objectMapper = new XMLObjectMapper(null, new DefaultXMLDeserialiserFactory(templateService));
 		OlogyTemplate template = new OlogyTemplate();
 		template.getAttributeTemplates().put("status", new PropertyTemplate());
 		template.getAttributeTemplates().put("startTime", new TimeTemplate());

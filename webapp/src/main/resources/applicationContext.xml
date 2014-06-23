@@ -19,13 +19,13 @@
                     <constructor-arg index="0" ref="templateService"/>
                     <constructor-arg index="1" ref="templateLoader"/>
                     <constructor-arg index="2" ref="xmlObjectMapper"/>
-                    <constructor-arg index="3" ref="jsonObjectMapper"/>
+                    <constructor-arg index="3" ref="jsonTemplateMapper"/>
                     <constructor-arg index="4" ref="templateViewMap"/>
                 </bean>
                 <bean class="uk.co.revsys.objectology.service.rest.InstanceRestService">
                     <constructor-arg index="0" ref="instanceService"/>
                     <constructor-arg index="1" ref="xmlObjectMapper"/>
-                    <constructor-arg index="2" ref="jsonObjectMapper"/>
+                    <constructor-arg index="2" ref="jsonInstanceMapper"/>
                     <constructor-arg index="3" ref="instanceViewMap"/>
                 </bean>
             </set>
@@ -50,14 +50,14 @@
         <constructor-arg index="0" ref="mongoClient"/>
         <constructor-arg index="1" value="objectology"/>
         <constructor-arg index="2" value="uk.co.revsys.objectology.model.template.OlogyTemplate"/>
-        <constructor-arg index="3" ref="jsonTemplateObjectMapper"/>
+        <constructor-arg index="3" ref="jsonTemplateMapper"/>
         <constructor-arg index="4" value="template"/>
     </bean>
 	
     <bean id="instanceDaoFactory" class="uk.co.revsys.objectology.dao.mongo.MongoDaoFactory">
         <constructor-arg index="0" ref="mongoClient"/>
         <constructor-arg index="1" value="objectology"/>
-        <constructor-arg index="2" ref="jsonObjectMapper"/>
+        <constructor-arg index="2" ref="jsonInstanceMapper"/>
         <constructor-arg index="3" value="uk.co.revsys.objectology.model.instance.OlogyInstance"/>
     </bean>
 	
@@ -74,7 +74,7 @@
 	
     <bean id="instanceValidator" class="uk.co.revsys.objectology.service.OlogyInstanceValidator"/>
 	
-    <bean id="xmlObjectMapper" class="uk.co.revsys.objectology.serialiser.ObjectMapper">
+    <bean id="xmlObjectMapper" class="uk.co.revsys.objectology.mapping.xml.XMLObjectMapper">
         <constructor-arg index="0" ref="xmlSerialiserFactory"/>
         <constructor-arg index="1" ref="xmlDeserialiserFactory"/>
     </bean>
@@ -85,30 +85,11 @@
         <constructor-arg index="0" ref="templateService"/>
     </bean>
 	
-    <bean id="jsonObjectMapper" class="uk.co.revsys.objectology.serialiser.ObjectMapper">
-        <constructor-arg index="0" ref="jsonSerialiserFactory"/>
-        <constructor-arg index="1" ref="jsonDeserialiserFactory"/>
+    <bean id="jsonInstanceMapper" class="uk.co.revsys.objectology.mapping.json.JsonInstanceMapper">
+        <constructor-arg index="0" ref="sequenceGenerator"/>
     </bean>
 	
-    <bean id="jsonTemplateObjectMapper" class="uk.co.revsys.objectology.serialiser.ObjectMapper">
-        <constructor-arg index="0" ref="jsonSerialiserFactory"/>
-        <constructor-arg index="1" ref="jsonTemplateDeserialiserFactory"/>
-    </bean>
-	
-    <bean id="jsonSerialiserFactory" class="uk.co.revsys.objectology.serialiser.json.DefaultJSONSerialiserFactory"></bean>
-	
-    <bean id="jsonDeserialiserFactory" class="uk.co.revsys.objectology.serialiser.json.DefaultJSONDeserialiserFactory">
-        <constructor-arg index="0" ref="templateService"/>
-        <constructor-arg index="1" ref="sequenceGenerator"/>
-    </bean>
-	
-    <bean id="jsonTemplateDeserialiserFactory" class="uk.co.revsys.objectology.serialiser.json.DefaultJSONDeserialiserFactory">
-        <constructor-arg index="0">
-            <null/>
-        </constructor-arg>
-        <constructor-arg index="1">
-            <null/>
-        </constructor-arg>
+    <bean id="jsonTemplateMapper" class="uk.co.revsys.objectology.mapping.json.JsonTemplateMapper">
     </bean>
 	
     <bean id="templateViewMap" class="uk.co.revsys.objectology.view.DefaultTemplateViewMap"/>
