@@ -3,12 +3,16 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>uk.co.revsys.objectology</groupId>
 	<artifactId>objectology-osgi</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<name>Objectology OSGI Bundle</name>
+
+    <parent>
+        <groupId>uk.co.revsys.objectology</groupId>
+        <artifactId>objectology-parent</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
 
 	<properties>
 		<!-- Matches ServiceMix Release 4.5.2 -->
