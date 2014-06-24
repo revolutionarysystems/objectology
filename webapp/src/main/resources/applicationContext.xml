@@ -101,7 +101,7 @@
     
     <bean id="resourceProvider" class="uk.co.revsys.resource.repository.provider.ResourceProvider">
         <constructor-arg index="0" ref="templateRepository"/>
-        <constructor-arg index="1" value="/"/>
+        <constructor-arg index="1" value="${resources.path}"/>
         <constructor-arg index="2" ref="templateFilter"/>
         <constructor-arg index="3" ref="templateLoader"/>
     </bean>
