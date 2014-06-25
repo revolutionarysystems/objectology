@@ -62,7 +62,9 @@ public class OlogyInstanceDeserialiser extends JsonDeserializer<OlogyInstance> {
             }
             mapper.getThreadContext().set("template", attributeTemplate.getValue());
             Attribute attribute = (Attribute) mapper.readValue(attributeJson, attributeTemplate.getValue().getAttributeType(), true);
-            attribute.setTemplate(attributeTemplate.getValue());
+            if (attribute != null) {
+                attribute.setTemplate(attributeTemplate.getValue());
+            }
             instance.setAttribute(attributeName, attribute);
         }
         return instance;
