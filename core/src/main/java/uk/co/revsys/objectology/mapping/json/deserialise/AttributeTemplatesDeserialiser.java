@@ -17,12 +17,8 @@ public class AttributeTemplatesDeserialiser extends JsonDeserializer<Map<String,
 
     @Override
     public Map<String, AttributeTemplate> deserialize(JsonParser jp, DeserializationContext dc) throws IOException, JsonProcessingException {
-        System.out.println("Using atribute asdsad asd asd sattributeTemplates");
-        System.out.println(jp.getCurrentName());
         ObjectMapper mapper = (ObjectMapper) jp.getCodec();
         ObjectNode root = jp.getCodec().readTree(jp);
-        System.out.println(root.toString());
-        System.out.println("root = " + root.size());
         Iterator<Map.Entry<String, JsonNode>> iterator = root.fields();
         Map<String, AttributeTemplate> templates = new HashMap<String, AttributeTemplate>();
         while(iterator.hasNext()){
@@ -30,10 +26,7 @@ public class AttributeTemplatesDeserialiser extends JsonDeserializer<Map<String,
             String attributeName = next.getKey();
             JsonNode node = next.getValue();
             if (node != null) {
-                System.out.println("node = " + node);
-                System.out.println(node.toString());
                 AttributeTemplate attributeTemplate = mapper.readValue(node.toString(), AttributeTemplate.class);
-                System.out.println("attributeTemplate = " + attributeTemplate);
                 templates.put(attributeName, attributeTemplate);
             }
         }

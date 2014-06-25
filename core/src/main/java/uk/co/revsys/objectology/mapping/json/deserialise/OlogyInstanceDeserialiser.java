@@ -26,6 +26,12 @@ public class OlogyInstanceDeserialiser extends JsonDeserializer<OlogyInstance> {
         ContextualObjectMapper mapper = (ContextualObjectMapper) jp.getCodec();
         ObjectNode root = mapper.readTree(jp);
         System.out.println("root = " + root);
+        if (root.has("id")) {
+            instance.setId(root.get("id").asText());
+        }
+        if (root.has("name")) {
+            instance.setName(root.get("name").asText());
+        }
         OlogyTemplate template = (OlogyTemplate) mapper.getThreadContext().get("template");
         if (template == null) {
             String templateId = null;

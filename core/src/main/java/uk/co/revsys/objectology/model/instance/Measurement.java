@@ -19,7 +19,6 @@ public class Measurement extends AtomicAttribute<BigDecimal> {
     @Override
     public void setValueFromString(String value) throws ParseException {
         if (value != null && !value.isEmpty()) {
-            System.out.println("value = " + value);
             setValue(new BigDecimal(value));
         }
     }

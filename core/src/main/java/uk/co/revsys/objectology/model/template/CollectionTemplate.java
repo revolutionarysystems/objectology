@@ -3,7 +3,7 @@ package uk.co.revsys.objectology.model.template;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.Collection;
 
-public class CollectionTemplate extends AbstractAttributeTemplate{
+public class CollectionTemplate extends AbstractAttributeTemplate<Collection>{
 
 	private AttributeTemplate memberTemplate;
 
@@ -23,7 +23,7 @@ public class CollectionTemplate extends AbstractAttributeTemplate{
 	}
 
 	@Override
-	public Class<? extends Attribute> getAttributeType() {
+	public Class<? extends Collection> getAttributeType() {
 		return Collection.class;
 	}
 	

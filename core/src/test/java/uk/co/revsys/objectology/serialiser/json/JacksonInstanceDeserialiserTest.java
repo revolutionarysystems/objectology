@@ -72,8 +72,10 @@ public class JacksonInstanceDeserialiserTest {
 		partTemplate.getAttributeTemplates().put("user", new LinkTemplate());
 		template.getAttributeTemplates().put("accountHolder", partTemplate);
 		templateService.create(template);
-		String json = "{\"id\": \"1234\", \"limit\":\"1000\", \"limits\": [\"123\"], \"startTime\":\"01/01/2001 00:00:00\",\"template\":\"" + template.getId() + "\",\"status\":\"Created\", \"accountHolder\": {\"id\": \"4321\", \"permissions\": \"all\", \"user\": \"1234\"}}";
+		String json = "{\"id\": \"1234\", \"name\": \"Test Instance\", \"limit\":\"1000\", \"limits\": [\"123\"], \"startTime\":\"01/01/2001 00:00:00\",\"template\":\"" + template.getId() + "\",\"status\":\"Created\", \"accountHolder\": {\"id\": \"4321\", \"permissions\": \"all\", \"user\": \"1234\"}}";
 		OlogyInstance result = objectMapper.deserialise(json, OlogyInstance.class);
+        assertEquals("1234", result.getId());
+        assertEquals("Test Instance", result.getName());
 		assertEquals(template.getId(), result.getTemplate().getId());
 		assertEquals("Created", result.getAttribute("status", Property.class).getValue());
         assertEquals("0001", result.getAttribute("seq").toString());

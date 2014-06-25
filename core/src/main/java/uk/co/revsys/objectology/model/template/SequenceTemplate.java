@@ -1,9 +1,9 @@
 package uk.co.revsys.objectology.model.template;
 
-import uk.co.revsys.objectology.model.instance.Attribute;
+import uk.co.revsys.objectology.model.instance.Property;
 import uk.co.revsys.objectology.model.instance.Sequence;
 
-public class SequenceTemplate extends PropertyTemplate{
+public class SequenceTemplate extends PropertyTemplate<Sequence>{
 
     private String name;
     private int length;
@@ -33,7 +33,7 @@ public class SequenceTemplate extends PropertyTemplate{
     }
     
     @Override
-    public Class<? extends Attribute> getAttributeType() {
+    public Class<? extends Sequence> getAttributeType() {
         return Sequence.class;
     }
 

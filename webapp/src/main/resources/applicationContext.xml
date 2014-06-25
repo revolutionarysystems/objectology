@@ -146,5 +146,10 @@
         <constructor-arg index="1" value="objectology"/>
         <constructor-arg index="2" value="sequence"/>
     </bean>
+    
+    <bean id="objectServiceFactory" class="uk.co.revsys.objectology.service.OlogyObjectServiceFactory">
+        <property name="ologyTemplateService" ref="templateService"/>
+        <property name="ologyInstanceService" ref="instanceService"/>
+    </bean>
 
 </beans>

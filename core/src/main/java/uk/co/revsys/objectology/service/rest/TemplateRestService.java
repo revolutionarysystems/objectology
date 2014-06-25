@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -16,8 +17,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.query.JSONQuery;
@@ -32,7 +33,7 @@ import uk.co.revsys.objectology.view.ViewNotFoundException;
 @Path("/template")
 public class TemplateRestService extends AbstractRestService {
 
-	private static final Log LOG = LogFactory.getLog(TemplateRestService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TemplateRestService.class);
 
 	private final OlogyTemplateService<OlogyTemplate> service;
 	private final ObjectMapper xmlObjectMapper;
@@ -54,9 +55,10 @@ public class TemplateRestService extends AbstractRestService {
 			return buildResponse(results);
 		} catch (DaoException ex) {
 			LOG.error("Error retrieving all templates", ex);
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
 		} catch (ViewNotFoundException ex) {
-			return Response.status(Response.Status.BAD_REQUEST).build();
+            LOG.error("Error retrieving all templates", ex);
+			return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
 		}
 	}
 	
@@ -71,9 +73,11 @@ public class TemplateRestService extends AbstractRestService {
 			List<OlogyTemplate> results = service.find(query, view);
 			return buildResponse(results);
 		} catch (DaoException ex) {
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error querying templates", ex);
+			return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
 		} catch (ViewNotFoundException ex) {
-			return Response.status(Response.Status.BAD_REQUEST).build();
+            LOG.error("Error querying templates", ex);
+			return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
 		}
 	}
 	
@@ -84,7 +88,7 @@ public class TemplateRestService extends AbstractRestService {
 		MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
 		queryParams.remove("view");
 		if(queryParams.isEmpty()){
-			return Response.status(Response.Status.BAD_REQUEST).build();
+			return buildErrorResponse(Response.Status.BAD_REQUEST, "No query parameters specified");
 		}
 		JSONQuery query = new JSONQuery();
 		for(Map.Entry<String, List<String>> queryParam: queryParams.entrySet()){
@@ -95,9 +99,11 @@ public class TemplateRestService extends AbstractRestService {
 			List<OlogyTemplate> results = service.find(query, view);
 			return buildResponse(results);
 		} catch (DaoException ex) {
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error querying templates", ex);
+			return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
 		} catch (ViewNotFoundException ex) {
-			return Response.status(Response.Status.BAD_REQUEST).build();
+            LOG.error("Error querying templates", ex);
+			return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
 		}
 	}
 
@@ -110,12 +116,19 @@ public class TemplateRestService extends AbstractRestService {
 			return buildResponse(object);
 		} catch (DeserialiserException ex) {
 			LOG.error("Error creating template", ex);
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
 		} catch (DaoException ex) {
 			LOG.error("Error creating template", ex);
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
 		}
 	}
+    
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createFromParameter(@FormParam("data") String xml){
+        return create(xml);
+    }
 
 	@GET
 	@Path("/{id}")
@@ -128,8 +141,8 @@ public class TemplateRestService extends AbstractRestService {
 			}
 			return buildResponse(result);
 		} catch (DaoException ex) {
-			LOG.error("Error retrieving template by id", ex);
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			LOG.error("Error retrieving template " + id, ex);
+			return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
 		}
 	}
 
@@ -145,7 +158,7 @@ public class TemplateRestService extends AbstractRestService {
 			return buildResponse(result);
 		} catch (DaoException ex) {
 			LOG.error("Error retrieving template by name", ex);
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
 		}
 	}
 
@@ -161,10 +174,10 @@ public class TemplateRestService extends AbstractRestService {
 			return buildResponse(object);
 		} catch (DeserialiserException ex) {
 			LOG.error("Error updating template", ex);
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
 		} catch (DaoException ex) {
 			LOG.error("Error updating template", ex);
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
 		}
 	}
 
@@ -181,10 +194,10 @@ public class TemplateRestService extends AbstractRestService {
 			return buildResponse(object);
 		} catch (DeserialiserException ex) {
 			LOG.error("Error updating template", ex);
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
 		} catch (DaoException ex) {
 			LOG.error("Error updating template", ex);
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
 		}
 	}
 
@@ -197,7 +210,7 @@ public class TemplateRestService extends AbstractRestService {
 			return Response.status(Response.Status.NO_CONTENT).build();
 		} catch (DaoException ex) {
 			LOG.error("Error deleting template", ex);
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
 		}
 	}
 
@@ -210,7 +223,7 @@ public class TemplateRestService extends AbstractRestService {
 			return Response.status(Response.Status.NO_CONTENT).build();
 		} catch (DaoException ex) {
 			LOG.error("Error deleting template", ex);
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
 		}
 	}
 }

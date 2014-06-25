@@ -11,7 +11,6 @@ public class JsonTemplateMapper extends JsonObjectMapper{
         SimpleModule module = new SimpleModule();
         module.addDeserializer(AttributeTemplate.class, new AttributeTemplateDeserialiser());
         registerModule(module);
-        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
 }

@@ -1,5 +1,7 @@
 package uk.co.revsys.objectology.model.template;
 
-public abstract class AtomicAttributeTemplate extends AbstractAttributeTemplate{
+import uk.co.revsys.objectology.model.instance.Attribute;
+
+public abstract class AtomicAttributeTemplate<A extends Attribute> extends AbstractAttributeTemplate<A>{
 	
 }

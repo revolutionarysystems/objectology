@@ -1,9 +1,8 @@
 package uk.co.revsys.objectology.model.template;
 
-import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.Measurement;
 
-public class MeasurementTemplate extends AtomicAttributeTemplate{
+public class MeasurementTemplate extends AtomicAttributeTemplate<Measurement>{
 
 	private String unit;
 
@@ -16,7 +15,7 @@ public class MeasurementTemplate extends AtomicAttributeTemplate{
 	}
 
 	@Override
-	public Class<? extends Attribute> getAttributeType() {
+	public Class<? extends Measurement> getAttributeType() {
 		return Measurement.class;
 	}
 	

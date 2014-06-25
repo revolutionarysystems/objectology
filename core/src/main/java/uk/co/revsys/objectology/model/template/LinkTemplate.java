@@ -4,7 +4,7 @@ import uk.co.revsys.objectology.model.ReferenceType;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.Link;
 
-public class LinkTemplate extends AbstractAttributeTemplate{
+public class LinkTemplate extends AbstractAttributeTemplate<Link>{
 
 	private ReferenceType referenceType = ReferenceType.id;
 	private String associatedType;
@@ -33,7 +33,7 @@ public class LinkTemplate extends AbstractAttributeTemplate{
 	}
 	
 	@Override
-	public Class<? extends Attribute> getAttributeType() {
+	public Class<? extends Link> getAttributeType() {
 		return Link.class;
 	}
 

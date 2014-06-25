@@ -22,6 +22,8 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.query.JSONQuery;
@@ -36,6 +38,8 @@ import uk.co.revsys.objectology.view.ViewNotFoundException;
 @Path("/")
 public class InstanceRestService extends AbstractRestService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(InstanceRestService.class);
+    
     private final OlogyInstanceService<OlogyInstance> service;
     private final ObjectMapper xmlObjectMapper;
 
@@ -54,9 +58,10 @@ public class InstanceRestService extends AbstractRestService {
             List<OlogyInstance> results = service.findAll(type, view);
             return buildResponse(results);
         } catch (DaoException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error retrieving all instances of type " + type, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         } catch (ViewNotFoundException ex) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
         }
     }
 
@@ -71,9 +76,11 @@ public class InstanceRestService extends AbstractRestService {
             List<OlogyInstance> results = service.find(type, query, view);
             return buildResponse(results);
         } catch (DaoException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error querying instances of type " + type, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         } catch (ViewNotFoundException ex) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            LOG.error("Error querying instances of type " + type, ex);
+            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
         }
     }
 
@@ -95,9 +102,11 @@ public class InstanceRestService extends AbstractRestService {
             List<OlogyInstance> results = service.find(type, query, view);
             return buildResponse(results);
         } catch (DaoException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error querying instances of type " + type, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         } catch (ViewNotFoundException ex) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            LOG.error("Error querying instances of type " + type, ex);
+            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
         }
     }
 
@@ -111,9 +120,11 @@ public class InstanceRestService extends AbstractRestService {
             object = service.create(object);
             return buildResponse(object);
         } catch (DeserialiserException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error creating instance", ex);
+            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
         } catch (DaoException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error creating instance", ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         }
     }
 
@@ -127,9 +138,11 @@ public class InstanceRestService extends AbstractRestService {
             object = service.create(object);
             return buildResponse(object);
         } catch (DeserialiserException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error creating instance", ex);
+            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
         } catch (DaoException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error creating instance", ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         }
     }
 
@@ -144,7 +157,8 @@ public class InstanceRestService extends AbstractRestService {
             }
             return buildResponse(result);
         } catch (DaoException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error finding instance " + type + ":" + id, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         }
     }
 
@@ -166,13 +180,17 @@ public class InstanceRestService extends AbstractRestService {
             object = service.update(object);
             return buildResponse(object);
         } catch (DeserialiserException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error updating instance " + type + ":" + id, ex);
+            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
         } catch (DaoException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error updating instance " + type + ":" + id, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         } catch (SerialiserException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error updating instance " + type + ":" + id, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         } catch (DocumentException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error updating instance " + type + ":" + id, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         }
     }
 
@@ -194,11 +212,14 @@ public class InstanceRestService extends AbstractRestService {
             object = service.update(object);
             return buildResponse(object);
         } catch (DeserialiserException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error updating instance " + type + ":" + id, ex);
+            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
         } catch (DaoException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error updating instance " + type + ":" + id, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         } catch (SerialiserException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error updating instance " + type + ":" + id, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         }
     }
 
@@ -210,7 +231,8 @@ public class InstanceRestService extends AbstractRestService {
             service.delete(result);
             return Response.status(Response.Status.NO_CONTENT).build();
         } catch (DaoException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error deleting instance " + type + ":" + id, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         }
     }
 

@@ -3,10 +3,10 @@ package uk.co.revsys.objectology.model.template;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.Time;
 
-public class TimeTemplate extends AtomicAttributeTemplate{
+public class TimeTemplate extends AtomicAttributeTemplate<Time>{
 
 	@Override
-	public Class<? extends Attribute> getAttributeType() {
+	public Class<? extends Time> getAttributeType() {
 		return Time.class;
 	}
 
