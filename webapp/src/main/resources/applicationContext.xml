@@ -106,31 +106,29 @@
         <constructor-arg index="3" ref="templateLoader"/>
     </bean>
     
-    <!--bean id="templateRepository" class="uk.co.revsys.resource.repository.LocalDiskResourceRepository">
-        <constructor-arg index="0" value="${resources.container}"/>
-    </bean-->
-    
-    <bean id="templateRepository" class="uk.co.revsys.resource.repository.cloud.JCloudResourceRepository">
-		<constructor-arg index="0" ref="blobStore"/>
-		<constructor-arg index="1" value="${resources.container}"/>
-	</bean>
-	
-	<bean id="contextBuilder" class="org.jclouds.ContextBuilder" factory-method="newBuilder">
-        <constructor-arg value="${cloud.type}"/>
-    </bean>
-
-    <bean id="contextBuilderWithCreds" factory-bean="contextBuilder" factory-method="credentials">
-        <constructor-arg  value="${cloud.identity}"/>
-        <constructor-arg  value="${cloud.credential}"/>
-    </bean>
-	
-	<bean id="blobStoreContext" factory-bean="contextBuilderWithCreds" factory-method="buildView">
-        <constructor-arg>
-            <value>org.jclouds.blobstore.BlobStoreContext</value>
+    <bean id="resourceRepositoryFactory" class="uk.co.revsys.resource.repository.ResourceRepositoryFactory">
+        <constructor-arg index="0">
+            <map key-type="java.lang.String" value-type="uk.co.revsys.resource.repository.ResourceRepositoryBuilder">
+                <entry key="local" value-ref="localDiskResourceRepositoryBuilder"/>
+                <entry key="cloud" value-ref="jCloudResourceRepositoryBuilder"/>
+            </map>
         </constructor-arg>
     </bean>
- 
-	<bean id="blobStore" factory-bean="blobStoreContext" factory-method="getBlobStore"/>
+    
+    <bean id="localDiskResourceRepositoryBuilder" class="uk.co.revsys.resource.repository.LocalDiskResourceRepositoryBuilder">
+        <constructor-arg index="0" value="${resources.container}"/>
+    </bean>
+    
+    <bean id="jCloudResourceRepositoryBuilder" class="uk.co.revsys.resource.repository.cloud.JCloudResourceRepositoryBuilder">
+        <constructor-arg index="0" value="${cloud.type}"/>
+        <constructor-arg index="1" value="${cloud.identity}"/>
+        <constructor-arg index="2" value="${cloud.credential}"/>
+        <constructor-arg index="3" value="${resources.container}"/>
+    </bean>
+	
+    <bean id="templateRepository" factory-bean="resourceRepositoryFactory" factory-method="build">
+        <constructor-arg index="0" value="${repository.type}"/>
+    </bean>
     
     <bean id="templateFilter" class="uk.co.revsys.resource.repository.provider.filter.ExtensionFilter">
         <constructor-arg index="0" value=".xml"/>
