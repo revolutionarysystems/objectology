@@ -170,11 +170,8 @@ public class InstanceRestService extends AbstractRestService {
         try {
             OlogyInstance existingObject = service.findById(type, id);
             Node existingObjectXML = DocumentHelper.parseText(xmlObjectMapper.serialise(existingObject)).getRootElement();
-            System.out.println("existingObjectXML = " + existingObjectXML.asXML());
             Node newObjectXML = DocumentHelper.parseText(xml).getRootElement();
-            System.out.println("newObjectXML = " + newObjectXML.asXML());
             Node combinedXML = mergeXML(existingObjectXML, newObjectXML);
-            System.out.println("combinedXML = " + combinedXML.asXML());
             OlogyInstance object = xmlObjectMapper.deserialise(combinedXML.asXML(), OlogyInstance.class);
             object.setId(id);
             object = service.update(object);
@@ -202,11 +199,8 @@ public class InstanceRestService extends AbstractRestService {
         try {
             OlogyInstance existingObject = service.findById(type, id);
             JSONObject existingObjectJSON = new JSONObject(getJsonObjectMapper().serialise(existingObject));
-            System.out.println("existingObjectJSON = " + existingObjectJSON);
             JSONObject newObjectJSON = new JSONObject(json);
-            System.out.println("newObjectJSON = " + newObjectJSON);
             JSONObject combinedJSON = mergeJSON(existingObjectJSON, newObjectJSON);
-            System.out.println("combinedJSON = " + combinedJSON);
             OlogyInstance object = getJsonObjectMapper().deserialise(combinedJSON.toString(), OlogyInstance.class);
             object.setId(id);
             object = service.update(object);

@@ -25,7 +25,6 @@ public class OlogyInstanceDeserialiser extends JsonDeserializer<OlogyInstance> {
         OlogyInstance instance = new OlogyInstance();
         ContextualObjectMapper mapper = (ContextualObjectMapper) jp.getCodec();
         ObjectNode root = mapper.readTree(jp);
-        System.out.println("root = " + root);
         if (root.has("id")) {
             instance.setId(root.get("id").asText());
         }
@@ -61,12 +60,8 @@ public class OlogyInstanceDeserialiser extends JsonDeserializer<OlogyInstance> {
             if (root.has(attributeName)) {
                 attributeJson = root.get(attributeName).toString();
             }
-            System.out.println("attributeName = " + attributeName);
-            System.out.println("attributeJson = " + attributeJson);
-            System.out.println("attributeType = " + attributeTemplate.getValue().getAttributeType());
             mapper.getThreadContext().set("template", attributeTemplate.getValue());
             Attribute attribute = (Attribute) mapper.readValue(attributeJson, attributeTemplate.getValue().getAttributeType(), true);
-            System.out.println("attribute = " + attribute);
             attribute.setTemplate(attributeTemplate.getValue());
             instance.setAttribute(attributeName, attribute);
         }
