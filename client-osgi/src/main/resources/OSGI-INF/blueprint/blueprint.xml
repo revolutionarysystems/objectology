@@ -17,6 +17,16 @@
             <to uri="bean:instanceClient?method=create(${body})" />
         </route>
 
+        <route>
+            <from uri="direct-vm://esb.service.objectology.instance.update"/>
+            <to uri="bean:instanceClient?method=update(${header.instanceType}, ${header.instanceId}, ${body})" />
+        </route>
+
+        <route>
+            <from uri="direct-vm://esb.service.objectology.instance.retrieve"/>
+            <to uri="bean:instanceClient?method=retrieve(${header.instanceType}, ${header.instanceId}, ${header.view})" />
+        </route>
+
     </camelContext>
     
     <bean id="instanceClient" class="uk.co.revsys.objectology.client.InstanceClient">

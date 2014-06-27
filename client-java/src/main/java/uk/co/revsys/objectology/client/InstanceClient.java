@@ -32,4 +32,34 @@ public class InstanceClient {
         return IOUtils.toString(response.getInputStream());
     }
     
+    public String update(String instanceType, String instanceId, String source) throws IOException{
+        HttpRequest request = HttpRequest.POST(baseUrl + "/"+instanceType+"/"+instanceId, "application/json", new ByteArrayInputStream(source.getBytes()));
+        HttpResponse response = httpClient.invoke(request);
+        if(response.getStatusCode()!=200){
+            InputStream errorStream = response.getInputStream();
+            if(errorStream!=null){
+                String errorMessage = IOUtils.toString(errorStream);
+                throw new IOException("Server returned status " + response.getStatusCode() + " - " + errorMessage);
+            }
+            throw new IOException("Server returned status " + response.getStatusCode());
+        }
+        return IOUtils.toString(response.getInputStream());
+    }
+    
+    public String retrieve(String instanceType, String instanceId, String view) throws IOException{
+        HttpRequest request = HttpRequest.GET(baseUrl + "/"+instanceType+"/"+instanceId+"?view="+view);
+        HttpResponse response = httpClient.invoke(request);
+        if(response.getStatusCode()!=200){
+            InputStream errorStream = response.getInputStream();
+            if(errorStream!=null){
+                String errorMessage = IOUtils.toString(errorStream);
+                throw new IOException("Server returned status " + response.getStatusCode() + " - " + errorMessage);
+            }
+            throw new IOException("Server returned status " + response.getStatusCode());
+        }
+        return IOUtils.toString(response.getInputStream());
+    }
+    
+
+
 }
