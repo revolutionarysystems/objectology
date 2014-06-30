@@ -95,7 +95,7 @@ public class InstanceRestService extends AbstractRestService {
         }
         JSONQuery query = new JSONQuery();
         for (Entry<String, List<String>> queryParam : queryParams.entrySet()) {
-            query.put(queryParam.getKey(), queryParam.getValue().get(0));
+            query.put(queryParam.getKey(), queryParam.getValue().get(0).replace("+", " "));
         }
         try {
             Class view = getView(viewName);

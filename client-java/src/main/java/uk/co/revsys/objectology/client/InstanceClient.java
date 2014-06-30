@@ -60,6 +60,20 @@ public class InstanceClient {
         return IOUtils.toString(response.getInputStream());
     }
     
+    public String query(String instanceType, String queryProperty, String queryValue, String view) throws IOException{
+        HttpRequest request = HttpRequest.GET(baseUrl + "/"+instanceType+"/query?"+queryProperty+"="+queryValue+"&view="+view);
+        HttpResponse response = httpClient.invoke(request);
+        if(response.getStatusCode()!=200){
+            InputStream errorStream = response.getInputStream();
+            if(errorStream!=null){
+                String errorMessage = IOUtils.toString(errorStream);
+                throw new IOException("Server returned status " + response.getStatusCode() + " - " + errorMessage);
+            }
+            throw new IOException("Server returned status " + response.getStatusCode());
+        }
+        return IOUtils.toString(response.getInputStream());
+    }
+    
 
 
 }
