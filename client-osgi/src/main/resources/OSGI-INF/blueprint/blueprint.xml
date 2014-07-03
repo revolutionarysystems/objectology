@@ -29,7 +29,7 @@
 
         <route>
             <from uri="direct-vm://esb.service.objectology.instance.query"/>
-            <to uri="bean:instanceClient?method=query(${header.instanceType}, ${header.queryProperty}, ${header.queryValue}, ${header.view})" />
+            <to uri="bean:instanceClient?method=query(${header.instanceType}, ${header.query}, ${header.view})" />
         </route>
 
     </camelContext>
