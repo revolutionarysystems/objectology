@@ -13,6 +13,13 @@
     <camelContext xmlns="http://camel.apache.org/schema/blueprint">
 
         <route>
+            <from uri="direct-vm://esb.service.objectology.proxy"/>
+            <recipientList>
+				<simple>{{service.endpoint}}?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
+			</recipientList>
+        </route>
+        
+        <route>
             <from uri="direct-vm://esb.service.objectology.instance.create"/>
             <to uri="bean:instanceClient?method=create(${body})" />
         </route>
