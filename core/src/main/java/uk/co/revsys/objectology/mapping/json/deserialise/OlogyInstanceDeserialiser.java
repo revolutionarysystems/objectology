@@ -3,14 +3,12 @@ package uk.co.revsys.objectology.mapping.json.deserialise;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.Map.Entry;
 import uk.co.revsys.objectology.dao.DaoException;
+import uk.co.revsys.objectology.mapping.DeserialiserException;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
@@ -52,6 +50,9 @@ public class OlogyInstanceDeserialiser extends JsonDeserializer<OlogyInstance> {
                     throw new IOException(ex);
                 }
             }
+        }
+        if(template==null){
+            throw new DeserialiserException("Template not found");
         }
         instance.setTemplate(template);
         for (Entry<String, AttributeTemplate> attributeTemplate : template.getAttributeTemplates().entrySet()) {

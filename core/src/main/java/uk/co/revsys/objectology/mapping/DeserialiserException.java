@@ -1,6 +1,8 @@
 package uk.co.revsys.objectology.mapping;
 
-public class DeserialiserException extends Exception{
+import java.io.IOException;
+
+public class DeserialiserException extends IOException{
 
 	public DeserialiserException() {
 	}

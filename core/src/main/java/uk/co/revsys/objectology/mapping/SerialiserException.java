@@ -1,6 +1,8 @@
 package uk.co.revsys.objectology.mapping;
 
-public class SerialiserException extends Exception{
+import java.io.IOException;
+
+public class SerialiserException extends IOException{
 
 	public SerialiserException() {
 	}
