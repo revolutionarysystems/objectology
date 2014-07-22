@@ -15,6 +15,11 @@ public class LinkTemplate extends AbstractAttributeTemplate<Link>{
 	public LinkTemplate(String associatedType) {
 		this.associatedType = associatedType;
 	}
+    
+    public LinkTemplate(String associatedType, ReferenceType referenceType) {
+		this.associatedType = associatedType;
+        this.referenceType = referenceType;
+	}
 	
 	public String getAssociatedType() {
 		return associatedType;

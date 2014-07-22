@@ -11,14 +11,33 @@
 			/WEB-INF/classes/applicationContext.xml
 		</param-value>
     </context-param>
+    
     <servlet>
 		<servlet-name>refreshTemplatesServlet</servlet-name>
 		<servlet-class>uk.co.revsys.resource.repository.provider.servlet.ResourceRefreshServlet</servlet-class>
+        <init-param>
+            <param-name>beanId</param-name>
+            <param-value>templateProvider</param-value>
+        </init-param>
 	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>refreshTemplatesServlet</servlet-name>
 		<url-pattern>/refreshTemplates</url-pattern>
+	</servlet-mapping>
+    
+    <servlet>
+		<servlet-name>refreshInstancesServlet</servlet-name>
+		<servlet-class>uk.co.revsys.resource.repository.provider.servlet.ResourceRefreshServlet</servlet-class>
+        <init-param>
+            <param-name>beanId</param-name>
+            <param-value>instanceProvider</param-value>
+        </init-param>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>refreshInstancesServlet</servlet-name>
+		<url-pattern>/refreshInstances</url-pattern>
 	</servlet-mapping>
     
 	<servlet>

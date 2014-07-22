@@ -52,11 +52,11 @@ public class InstanceRestService extends AbstractRestService {
     @GET
     @Path("/{type}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findAll(@PathParam("type") String type, @QueryParam("view") String viewName) {
+    public Response findAll(@PathParam("type") String type, @QueryParam("view") String viewName, @QueryParam("depth") int depth) {
         try {
             Class view = getView(viewName);
             List<OlogyInstance> results = service.findAll(type, view);
-            return buildResponse(results);
+            return buildResponse(results, depth);
         } catch (DaoException ex) {
             LOG.error("Error retrieving all instances of type " + type, ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
@@ -69,12 +69,12 @@ public class InstanceRestService extends AbstractRestService {
     @Path("/{type}/query")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response query(@PathParam("type") String type, @QueryParam("view") String viewName, String json) {
+    public Response query(@PathParam("type") String type, @QueryParam("view") String viewName, @QueryParam("depth") int depth, String json) {
         try {
             Class view = getView(viewName);
             Query query = new QueryImpl(json);
             List<OlogyInstance> results = service.find(type, query, view);
-            return buildResponse(results);
+            return buildResponse(results, depth);
         } catch (DaoException ex) {
             LOG.error("Error querying instances of type " + type, ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
@@ -87,9 +87,10 @@ public class InstanceRestService extends AbstractRestService {
     @GET
     @Path("/{type}/query")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response query(@PathParam("type") String type, @QueryParam("view") String viewName, @Context UriInfo ui) {
+    public Response query(@PathParam("type") String type, @QueryParam("view") String viewName, @QueryParam("depth") int depth,  @Context UriInfo ui) {
         MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
         queryParams.remove("view");
+        queryParams.remove("depth");
         if (queryParams.isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -100,7 +101,7 @@ public class InstanceRestService extends AbstractRestService {
         try {
             Class view = getView(viewName);
             List<OlogyInstance> results = service.find(type, query, view);
-            return buildResponse(results);
+            return buildResponse(results, depth);
         } catch (DaoException ex) {
             LOG.error("Error querying instances of type " + type, ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
@@ -149,13 +150,13 @@ public class InstanceRestService extends AbstractRestService {
     @GET
     @Path("/{type}/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findById(@PathParam("type") String type, @PathParam("id") String id) {
+    public Response findById(@PathParam("type") String type, @PathParam("id") String id, @QueryParam("depth") int depth) {
         try {
             OlogyInstance result = service.findById(type, id);
             if (result == null) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
-            return buildResponse(result);
+            return buildResponse(result, depth);
         } catch (DaoException ex) {
             LOG.error("Error finding instance " + type + ":" + id, ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);

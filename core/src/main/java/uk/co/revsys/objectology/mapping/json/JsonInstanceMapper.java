@@ -1,6 +1,5 @@
 package uk.co.revsys.objectology.mapping.json;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import uk.co.revsys.objectology.dao.SequenceGenerator;
 import uk.co.revsys.objectology.mapping.json.deserialise.SequenceDeserialiser;

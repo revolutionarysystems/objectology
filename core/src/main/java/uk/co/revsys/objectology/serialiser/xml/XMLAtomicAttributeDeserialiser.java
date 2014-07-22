@@ -9,28 +9,31 @@ import uk.co.revsys.objectology.model.template.AttributeTemplate;
 import uk.co.revsys.objectology.mapping.DeserialiserException;
 import uk.co.revsys.objectology.mapping.xml.XMLObjectMapper;
 
-public class XMLAtomicAttributeDeserialiser<A extends AtomicAttribute> extends XMLAttributeDeserialiser<A>{
+public class XMLAtomicAttributeDeserialiser<A extends AtomicAttribute> extends XMLAttributeDeserialiser<A> {
 
-	private final Class<? extends A> type;
+    private final Class<? extends A> type;
 
-	public XMLAtomicAttributeDeserialiser(Class<? extends A> type) {
-		this.type = type;
-	}
-	
-	@Override
-	public A deserialise(XMLObjectMapper objectMapper, Node source, Object... args) throws DeserialiserException {
-		try {
-			A instance = type.newInstance();
-			instance.setValueFromString(source.getText());
-			instance.setTemplate((AttributeTemplate)args[0]);
-			return instance;
-		} catch (InstantiationException ex) {
-			throw new DeserialiserException(ex);
-		} catch (IllegalAccessException ex) {
-			throw new DeserialiserException(ex);
-		} catch (ParseException ex) {
+    public XMLAtomicAttributeDeserialiser(Class<? extends A> type) {
+        this.type = type;
+    }
+
+    @Override
+    public A deserialise(XMLObjectMapper objectMapper, Node source, Object... args) throws DeserialiserException {
+        try {
+            if (source == null) {
+                return null;
+            }
+            A instance = type.newInstance();            
+            instance.setValueFromString(source.getText());
+            instance.setTemplate((AttributeTemplate) args[0]);
+            return instance;
+        } catch (InstantiationException ex) {
+            throw new DeserialiserException(ex);
+        } catch (IllegalAccessException ex) {
+            throw new DeserialiserException(ex);
+        } catch (ParseException ex) {
             throw new DeserialiserException(ex);
         }
-	}
+    }
 
 }

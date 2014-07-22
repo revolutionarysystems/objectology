@@ -59,6 +59,7 @@ public class XMLOlogyInstanceDeserialiserTest {
 		template.getAttributeTemplates().put("startTime", new TimeTemplate());
 		template.getAttributeTemplates().put("limit", new MeasurementTemplate());
 		template.getAttributeTemplates().put("endTime", new TimeTemplate());
+        template.getAttributeTemplates().put("ids", new CollectionTemplate(new MeasurementTemplate()));
 		template.getAttributeTemplates().put("limits", new CollectionTemplate(new MeasurementTemplate()));
 		OlogyTemplate partTemplate = new OlogyTemplate();
 		partTemplate.getAttributeTemplates().put("permissions", new PropertyTemplate());
@@ -74,6 +75,7 @@ public class XMLOlogyInstanceDeserialiserTest {
 		source.append("<subscription>");
 		source.append("<template>").append(template.getId()).append("</template>");
 		source.append("<status>Created</status>");
+        source.append("<name>Test Subscription</name>");
 		source.append("<startTime>01/01/2001 00:00:00</startTime>");
 		source.append("<limit>1000</limit>");
 		source.append("<limits>");
@@ -93,17 +95,19 @@ public class XMLOlogyInstanceDeserialiserTest {
 		OlogyInstance instance = objectMapper.deserialise(source.toString(), OlogyInstance.class);
 		assertNotNull(instance);
 		assertEquals(template, instance.getTemplate());
+        assertEquals("Test Subscription", instance.getName());
 		assertEquals("Created", instance.getAttribute("status", Property.class).getValue());
 		assertEquals("2001-01-01T00:00:00+0000", instance.getAttribute("startTime", Time.class).toString());
 		assertEquals("1000", instance.getAttribute("limit", Measurement.class).toString());
 		assertNull(instance.getAttribute("other"));
 		assertNull(instance.getAttribute("endTime"));
+        assertNotNull(instance.getAttribute("ids"));
 		assertNotNull(instance.getAttribute("accountHolder"));
 		assertEquals("all", instance.getAttribute("accountHolder", OlogyInstance.class).getAttribute("permissions", Property.class).getValue());
 		assertEquals("1234", instance.getAttribute("accountHolder", OlogyInstance.class).getAttribute("user", Link.class).getReference());
 		assertEquals(1, instance.getAttribute("limits", Collection.class).getMembers().size());
 		assertEquals("1", ((Measurement)instance.getAttribute("limits", Collection.class).getMembers().get(0)).toString());
-		assertEquals("Feature 1", ((OlogyInstance)instance.getAttribute("features", Collection.class).getMembers().get(0)).getAttribute("name", Property.class).getValue());
+		assertEquals("Feature 1", ((OlogyInstance)instance.getAttribute("features", Collection.class).getMembers().get(0)).getName());
 	}
 
 }

@@ -2,12 +2,15 @@ package uk.co.revsys.objectology.model.instance;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import uk.co.revsys.objectology.dao.DaoException;
+import uk.co.revsys.objectology.mapping.json.serialise.LinkSerialiser;
 import uk.co.revsys.objectology.model.OlogyObject;
 import uk.co.revsys.objectology.model.ReferenceType;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
 
+@JsonSerialize(using = LinkSerialiser.class)
 public class Link extends AbstractAttribute<LinkTemplate> {
 
 	private String reference;

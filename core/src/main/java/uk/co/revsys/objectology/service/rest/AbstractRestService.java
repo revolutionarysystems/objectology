@@ -39,9 +39,13 @@ public class AbstractRestService {
 		return view;
 	}
 
-	protected Response buildResponse(Object entity) {
+    protected Response buildResponse(Object entity) {
+        return buildResponse(entity, 1);
+    }
+    
+	protected Response buildResponse(Object entity, int depth) {
 		try {
-			return Response.ok(jsonObjectMapper.serialise(entity)).build();
+			return Response.ok(jsonObjectMapper.serialise(entity, depth)).build();
 		} catch (SerialiserException ex) {
             LOG.error("Error building response", ex);
 			return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);

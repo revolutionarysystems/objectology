@@ -22,6 +22,11 @@ public class XMLObjectMapper implements ObjectMapper{
     public String serialise(Object object) throws SerialiserException {
         return serialise(object, new Object[0]);
     }
+
+    @Override
+    public String serialise(Object object, int depth) throws SerialiserException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 	
 	public String serialise(Object object, Object... args) throws SerialiserException{
 		return getSerialiser(object.getClass()).serialise(this, object, args);

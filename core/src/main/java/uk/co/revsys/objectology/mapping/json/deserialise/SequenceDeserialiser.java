@@ -2,18 +2,16 @@ package uk.co.revsys.objectology.mapping.json.deserialise;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import java.io.IOException;
+import uk.co.revsys.objectology.dao.SequenceException;
 import uk.co.revsys.objectology.dao.SequenceGenerator;
+import uk.co.revsys.objectology.mapping.DeserialiserException;
 import uk.co.revsys.objectology.model.instance.Sequence;
 import uk.co.revsys.objectology.model.template.SequenceTemplate;
-import uk.co.revsys.objectology.mapping.json.ContextualObjectMapper;
 
-public class SequenceDeserialiser extends JsonDeserializer<Sequence> implements ContextualDeserializer{
+public class SequenceDeserialiser extends JsonDeserializer<Sequence>{
 
     private final SequenceGenerator sequenceGenerator;
 
@@ -22,15 +20,17 @@ public class SequenceDeserialiser extends JsonDeserializer<Sequence> implements 
     }
 
     @Override
-    public JsonDeserializer<?> createContextual(DeserializationContext dc, BeanProperty bp) throws JsonMappingException {
-        ContextualObjectMapper mapper = (ContextualObjectMapper) dc.getParser().getCodec();
-        SequenceTemplate template = (SequenceTemplate) mapper.getThreadContext().get("template");
-        return new SequenceDeserialiserInstance(sequenceGenerator, template);
-    }
-
-    @Override
     public Sequence deserialize(JsonParser jp, DeserializationContext dc) throws IOException, JsonProcessingException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        String value = jp.readValueAs(String.class);
+        if(value.isEmpty()){
+            SequenceTemplate template = (SequenceTemplate) dc.getAttribute("template");
+            try {
+                value = sequenceGenerator.getNextSequence(template.getName(), template.getLength());
+            } catch (SequenceException ex) {
+                throw new DeserialiserException(ex);
+            }
+        }
+        return new Sequence(value);
     }
 
 }

@@ -3,6 +3,9 @@ package uk.co.revsys.objectology.serialiser.json;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.easymock.EasyMock;
+import static org.easymock.EasyMock.expect;
+import org.easymock.IMocksControl;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -12,6 +15,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import uk.co.revsys.objectology.mapping.ObjectMapper;
 import uk.co.revsys.objectology.mapping.json.JsonInstanceMapper;
+import uk.co.revsys.objectology.model.ReferenceType;
 import uk.co.revsys.objectology.model.instance.Collection;
 import uk.co.revsys.objectology.model.instance.Link;
 import uk.co.revsys.objectology.model.instance.Measurement;
@@ -26,6 +30,8 @@ import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
+import uk.co.revsys.objectology.service.OlogyInstanceService;
+import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
 
 public class JacksonInstanceSerialiserTest {
 
@@ -61,6 +67,7 @@ public class JacksonInstanceSerialiserTest {
         template.getAttributeTemplates().put("seq", new SequenceTemplate("seq1", 4));
 		template.getAttributeTemplates().put("startTime", new TimeTemplate());
 		template.getAttributeTemplates().put("limit", new MeasurementTemplate());
+        template.getAttributeTemplates().put("ids", new CollectionTemplate(new MeasurementTemplate()));
 		template.getAttributeTemplates().put("limits", new CollectionTemplate(new MeasurementTemplate()));
 		OlogyTemplate partTemplate = new OlogyTemplate();
 		partTemplate.getAttributeTemplates().put("permissions", new PropertyTemplate());
@@ -105,5 +112,34 @@ public class JacksonInstanceSerialiserTest {
 		assertEquals("123", jsonObject.getJSONArray("limits").get(0));
 		assertEquals("Feature 1", jsonObject.getJSONArray("features").getJSONObject(0).getString("title"));
 	}
+    
+    @Test
+	public void testSerialiseJSONWithDepthParam() throws Exception {
+        ObjectMapper objectMapper = new JsonInstanceMapper(null);
+		OlogyTemplate template = new OlogyTemplate();
+		template.setId("1234");
+        LinkTemplate userLinkTemplate = new LinkTemplate("user");
+        userLinkTemplate.setReferenceType(ReferenceType.name);
+        template.getAttributeTemplates().put("user", userLinkTemplate);
+        OlogyTemplate userTemplate = new OlogyTemplate();
+        OlogyInstance user = new OlogyInstance();
+        user.setTemplate(userTemplate);
+        user.setName("Test User");
+        OlogyInstance instance = new OlogyInstance();
+        instance.setTemplate(template);
+        Link userLink = new Link("Test User");
+        userLink.setTemplate(userLinkTemplate);
+        instance.setAttribute("user", userLink);
+        IMocksControl mocksControl = EasyMock.createControl();
+        OlogyInstanceService mockInstanceService = mocksControl.createMock(OlogyInstanceService.class);
+        OlogyObjectServiceFactory.setOlogyInstanceService(mockInstanceService);
+        expect(mockInstanceService.findByName("user", "Test User")).andReturn(user);
+        mocksControl.replay();
+        String json = objectMapper.serialise(instance, 2);
+        System.out.println("json = " + json);
+        mocksControl.verify();
+        JSONObject jsonObject = new JSONObject(json);
+        assertEquals("Test User", jsonObject.getJSONObject("user").getString("name"));
+    }
 
 }

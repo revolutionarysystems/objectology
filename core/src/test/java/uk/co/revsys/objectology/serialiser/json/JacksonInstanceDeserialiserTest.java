@@ -67,6 +67,7 @@ public class JacksonInstanceDeserialiserTest {
 		template.getAttributeTemplates().put("startTime", new TimeTemplate());
 		template.getAttributeTemplates().put("limit", new MeasurementTemplate());
 		template.getAttributeTemplates().put("limits", new CollectionTemplate(new MeasurementTemplate()));
+        template.getAttributeTemplates().put("ids", new CollectionTemplate(new MeasurementTemplate()));
 		OlogyTemplate partTemplate = new OlogyTemplate();
 		partTemplate.getAttributeTemplates().put("permissions", new PropertyTemplate());
 		partTemplate.getAttributeTemplates().put("user", new LinkTemplate());
@@ -82,6 +83,7 @@ public class JacksonInstanceDeserialiserTest {
 		assertEquals(statusTemplate, result.getAttribute("status").getTemplate());
 		assertEquals("2001-01-01T00:00:00+0000", result.getAttribute("startTime", Time.class).toString());
 		assertEquals("1000", result.getAttribute("limit", Measurement.class).toString());
+        assertNotNull(result.getAttribute("ids", Collection.class));
 		assertEquals("all", result.getAttribute("accountHolder", OlogyInstance.class).getAttribute("permissions", Property.class).getValue());
 		assertEquals("1234", result.getAttribute("accountHolder", OlogyInstance.class).getAttribute("user", Link.class).getReference());
 		assertEquals("123", ((Measurement)result.getAttribute("limits", Collection.class).getMembers().get(0)).toString());

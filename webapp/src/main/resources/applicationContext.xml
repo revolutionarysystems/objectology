@@ -99,43 +99,72 @@
 	
     <bean id="instanceViewMap" class="uk.co.revsys.objectology.view.DefaultInstanceViewMap"/>
     
-    <bean id="resourceProvider" class="uk.co.revsys.resource.repository.provider.ResourceProvider">
+    <bean id="templateProvider" class="uk.co.revsys.resource.repository.provider.ResourceProvider">
         <constructor-arg index="0" ref="templateRepository"/>
-        <constructor-arg index="1" value="${resources.path}"/>
-        <constructor-arg index="2" ref="templateFilter"/>
+        <constructor-arg index="1" value="${template.path}"/>
+        <constructor-arg index="2" ref="xmlFilter"/>
         <constructor-arg index="3" ref="templateLoader"/>
+    </bean>
+    
+    <bean id="instanceProvider" class="uk.co.revsys.resource.repository.provider.ResourceProvider">
+        <constructor-arg index="0" ref="instanceRepository"/>
+        <constructor-arg index="1" value="${instance.path}"/>
+        <constructor-arg index="2" ref="xmlFilter"/>
+        <constructor-arg index="3" ref="instanceLoader"/>
     </bean>
     
     <bean id="resourceRepositoryFactory" class="uk.co.revsys.resource.repository.ResourceRepositoryFactory">
         <constructor-arg index="0">
             <map key-type="java.lang.String" value-type="uk.co.revsys.resource.repository.ResourceRepositoryBuilder">
-                <entry key="local" value-ref="localDiskResourceRepositoryBuilder"/>
-                <entry key="cloud" value-ref="jCloudResourceRepositoryBuilder"/>
+                <entry key="template-local" value-ref="localDiskTemplateRepositoryBuilder"/>
+                <entry key="template-cloud" value-ref="cloudTemplateRepositoryBuilder"/>
+                <entry key="instance-local" value-ref="localDiskInstanceRepositoryBuilder"/>
+                <entry key="instance-cloud" value-ref="cloudInstanceRepositoryBuilder"/>
             </map>
         </constructor-arg>
     </bean>
     
-    <bean id="localDiskResourceRepositoryBuilder" class="uk.co.revsys.resource.repository.LocalDiskResourceRepositoryBuilder">
-        <constructor-arg index="0" value="${resources.container}"/>
+    <bean id="localDiskTemplateRepositoryBuilder" class="uk.co.revsys.resource.repository.LocalDiskResourceRepositoryBuilder">
+        <constructor-arg index="0" value="${template.container}"/>
     </bean>
     
-    <bean id="jCloudResourceRepositoryBuilder" class="uk.co.revsys.resource.repository.cloud.JCloudResourceRepositoryBuilder">
+    <bean id="cloudTemplateRepositoryBuilder" class="uk.co.revsys.resource.repository.cloud.JCloudResourceRepositoryBuilder">
         <constructor-arg index="0" value="${cloud.type}"/>
         <constructor-arg index="1" value="${cloud.identity}"/>
         <constructor-arg index="2" value="${cloud.credential}"/>
-        <constructor-arg index="3" value="${resources.container}"/>
+        <constructor-arg index="3" value="${template.container}"/>
     </bean>
 	
     <bean id="templateRepository" factory-bean="resourceRepositoryFactory" factory-method="build">
-        <constructor-arg index="0" value="${repository.type}"/>
+        <constructor-arg index="0" value="template-${template.repository.type}"/>
     </bean>
     
-    <bean id="templateFilter" class="uk.co.revsys.resource.repository.provider.filter.ExtensionFilter">
+    <bean id="localDiskInstanceRepositoryBuilder" class="uk.co.revsys.resource.repository.LocalDiskResourceRepositoryBuilder">
+        <constructor-arg index="0" value="${instance.container}"/>
+    </bean>
+    
+    <bean id="cloudInstanceRepositoryBuilder" class="uk.co.revsys.resource.repository.cloud.JCloudResourceRepositoryBuilder">
+        <constructor-arg index="0" value="${cloud.type}"/>
+        <constructor-arg index="1" value="${cloud.identity}"/>
+        <constructor-arg index="2" value="${cloud.credential}"/>
+        <constructor-arg index="3" value="${instance.container}"/>
+    </bean>
+	
+    <bean id="instanceRepository" factory-bean="resourceRepositoryFactory" factory-method="build">
+        <constructor-arg index="0" value="instance-${instance.repository.type}"/>
+    </bean>
+    
+    <bean id="xmlFilter" class="uk.co.revsys.resource.repository.provider.filter.ExtensionFilter">
         <constructor-arg index="0" value=".xml"/>
     </bean>
     
     <bean id="templateLoader" class="uk.co.revsys.objectology.service.TemplateLoader">
         <constructor-arg index="0" ref="templateService"/>
+        <constructor-arg index="1" ref="xmlObjectMapper"/>
+    </bean>
+    
+    <bean id="instanceLoader" class="uk.co.revsys.objectology.service.InstanceLoader">
+        <constructor-arg index="0" ref="instanceService"/>
         <constructor-arg index="1" ref="xmlObjectMapper"/>
     </bean>
     

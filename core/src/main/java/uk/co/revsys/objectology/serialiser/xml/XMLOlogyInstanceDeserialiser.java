@@ -1,6 +1,7 @@
 package uk.co.revsys.objectology.serialiser.xml;
 
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.dom4j.Node;
@@ -30,17 +31,26 @@ public class XMLOlogyInstanceDeserialiser extends XMLAttributeDeserialiser<Ology
                 if (templateNode != null) {
                     String templateId = templateNode.getText();
                     template = templateService.findById(templateId);
+                    if (template == null) {
+                        throw new DeserialiserException("Template with id " + templateId + " not found");
+                    }
                     templateNode.detach();
                 } else {
                     Node templateIdNode = source.selectSingleNode("templateId");
                     if (templateIdNode != null) {
                         String templateId = templateIdNode.getText();
                         template = templateService.findById(templateId);
+                        if (template == null) {
+                            throw new DeserialiserException("Template with id " + templateId + " not found");
+                        }
                         templateIdNode.detach();
                     } else {
                         Node templateNameNode = source.selectSingleNode("templateName");
                         String templateName = templateNameNode.getText();
                         template = templateService.findByName(templateName);
+                        if (template == null) {
+                            throw new DeserialiserException("Template with name " + templateName + " not found");
+                        }
                         templateNameNode.detach();
                     }
                 }
@@ -49,18 +59,26 @@ public class XMLOlogyInstanceDeserialiser extends XMLAttributeDeserialiser<Ology
             }
         } else {
             template = (OlogyTemplate) args[0];
+            if(template == null){
+                throw new DeserialiserException("Template not found");
+            }
         }
         OlogyInstance instance = new OlogyInstance();
         instance.setTemplate(template);
-        List<Node> nodes = source.selectNodes("*");
-        for (Node node : nodes) {
-            String name = node.getName();
-            AttributeTemplate attributeTemplate = template.getAttributeTemplate(name);
-            if (attributeTemplate != null) {
-                XMLAttributeDeserialiser<Attribute> attributeDeserialiser = (XMLAttributeDeserialiser) objectMapper.getDeserialiser(attributeTemplate.getAttributeType());
-                Attribute attribute = attributeDeserialiser.deserialise(objectMapper, node, attributeTemplate);
-                instance.getAttributes().put(name, attribute);
+        Node nameNode = source.selectSingleNode("name");
+        if(nameNode!=null){
+            instance.setName(nameNode.getText());
+            nameNode.detach();
+        }
+        for (Map.Entry<String, AttributeTemplate> attributeTemplate : template.getAttributeTemplates().entrySet()) {
+            String attributeName = attributeTemplate.getKey();
+            Node node = source.selectSingleNode(attributeName);
+            XMLAttributeDeserialiser<Attribute> attributeDeserialiser = (XMLAttributeDeserialiser) objectMapper.getDeserialiser(attributeTemplate.getValue().getAttributeType());
+            Attribute attribute = attributeDeserialiser.deserialise(objectMapper, node, attributeTemplate.getValue());
+            if (attribute != null) {
+                attribute.setTemplate(attributeTemplate.getValue());
             }
+            instance.setAttribute(attributeName, attribute);
         }
         return instance;
     }

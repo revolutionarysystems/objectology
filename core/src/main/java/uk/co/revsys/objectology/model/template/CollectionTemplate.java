@@ -1,6 +1,5 @@
 package uk.co.revsys.objectology.model.template;
 
-import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.Collection;
 
 public class CollectionTemplate extends AbstractAttributeTemplate<Collection>{
