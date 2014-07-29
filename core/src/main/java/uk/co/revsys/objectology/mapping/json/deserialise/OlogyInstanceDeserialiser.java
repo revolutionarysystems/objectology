@@ -9,12 +9,13 @@ import java.io.IOException;
 import java.util.Map.Entry;
 import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.mapping.DeserialiserException;
+import uk.co.revsys.objectology.mapping.json.JSONNullType;
 import uk.co.revsys.objectology.mapping.json.JsonObjectMapper;
 import uk.co.revsys.objectology.model.instance.Attribute;
+import uk.co.revsys.objectology.model.instance.GeneratedAttribute;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
-import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
 
 public class OlogyInstanceDeserialiser extends JsonDeserializer<OlogyInstance> {
@@ -31,6 +32,7 @@ public class OlogyInstanceDeserialiser extends JsonDeserializer<OlogyInstance> {
             instance.setName(root.get("name").asText());
         }
         OlogyTemplate template = (OlogyTemplate) dc.getAttribute("template");
+        System.out.println("template = " + template);
         if (template == null) {
             String templateId = null;
             if (root.has("template")) {
@@ -63,21 +65,21 @@ public class OlogyInstanceDeserialiser extends JsonDeserializer<OlogyInstance> {
             throw new DeserialiserException("Template not found");
         }
         instance.setTemplate(template);
-        for (Entry<String, AttributeTemplate> attributeTemplate : template.getAttributeTemplates().entrySet()) {
-            String attributeName = attributeTemplate.getKey();
+        for (Entry<String, AttributeTemplate> attributeTemplateEntry : template.getAttributeTemplates().entrySet()) {
+            String attributeName = attributeTemplateEntry.getKey();
+            AttributeTemplate attributeTemplate = attributeTemplateEntry.getValue();
             String attributeJson = "null";
-            // TODO Find a better way of handling this! - Required because jackson will call the getNullValue() method
-            // which doesn't have access to deserialisation context and therefore can't access the template
-            if(attributeTemplate.getValue() instanceof SequenceTemplate){
-                attributeJson = "\"\"";
-            }
-            ////////////////////////////////////////////
             if (root.has(attributeName)) {
                 attributeJson = root.get(attributeName).toString();
+            } else {
+                JSONNullType jsonNullType = (JSONNullType) attributeTemplate.getAttributeType().getAnnotation(JSONNullType.class);
+                if (jsonNullType != null) {
+                    attributeJson = jsonNullType.value();
+                }
             }
-            Attribute attribute = (Attribute) mapper.reader(attributeTemplate.getValue().getAttributeType()).withAttribute("template", attributeTemplate.getValue()).readValue(attributeJson);
+            Attribute attribute = (Attribute) mapper.reader(attributeTemplate.getAttributeType()).withAttribute("template", attributeTemplate).readValue(attributeJson);
             if (attribute != null) {
-                attribute.setTemplate(attributeTemplate.getValue());
+                attribute.setTemplate(attributeTemplate);
             }
             instance.setAttribute(attributeName, attribute);
         }

@@ -37,4 +37,9 @@ public class SequenceTemplate extends PropertyTemplate<Sequence>{
         return Sequence.class;
     }
 
+    @Override
+    public String getNature() {
+        return "sequence";
+    }
+
 }

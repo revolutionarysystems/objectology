@@ -1,12 +1,18 @@
 package uk.co.revsys.objectology.service.rest;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -16,14 +22,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.Node;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.co.revsys.objectology.action.model.Action;
+import uk.co.revsys.objectology.action.handler.ActionInvocationException;
+import uk.co.revsys.objectology.action.ActionRequest;
+import uk.co.revsys.objectology.action.handler.ActionHandler;
+import uk.co.revsys.objectology.action.handler.ActionHandlerFactory;
 import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.query.JSONQuery;
@@ -32,6 +39,7 @@ import uk.co.revsys.objectology.query.QueryImpl;
 import uk.co.revsys.objectology.mapping.DeserialiserException;
 import uk.co.revsys.objectology.mapping.ObjectMapper;
 import uk.co.revsys.objectology.mapping.SerialiserException;
+import uk.co.revsys.objectology.security.AuthorisationHandler;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
 import uk.co.revsys.objectology.view.ViewNotFoundException;
 
@@ -39,14 +47,16 @@ import uk.co.revsys.objectology.view.ViewNotFoundException;
 public class InstanceRestService extends AbstractRestService {
 
     private static final Logger LOG = LoggerFactory.getLogger(InstanceRestService.class);
-    
+
     private final OlogyInstanceService<OlogyInstance> service;
     private final ObjectMapper xmlObjectMapper;
+    private final ActionHandlerFactory actionHandlerFactory;
 
-    public InstanceRestService(OlogyInstanceService service, ObjectMapper xmlObjectMapper, ObjectMapper jsonObjectMapper, HashMap<String, Class> viewMap) {
-        super(jsonObjectMapper, viewMap);
+    public InstanceRestService(OlogyInstanceService service, ObjectMapper xmlObjectMapper, ObjectMapper jsonObjectMapper, HashMap<String, Class> viewMap, AuthorisationHandler authorisationHandler, ActionHandlerFactory actionHandlerFactory) {
+        super(jsonObjectMapper, viewMap, authorisationHandler);
         this.service = service;
         this.xmlObjectMapper = xmlObjectMapper;
+        this.actionHandlerFactory = actionHandlerFactory;
     }
 
     @GET
@@ -54,6 +64,9 @@ public class InstanceRestService extends AbstractRestService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll(@PathParam("type") String type, @QueryParam("view") String viewName, @QueryParam("depth") int depth) {
         try {
+            if (!isAdministrator()) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
             Class view = getView(viewName);
             List<OlogyInstance> results = service.findAll(type, view);
             return buildResponse(results, depth);
@@ -74,6 +87,9 @@ public class InstanceRestService extends AbstractRestService {
             Class view = getView(viewName);
             Query query = new QueryImpl(json);
             List<OlogyInstance> results = service.find(type, query, view);
+            if (!isAuthorisedToView(results)) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
             return buildResponse(results, depth);
         } catch (DaoException ex) {
             LOG.error("Error querying instances of type " + type, ex);
@@ -87,7 +103,7 @@ public class InstanceRestService extends AbstractRestService {
     @GET
     @Path("/{type}/query")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response query(@PathParam("type") String type, @QueryParam("view") String viewName, @QueryParam("depth") int depth,  @Context UriInfo ui) {
+    public Response query(@PathParam("type") String type, @QueryParam("view") String viewName, @QueryParam("depth") int depth, @Context UriInfo ui) {
         MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
         queryParams.remove("view");
         queryParams.remove("depth");
@@ -101,6 +117,9 @@ public class InstanceRestService extends AbstractRestService {
         try {
             Class view = getView(viewName);
             List<OlogyInstance> results = service.find(type, query, view);
+            if (!isAuthorisedToView(results)) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
             return buildResponse(results, depth);
         } catch (DaoException ex) {
             LOG.error("Error querying instances of type " + type, ex);
@@ -117,6 +136,9 @@ public class InstanceRestService extends AbstractRestService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createFromXML(String xml) {
         try {
+            if (!isAdministrator()) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
             OlogyInstance object = xmlObjectMapper.deserialise(xml, OlogyInstance.class);
             object = service.create(object);
             return buildResponse(object);
@@ -135,6 +157,9 @@ public class InstanceRestService extends AbstractRestService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createFromJSON(String json) {
         try {
+            if (!isAdministrator()) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
             OlogyInstance object = getJsonObjectMapper().deserialise(json, OlogyInstance.class);
             object = service.create(object);
             return buildResponse(object);
@@ -156,38 +181,12 @@ public class InstanceRestService extends AbstractRestService {
             if (result == null) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
+            if (!isAuthorisedToView(result)) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
             return buildResponse(result, depth);
         } catch (DaoException ex) {
             LOG.error("Error finding instance " + type + ":" + id, ex);
-            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
-        }
-    }
-
-    @POST
-    @Path("/{type}/{id}")
-    @Consumes(MediaType.TEXT_XML)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response updateFromXML(@PathParam("type") String type, @PathParam("id") String id, String xml) {
-        try {
-            OlogyInstance existingObject = service.findById(type, id);
-            Node existingObjectXML = DocumentHelper.parseText(xmlObjectMapper.serialise(existingObject)).getRootElement();
-            Node newObjectXML = DocumentHelper.parseText(xml).getRootElement();
-            Node combinedXML = mergeXML(existingObjectXML, newObjectXML);
-            OlogyInstance object = xmlObjectMapper.deserialise(combinedXML.asXML(), OlogyInstance.class);
-            object.setId(id);
-            object = service.update(object);
-            return buildResponse(object);
-        } catch (DeserialiserException ex) {
-            LOG.error("Error updating instance " + type + ":" + id, ex);
-            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
-        } catch (DaoException ex) {
-            LOG.error("Error updating instance " + type + ":" + id, ex);
-            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
-        } catch (SerialiserException ex) {
-            LOG.error("Error updating instance " + type + ":" + id, ex);
-            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
-        } catch (DocumentException ex) {
-            LOG.error("Error updating instance " + type + ":" + id, ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         }
     }
@@ -198,6 +197,9 @@ public class InstanceRestService extends AbstractRestService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateFromJSON(@PathParam("type") String type, @PathParam("id") String id, String json) {
         try {
+            if (!isAdministrator()) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
             OlogyInstance existingObject = service.findById(type, id);
             JSONObject existingObjectJSON = new JSONObject(getJsonObjectMapper().serialise(existingObject));
             JSONObject newObjectJSON = new JSONObject(json);
@@ -218,10 +220,61 @@ public class InstanceRestService extends AbstractRestService {
         }
     }
 
+    // TODO: Get this working as a POST. When using POST the formParameters map is empty
+    @PUT
+    @Path("/{type}/{id}/action/{action}")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response invokeActionPut(@PathParam("type") String type, @PathParam("id") String id, @PathParam("action") String actionName, MultivaluedMap<String, String> formParameters) {
+        try {
+            OlogyInstance entity = service.findById(type, id);
+            if (entity == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            Action action = entity.getTemplate().getActions().get(actionName);
+            if (action == null) {
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+            if (!isAuthorisedToInvokeAction(entity, action)) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
+            ActionRequest request = new ActionRequest();
+            Map<String, String> parameters = new HashMap<String, String>();
+            for (String key : formParameters.keySet()) {
+                System.out.println("key = " + key);
+                String parameter = formParameters.getFirst(key);
+                System.out.println("parameter = " + parameter);
+                if (parameter != null) {
+                    try {
+                        parameter = URLDecoder.decode(parameter, "UTF-8");
+                    } catch (UnsupportedEncodingException ex) {
+                        LOG.error("UTF-8 encoding not supported", ex);
+                        return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+                    }
+                }
+                System.out.println("parameter = " + parameter);
+                parameters.put(key, parameter);
+            }
+            request.setParameters(parameters);
+            ActionHandler actionHandler = actionHandlerFactory.getHandler(action);
+            entity = actionHandler.invoke(entity, action, request);
+            return buildResponse(entity);
+        } catch (DaoException ex) {
+            LOG.error("Error invoking action " + actionName + " on " + id, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+        } catch (ActionInvocationException ex) {
+            LOG.error("Error invoking action " + actionName + " on " + id, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+        }
+    }
+
     @DELETE
     @Path("/{type}/{id}")
     public Response delete(@PathParam("type") String type, @PathParam("id") String id) {
         try {
+            if (!isAdministrator()) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
             OlogyInstance result = service.findById(type, id);
             service.delete(result);
             return Response.status(Response.Status.NO_CONTENT).build();
@@ -229,6 +282,25 @@ public class InstanceRestService extends AbstractRestService {
             LOG.error("Error deleting instance " + type + ":" + id, ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         }
+    }
+
+    private boolean isAuthorisedToView(OlogyInstance instance) {
+        return getAuthorisationHandler().isAuthorised(instance, instance.getTemplate().getSecurityConstraints());
+    }
+
+    private boolean isAuthorisedToView(List<OlogyInstance> instances) {
+        Iterator<OlogyInstance> iterator = instances.iterator();
+        while (iterator.hasNext()) {
+            OlogyInstance instance = iterator.next();
+            if (!isAuthorisedToView(instance)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isAuthorisedToInvokeAction(OlogyInstance instance, Action action) {
+        return getAuthorisationHandler().isAuthorised(instance, action.getSecurityConstraints());
     }
 
     protected JSONObject mergeJSON(JSONObject json1, JSONObject json2) {
@@ -253,32 +325,6 @@ public class InstanceRestService extends AbstractRestService {
             }
         }
         return json1;
-    }
-
-    protected Node mergeXML(Node xml1, Node xml2) {
-        List<Node> children = xml2.selectNodes("*");
-        if (children.isEmpty()) {
-            return xml2;
-        }
-        String action = null;
-        Node actionNode = ((Element)xml2).attribute("action");
-        if (actionNode != null) {
-            action = actionNode.getText();
-        }
-        for (Node xml2Child : children) {
-            String path = xml2Child.getName();
-            Node xml1Child = xml1.selectSingleNode(path);
-            if (xml1Child == null || (action!=null && action.equals("add"))) {
-                xml2Child.detach();
-                ((Element) xml1).add(xml2Child);
-            } else {
-                xml2Child.detach();
-                xml1Child.detach();
-                ((Element) xml1).add(mergeXML(xml1Child, xml2Child));
-
-            }
-        }
-        return xml1;
     }
 
 }

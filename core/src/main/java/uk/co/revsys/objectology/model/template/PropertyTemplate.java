@@ -9,6 +9,11 @@ public class PropertyTemplate<P extends Property> extends AtomicAttributeTemplat
         return (Class<? extends P>) Property.class;
     }
 
+    @Override
+    public String getNature() {
+        return "property";
+    }
+
 	
 
 }

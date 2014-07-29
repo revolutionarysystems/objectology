@@ -25,5 +25,10 @@ public class CollectionTemplate extends AbstractAttributeTemplate<Collection>{
 	public Class<? extends Collection> getAttributeType() {
 		return Collection.class;
 	}
+
+    @Override
+    public String getNature() {
+        return "collection";
+    }
 	
 }

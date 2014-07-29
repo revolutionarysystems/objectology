@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import uk.co.revsys.objectology.action.model.UpdateAttributeAction;
 import uk.co.revsys.objectology.mapping.ObjectMapper;
 import uk.co.revsys.objectology.model.instance.Property;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
@@ -19,6 +20,8 @@ import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
 import uk.co.revsys.objectology.mapping.SerialiserException;
 import uk.co.revsys.objectology.mapping.json.JsonObjectMapper;
+import uk.co.revsys.objectology.model.template.LinkedObjectTemplate;
+import uk.co.revsys.objectology.security.RoleConstraint;
 
 public class JacksonTemplateSerialiserTest {
 
@@ -54,11 +57,16 @@ public class JacksonTemplateSerialiserTest {
         Property statusProperty = new Property("{status}");
         statusProperty.setTemplate(statusTemplate);
         statusTemplate.setValue(statusProperty);
+        RoleConstraint roleConstraint = new RoleConstraint("test:test");
+        template.getSecurityConstraints().add(roleConstraint);
+        UpdateAttributeAction replacePropertyAction = new UpdateAttributeAction("status");
+        template.getActions().put("changeStatus", replacePropertyAction);
         template.getAttributeTemplates().put("seq", new SequenceTemplate("seq1", 4));
         template.getAttributeTemplates().put("status", statusTemplate);
         template.getAttributeTemplates().put("startTime", new TimeTemplate());
         template.getAttributeTemplates().put("limit", new MeasurementTemplate());
         template.getAttributeTemplates().put("limits", new CollectionTemplate(new MeasurementTemplate()));
+        template.getAttributeTemplates().put("account", new LinkedObjectTemplate("account", "subscription"));
         OlogyTemplate partTemplate = new OlogyTemplate();
         partTemplate.getAttributeTemplates().put("permissions", new PropertyTemplate());
         partTemplate.getAttributeTemplates().put("user", new LinkTemplate());
@@ -80,6 +88,11 @@ public class JacksonTemplateSerialiserTest {
         assertEquals("property", json.getJSONObject("attributes").getJSONObject("status").get("nature"));
         assertEquals("{status}", json.getJSONObject("attributes").getJSONObject("status").getString("value"));
         assertEquals("measurement", json.getJSONObject("attributes").getJSONObject("limits").getJSONObject("memberTemplate").getString("nature"));
+        assertEquals("test:test", json.getJSONArray("securityConstraints").getJSONObject(0).getString("role"));
+        assertEquals("roleConstraint", json.getJSONArray("securityConstraints").getJSONObject(0).getString("nature"));
+        assertEquals("status", json.getJSONObject("actions").getJSONObject("changeStatus").getString("attribute"));
+        assertEquals("account", json.getJSONObject("attributes").getJSONObject("account").getString("type"));
+        assertEquals("subscription", json.getJSONObject("attributes").getJSONObject("account").getString("link"));
     }
 
 }

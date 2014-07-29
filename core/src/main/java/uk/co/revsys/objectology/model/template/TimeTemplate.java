@@ -10,4 +10,9 @@ public class TimeTemplate extends AtomicAttributeTemplate<Time>{
 		return Time.class;
 	}
 
+    @Override
+    public String getNature() {
+        return "time";
+    }
+
 }

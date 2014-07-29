@@ -42,4 +42,9 @@ public class LinkTemplate extends AbstractAttributeTemplate<Link>{
 		return Link.class;
 	}
 
+    @Override
+    public String getNature() {
+        return "link";
+    }
+
 }

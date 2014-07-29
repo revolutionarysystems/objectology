@@ -68,4 +68,14 @@ public class InMemoryOlogyObjectDao<O extends OlogyObject> extends AbstractOlogy
 		objects.remove(object.getId());
 	}
 
+    @Override
+    public boolean existsById(String id) throws DaoException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean existsByName(String name) throws DaoException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

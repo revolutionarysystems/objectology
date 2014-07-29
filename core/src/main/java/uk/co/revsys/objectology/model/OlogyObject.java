@@ -1,6 +1,7 @@
 package uk.co.revsys.objectology.model;
 
 import java.util.Map;
+import javax.xml.bind.annotation.XmlTransient;
 import uk.co.revsys.objectology.model.instance.Attribute;
 
 public abstract class OlogyObject {

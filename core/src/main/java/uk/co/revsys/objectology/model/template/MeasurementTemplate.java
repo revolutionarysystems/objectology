@@ -18,6 +18,11 @@ public class MeasurementTemplate extends AtomicAttributeTemplate<Measurement>{
 	public Class<? extends Measurement> getAttributeType() {
 		return Measurement.class;
 	}
+
+    @Override
+    public String getNature() {
+        return "measurement";
+    }
 	
 	
 	

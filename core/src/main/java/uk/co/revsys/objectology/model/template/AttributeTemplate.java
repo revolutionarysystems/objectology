@@ -1,18 +1,14 @@
 package uk.co.revsys.objectology.model.template;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import uk.co.revsys.objectology.model.instance.Attribute;
-import uk.co.revsys.objectology.mapping.json.serialise.NatureSerialiser;
+import uk.co.revsys.objectology.model.ObjectWithNature;
 
-public interface AttributeTemplate<A extends Attribute> {
+public interface AttributeTemplate<A extends Attribute> extends ObjectWithNature{
 	
 	public A getValue();
 	
 	public void setValue(A value);
 	
-    @JsonProperty("nature")
-    @JsonSerialize(using = NatureSerialiser.class)
 	public Class<? extends A> getAttributeType();
 	
 }

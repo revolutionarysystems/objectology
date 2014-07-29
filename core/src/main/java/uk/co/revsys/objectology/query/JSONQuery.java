@@ -20,6 +20,11 @@ public class JSONQuery extends JSONObject implements Query{
 	public JSONQuery(String source) throws JSONException {
 		super(source);
 	}
+    
+    public JSONQuery(String key, String value){
+        super();
+        put(key, value);
+    }
 	
 	@Override
 	public String toQueryString() {

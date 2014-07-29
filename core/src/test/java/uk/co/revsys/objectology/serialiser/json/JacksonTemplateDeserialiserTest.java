@@ -6,17 +6,20 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import uk.co.revsys.objectology.action.model.UpdateAttributeAction;
 import uk.co.revsys.objectology.mapping.ObjectMapper;
 import uk.co.revsys.objectology.mapping.json.JsonTemplateMapper;
 import uk.co.revsys.objectology.model.ReferenceType;
 import uk.co.revsys.objectology.model.instance.Property;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
+import uk.co.revsys.objectology.model.template.LinkedObjectTemplate;
 import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
+import uk.co.revsys.objectology.security.RoleConstraint;
 
 public class JacksonTemplateDeserialiserTest {
 
@@ -45,7 +48,7 @@ public class JacksonTemplateDeserialiserTest {
     @Test
     public void testDoDeserialiseJSON() throws Exception {
         ObjectMapper objectMapper = new JsonTemplateMapper();
-        String json = "{\"id\":\"1234\",\"name\": \"Test Template\",\"nature\":\"object\",\"attributes\":{\"seq\": {\"nature\": \"sequence\", \"name\": \"seq1\", \"length\": 4}, \"startTime\":{\"nature\":\"time\"},\"limit\":{\"nature\":\"measurement\"},\"limits\":{\"memberTemplate\":{\"nature\":\"measurement\"},\"nature\":\"collection\"},\"status\":{\"nature\":\"property\", \"value\": \"{status}\"},\"accountHolder\":{\"nature\":\"object\",\"attributes\":{\"permissions\":{\"nature\":\"property\"},\"user\":{\"nature\":\"link\", \"referenceType\": \"name\", \"associatedType\": \"user\"}}},\"features\":{\"memberTemplate\":{\"nature\":\"object\",\"attributes\":{\"name\":{\"nature\":\"property\"}}},\"nature\":\"collection\"}},\"type\":\"subscription\"}";
+        String json = "{\"id\":\"1234\",\"name\": \"Test Template\",\"nature\":\"object\", \"actions\": {\"changeStatus\": {\"nature\": \"updateAttributeAction\", \"attribute\": \"status\"}}, \"securityConstraints\": [{\"nature\": \"roleConstraint\", \"role\": \"test:test\"}], \"attributes\":{\"account\": {\"nature\": \"linkedObject\", \"type\":\"account\", \"link\":\"subscription\"}, \"seq\": {\"nature\": \"sequence\", \"name\": \"seq1\", \"length\": 4}, \"startTime\":{\"nature\":\"time\"},\"limit\":{\"nature\":\"measurement\"},\"limits\":{\"memberTemplate\":{\"nature\":\"measurement\"},\"nature\":\"collection\"},\"status\":{\"nature\":\"property\", \"value\": \"{status}\"},\"accountHolder\":{\"nature\":\"object\",\"attributes\":{\"permissions\":{\"nature\":\"property\"},\"user\":{\"nature\":\"link\", \"referenceType\": \"name\", \"associatedType\": \"user\"}}},\"features\":{\"memberTemplate\":{\"nature\":\"object\",\"attributes\":{\"name\":{\"nature\":\"property\"}}},\"nature\":\"collection\"}},\"type\":\"subscription\"}";
         OlogyTemplate result = objectMapper.deserialise(json, OlogyTemplate.class);
         assertNotNull(result);
         assertEquals("subscription", result.getType());
@@ -64,6 +67,14 @@ public class JacksonTemplateDeserialiserTest {
         assertEquals(ReferenceType.name, userLinkTemplate.getReferenceType());
         assertTrue(result.getAttributeTemplate("limits") instanceof CollectionTemplate);
         assertEquals(MeasurementTemplate.class, result.getAttributeTemplate("limits", CollectionTemplate.class).getMemberTemplate().getClass());
+        assertEquals(1, result.getSecurityConstraints().size());
+        assertEquals(RoleConstraint.class, result.getSecurityConstraints().get(0).getClass());
+        assertEquals("test:test", ((RoleConstraint)result.getSecurityConstraints().get(0)).getRole());
+        assertEquals(1, result.getActions().size());
+        assertEquals(UpdateAttributeAction.class, result.getActions().get("changeStatus").getClass());
+        assertEquals("status", ((UpdateAttributeAction)result.getActions().get("changeStatus")).getAttribute());
+        assertEquals("account", result.getAttributeTemplate("account", LinkedObjectTemplate.class).getType());
+        assertEquals("subscription", result.getAttributeTemplate("account", LinkedObjectTemplate.class).getLink());
     }
 
 }

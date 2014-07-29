@@ -1,7 +1,5 @@
 package uk.co.revsys.objectology.model.instance;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.mapping.json.serialise.LinkSerialiser;
@@ -11,7 +9,7 @@ import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
 
 @JsonSerialize(using = LinkSerialiser.class)
-public class Link extends AbstractAttribute<LinkTemplate> {
+public class Link extends AbstractLink<LinkTemplate> {
 
 	private String reference;
 
@@ -22,7 +20,6 @@ public class Link extends AbstractAttribute<LinkTemplate> {
 	public Link() {
 	}
 
-    @JsonValue
 	public String getReference() {
 		return reference;
 	}
@@ -31,7 +28,7 @@ public class Link extends AbstractAttribute<LinkTemplate> {
 		this.reference = reference;
 	}
 
-    @JsonIgnore
+    @Override
 	public OlogyObject getAssociatedObject() throws DaoException {
 		ReferenceType referenceType = getTemplate().getReferenceType();
 		String associatedType = getTemplate().getAssociatedType();

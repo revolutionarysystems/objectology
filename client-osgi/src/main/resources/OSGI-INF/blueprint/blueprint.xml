@@ -15,37 +15,69 @@
         <route>
             <from uri="direct-vm://esb.service.objectology.proxy"/>
             <recipientList>
-				<simple>{{service.endpoint}}?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
-			</recipientList>
+                <simple>{{service.endpoint}}?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
+            </recipientList>
         </route>
         
         <route>
             <from uri="direct-vm://esb.service.objectology.instance.create"/>
-            <to uri="bean:instanceClient?method=create(${body})" />
+            <setHeader headerName="CamelHttpMethod">
+                <constant>POST</constant>
+            </setHeader>
+            <setHeader headerName="Content-Type">
+                <constant>application/json</constant>
+            </setHeader>
+            <recipientList>
+                <simple>{{service.endpoint}}/instance?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
+            </recipientList>
         </route>
 
         <route>
             <from uri="direct-vm://esb.service.objectology.instance.update"/>
-            <to uri="bean:instanceClient?method=update(${header.instanceType}, ${header.instanceId}, ${body})" />
+            <setHeader headerName="CamelHttpMethod">
+                <constant>POST</constant>
+            </setHeader>
+            <setHeader headerName="Content-Type">
+                <constant>application/json</constant>
+            </setHeader>
+            <recipientList>
+                <simple>{{service.endpoint}}/${header.instanceType}/${header.instanceId}?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
+            </recipientList>
+        </route>
+        
+        <route>
+            <from uri="direct-vm://esb.service.objectology.instance.invokeAction"/>
+            <setHeader headerName="CamelHttpMethod">
+                <constant>PUT</constant>
+            </setHeader>
+            <recipientList>
+                <simple>{{service.endpoint}}/${header.instanceType}/${header.instanceId}/action/${header.action}?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
+            </recipientList>
         </route>
 
         <route>
             <from uri="direct-vm://esb.service.objectology.instance.retrieve"/>
-            <to uri="bean:instanceClient?method=retrieve(${header.instanceType}, ${header.instanceId}, ${header.view})" />
+            <setHeader headerName="CamelHttpMethod">
+                <constant>GET</constant>
+            </setHeader>
+            <recipientList>
+                <simple>{{service.endpoint}}/${header.instanceType}/${header.instanceId}?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
+            </recipientList>
         </route>
 
         <route>
             <from uri="direct-vm://esb.service.objectology.instance.query"/>
-            <to uri="bean:instanceClient?method=query(${header.instanceType}, ${header.query}, ${header.view})" />
+            <setHeader headerName="CamelHttpMethod">
+                <constant>GET</constant>
+            </setHeader>
+            <setHeader headerName="Content-Type">
+                <constant>application/json</constant>
+            </setHeader>
+            <recipientList>
+                <simple>{{service.endpoint}}/${header.instanceType}/${header.instanceId}/query?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
+            </recipientList>
         </route>
 
     </camelContext>
-    
-    <bean id="instanceClient" class="uk.co.revsys.objectology.client.InstanceClient">
-        <argument ref="httpClient"/>
-        <argument value="${service.endpoint}"/>
-    </bean>
-    
-    <bean id="httpClient" class="uk.co.revsys.utils.http.HttpClientImpl"/>
 
 </blueprint>

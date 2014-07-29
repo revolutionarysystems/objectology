@@ -15,6 +15,18 @@ public class Measurement extends AtomicAttribute<BigDecimal> {
     public Measurement(String value) throws ParseException {
         super(value);
     }
+    
+    public Measurement(int value){
+        super(new BigDecimal(value));
+    }
+    
+    public Measurement(float value){
+        super(new BigDecimal(value));
+    }
+    
+    public Measurement(double value){
+        super(new BigDecimal(value));
+    }
 
     @Override
     public void setValueFromString(String value) throws ParseException {

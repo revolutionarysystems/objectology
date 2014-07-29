@@ -7,15 +7,17 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
+    <import resource="securityContext.xml"/>
+    
     <context:annotation-config/>
     
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>classpath:objectology.properties</value>
-			</list>
-		</property>
-	</bean>
+        <property name="locations">
+            <list>
+                <value>classpath:objectology.properties</value>
+            </list>
+        </property>
+    </bean>
 	
     <bean class="org.apache.wink.spring.Registrar">
         <property name="classes">
@@ -29,12 +31,15 @@
                     <constructor-arg index="2" ref="xmlObjectMapper"/>
                     <constructor-arg index="3" ref="jsonTemplateMapper"/>
                     <constructor-arg index="4" ref="templateViewMap"/>
+                    <constructor-arg index="5" ref="authorisationHandler"/>
                 </bean>
                 <bean class="uk.co.revsys.objectology.service.rest.InstanceRestService">
                     <constructor-arg index="0" ref="instanceService"/>
                     <constructor-arg index="1" ref="xmlObjectMapper"/>
                     <constructor-arg index="2" ref="jsonInstanceMapper"/>
                     <constructor-arg index="3" ref="instanceViewMap"/>
+                    <constructor-arg index="4" ref="authorisationHandler"/>
+                    <constructor-arg index="5" ref="actionHandlerFactory"/>
                 </bean>
             </set>
         </property>
@@ -65,7 +70,7 @@
     <bean id="instanceDaoFactory" class="uk.co.revsys.objectology.dao.mongo.MongoDaoFactory">
         <constructor-arg index="0" ref="mongoClient"/>
         <constructor-arg index="1" value="${db.name}"/>
-        <constructor-arg index="2" ref="jsonInstanceMapper"/>
+        <constructor-arg index="2" ref="jsonDBInstanceMapper"/>
         <constructor-arg index="3" value="uk.co.revsys.objectology.model.instance.OlogyInstance"/>
     </bean>
 	
@@ -78,19 +83,23 @@
     <bean id="instanceValidator" class="uk.co.revsys.objectology.service.OlogyInstanceValidator"/>
 	
     <bean id="xmlObjectMapper" class="uk.co.revsys.objectology.mapping.xml.XMLObjectMapper">
-        <constructor-arg index="0" ref="xmlSerialiserFactory"/>
-        <constructor-arg index="1" ref="xmlDeserialiserFactory"/>
+        <constructor-arg index="0" ref="xmlTemplateToJSONConverter"/>
+        <constructor-arg index="1" ref="xmlInstanceToJSONConverter"/>
+        <constructor-arg index="2" ref="jsonTemplateMapper"/>
+        <constructor-arg index="3" ref="jsonInstanceMapper"/>
     </bean>
     
-    <bean id="xmlSerialiserFactory" class="uk.co.revsys.objectology.serialiser.xml.DefaultXMLSerialiserFactory"/>
-	
-    <bean id="xmlDeserialiserFactory" class="uk.co.revsys.objectology.serialiser.xml.DefaultXMLDeserialiserFactory">
+    <bean id="xmlTemplateToJSONConverter" class="uk.co.revsys.objectology.mapping.xml.XMLTemplateToJSONConverter"/>
+    
+    <bean id="xmlInstanceToJSONConverter" class="uk.co.revsys.objectology.mapping.xml.XMLInstanceToJSONConverter">
         <constructor-arg index="0" ref="templateService"/>
     </bean>
 	
     <bean id="jsonInstanceMapper" class="uk.co.revsys.objectology.mapping.json.JsonInstanceMapper">
         <constructor-arg index="0" ref="sequenceGenerator"/>
     </bean>
+    
+    <bean id="jsonDBInstanceMapper" class="uk.co.revsys.objectology.mapping.json.JsonDBInstanceMapper"/>
 	
     <bean id="jsonTemplateMapper" class="uk.co.revsys.objectology.mapping.json.JsonTemplateMapper">
     </bean>
@@ -177,6 +186,30 @@
     <bean id="objectServiceFactory" class="uk.co.revsys.objectology.service.OlogyObjectServiceFactory">
         <property name="ologyTemplateService" ref="templateService"/>
         <property name="ologyInstanceService" ref="instanceService"/>
+    </bean>
+    
+    <bean id="authorisationHandlers" class="java.util.HashMap">
+        <constructor-arg index="0">
+            <map key-type="java.lang.String" value-type="uk.co.revsys.objectology.security.AuthorisationHandler">
+                <entry key="none" value-ref="allowAllAuthorisationHandler"/>
+                <entry key="default" value-ref="defaultAuthorisationHandler"/>
+            </map>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="authorisationHandler" factory-bean="authorisationHandlers" factory-method="get">
+        <constructor-arg index="0" value="${security}"/>
+    </bean>
+    
+    <bean id="allowAllAuthorisationHandler" class="uk.co.revsys.objectology.security.AllowAllAuthorisationHandler"/>
+    
+    <bean id="defaultAuthorisationHandler" class="uk.co.revsys.objectology.security.AuthorisationHandlerImpl">
+        <constructor-arg index="0" value="${security.administrator.role}"/>
+        <constructor-arg index="1" value="${security.user.role}"/>
+    </bean>
+    
+    <bean id="actionHandlerFactory" class="uk.co.revsys.objectology.action.handler.DefaultActionHandlerFactory">
+        <constructor-arg index="0" ref="jsonInstanceMapper"/>
     </bean>
 
 </beans>

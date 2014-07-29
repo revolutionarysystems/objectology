@@ -114,4 +114,16 @@ public class MongoDao<O extends OlogyObject> extends AbstractOlogyObjectDao<O> {
 		}
 	}
 
+    @Override
+    public boolean existsById(String id) throws DaoException {
+        DBObject result = dbCollection.findOne(new BasicDBObject("_id", id));
+        return result != null;
+    }
+
+    @Override
+    public boolean existsByName(String name) throws DaoException {
+        DBObject result = dbCollection.findOne(new BasicDBObject("name", name));
+        return result != null;
+    }
+
 }

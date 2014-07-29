@@ -9,6 +9,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import uk.co.revsys.objectology.dao.InMemoryOlogyObjectDao;
 import uk.co.revsys.objectology.dao.OlogyObjectDao;
+import uk.co.revsys.objectology.mapping.ObjectMapper;
+import uk.co.revsys.objectology.mapping.json.JsonInstanceMapper;
+import uk.co.revsys.objectology.mapping.xml.XMLInstanceToJSONConverter;
 import uk.co.revsys.objectology.model.instance.Collection;
 import uk.co.revsys.objectology.model.instance.Link;
 import uk.co.revsys.objectology.model.instance.Measurement;
@@ -22,6 +25,8 @@ import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
 import uk.co.revsys.objectology.mapping.xml.XMLObjectMapper;
+import uk.co.revsys.objectology.model.template.LinkedObjectsTemplate;
+import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
 import uk.co.revsys.objectology.service.OlogyTemplateServiceImpl;
 import uk.co.revsys.objectology.service.OlogyTemplateValidator;
 
@@ -53,7 +58,8 @@ public class XMLOlogyInstanceDeserialiserTest {
 	public void testDeserialise() throws Exception {
 		OlogyObjectDao dao = new InMemoryOlogyObjectDao();
 		OlogyTemplateServiceImpl templateService = new OlogyTemplateServiceImpl(dao, new OlogyTemplateValidator());
-		XMLObjectMapper objectMapper = new XMLObjectMapper(null, new DefaultXMLDeserialiserFactory(templateService));
+        OlogyObjectServiceFactory.setOlogyTemplateService(templateService);
+		ObjectMapper objectMapper = new XMLObjectMapper(null, new XMLInstanceToJSONConverter(templateService), null, new JsonInstanceMapper(null));
 		OlogyTemplate template = new OlogyTemplate();
 		template.getAttributeTemplates().put("status", new PropertyTemplate());
 		template.getAttributeTemplates().put("startTime", new TimeTemplate());
@@ -61,6 +67,7 @@ public class XMLOlogyInstanceDeserialiserTest {
 		template.getAttributeTemplates().put("endTime", new TimeTemplate());
         template.getAttributeTemplates().put("ids", new CollectionTemplate(new MeasurementTemplate()));
 		template.getAttributeTemplates().put("limits", new CollectionTemplate(new MeasurementTemplate()));
+        template.getAttributeTemplates().put("users", new LinkedObjectsTemplate("user", "subscription"));
 		OlogyTemplate partTemplate = new OlogyTemplate();
 		partTemplate.getAttributeTemplates().put("permissions", new PropertyTemplate());
 		partTemplate.getAttributeTemplates().put("user", new LinkTemplate());

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/util  http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="filterChainDefinitionMap" ref="filterChainDefinitionMap"/>
+    </bean>
+    
+    <bean id="filterChainDefinitionMap" class="uk.co.revsys.utils.spring.OrderedPropertyMapFactoryBean">
+        <property name="location" value="classpath:security-filters-${security}.properties"/>
+    </bean>
+
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="realm"/>
+        <property name="sessionManager" ref="sessionManager"/>
+        <property name="subjectDAO" ref="subjectDAO" />
+    </bean>
+    
+    <bean id="sessionManager"
+          class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <property name="sessionDAO" ref="sessionDAO" />
+    </bean>
+    
+    <bean id="sessionDAO" class="uk.co.revsys.user.manager.shiro.dao.MongoSessionDao">
+        <constructor-arg ref="mongo"/>
+    </bean>
+    
+    <bean id="mongo" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg index="0" ref="mongoClient"/>
+        <constructor-arg index="1" value="user-manager"/>
+    </bean>
+	
+    <bean id="mongoClient" class="com.mongodb.MongoClient">
+        <constructor-arg index="0" value="${user.manager.db.host}"/>
+    </bean>
+
+    <bean id="subjectDAO" class="org.apache.shiro.mgt.DefaultSubjectDAO">
+        <property name="sessionStorageEvaluator" ref="sessionStorageEvaluator"/>
+    </bean>
+
+    <bean id="sessionStorageEvaluator" class="org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator">
+        <property name="sessionStorageEnabled" value="false"/>
+    </bean>
+    
+    <bean id="realm" class="uk.co.revsys.user.manager.shiro.realm.DaoRealm">
+        <constructor-arg index="0" ref="accountService"/>
+        <constructor-arg index="1" ref="userService"/>
+        <property name="credentialsMatcher">
+            <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                <property name="hashAlgorithmName" value="SHA-256"/>
+                <property name="storedCredentialsHexEncoded" value="false"/>
+                <property name="hashIterations" value="500000"/>
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="accountService" class="uk.co.revsys.user.manager.service.AccountService">
+        <constructor-arg index="0" ref="accountDao"/>
+        <constructor-arg index="1" ref="userService"/>
+    </bean>
+	
+    <bean id="userService" class="uk.co.revsys.user.manager.service.UserService">
+        <constructor-arg index="0" ref="userDao"/>
+        <constructor-arg index="1" ref="roleService"/>
+        <constructor-arg index="2">
+            <null/>
+        </constructor-arg>
+        <constructor-arg index="3">
+            <null/>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="roleService" class="uk.co.revsys.user.manager.service.RoleService">
+        <constructor-arg index="0" ref="roleDao"/>
+        <constructor-arg index="1" ref="permissionService"/>
+    </bean>
+    
+    <bean id="permissionService" class="uk.co.revsys.user.manager.service.EntityServiceImpl">
+        <constructor-arg index="0" ref="permissionDao"/>
+    </bean>
+    
+    <bean id="accountDao" class="uk.co.revsys.user.manager.dao.SpringDataMongoDao">
+        <constructor-arg index="0">
+            <null/>
+        </constructor-arg>
+        <constructor-arg index="1" ref="mongo"/>
+        <constructor-arg index="2" value="uk.co.revsys.user.manager.model.Account"/>
+    </bean>
+	
+    <bean id="userDao" class="uk.co.revsys.user.manager.dao.SpringDataMongoDao">
+        <constructor-arg index="0">
+            <null/>
+        </constructor-arg>
+        <constructor-arg index="1" ref="mongo"/>
+        <constructor-arg index="2" value="uk.co.revsys.user.manager.model.User"/>
+    </bean>
+    
+    <bean id="roleDao" class="uk.co.revsys.user.manager.dao.SpringDataMongoDao">
+        <constructor-arg index="0">
+            <null/>
+        </constructor-arg>
+        <constructor-arg index="1" ref="mongo"/>
+        <constructor-arg index="2" value="uk.co.revsys.user.manager.model.Role"/>
+    </bean>
+	
+    <bean id="permissionDao" class="uk.co.revsys.user.manager.dao.SpringDataMongoDao">
+        <constructor-arg index="0">
+            <null/>
+        </constructor-arg>
+        <constructor-arg index="1" ref="mongo"/>
+        <constructor-arg index="2" value="uk.co.revsys.user.manager.model.Permission"/>
+    </bean>
+
+    <!--bean id="realm" class="uk.co.revsys.user.manager.shiro.realm.UserManagerRealm">
+        <constructor-arg index="0" ref="httpClient"/>
+        <constructor-arg index="1" value="${user.manager.url}"/>
+        <property name="credentialsMatcher">
+            <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                <property name="hashAlgorithmName" value="SHA-256"/>
+                <property name="storedCredentialsHexEncoded" value="false"/>
+                <property name="hashIterations" value="500000"/>
+            </bean>
+        </property>
+    </bean-->
+    
+    <bean id="httpClient" class="uk.co.revsys.utils.http.HttpClientImpl"/>
+
+    <!-- =========================================================
+    Shiro Spring-specific integration
+    ========================================================= -->
+    <!-- Post processor that automatically invokes init() and destroy() methods
+ for Spring-configured Shiro objects so you don't have to
+ 1) specify an init-method and destroy-method attributes for every bean
+    definition and
+ 2) even know which Shiro objects require these methods to be
+    called. -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+
+    <!-- Enable Shiro Annotations for Spring-configured beans.  Only run after
+    the lifecycleBeanProcessor has run: -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor"/>
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+    
+    <bean id="formAuthenticationFilter" class="uk.co.revsys.user.manager.filter.FormAuthenticationFilter"/>
+
+</beans>

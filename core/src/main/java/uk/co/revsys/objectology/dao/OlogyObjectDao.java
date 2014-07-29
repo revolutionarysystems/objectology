@@ -16,6 +16,10 @@ public interface OlogyObjectDao<O extends OlogyObject> {
 	
 	public <V extends Object> List<V> find(Query query, Class<? extends V> view) throws DaoException;
 
+    public boolean existsById(String id) throws DaoException;
+    
+    public boolean existsByName(String name) throws DaoException;
+    
 	public O findById(String id) throws DaoException;
 
 	public O findByName(String name) throws DaoException;
