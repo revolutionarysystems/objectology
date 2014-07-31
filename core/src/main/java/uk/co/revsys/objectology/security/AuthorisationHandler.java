@@ -7,8 +7,6 @@ public interface AuthorisationHandler {
 
     public boolean isAdministrator();
     
-    public boolean isUser();
-    
     public boolean isAuthorised(OlogyInstance instance, List<SecurityConstraint> securityConstraints);
     
 }

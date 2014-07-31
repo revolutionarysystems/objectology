@@ -205,7 +205,6 @@
     
     <bean id="defaultAuthorisationHandler" class="uk.co.revsys.objectology.security.AuthorisationHandlerImpl">
         <constructor-arg index="0" value="${security.administrator.role}"/>
-        <constructor-arg index="1" value="${security.user.role}"/>
     </bean>
     
     <bean id="actionHandlerFactory" class="uk.co.revsys.objectology.action.handler.DefaultActionHandlerFactory">
