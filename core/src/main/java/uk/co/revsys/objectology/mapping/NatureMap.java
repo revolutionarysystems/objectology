@@ -13,6 +13,8 @@ import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
+import uk.co.revsys.objectology.security.IsAdministratorConstraint;
+import uk.co.revsys.objectology.security.PermissionConstraint;
 import uk.co.revsys.objectology.security.RoleConstraint;
 
 public class NatureMap {
@@ -20,6 +22,7 @@ public class NatureMap {
     private static final DualHashBidiMap<String, Class<? extends ObjectWithNature>> natureMap = new DualHashBidiMap<String, Class<? extends ObjectWithNature>>();
     
     static {
+        // Attributes
         NatureMap.setNature("property", PropertyTemplate.class);
 		NatureMap.setNature("measurement", MeasurementTemplate.class);
 		NatureMap.setNature("time", TimeTemplate.class);
@@ -27,11 +30,15 @@ public class NatureMap {
 		NatureMap.setNature("collection", CollectionTemplate.class);
 		NatureMap.setNature("object", OlogyTemplate.class);
         NatureMap.setNature("sequence", SequenceTemplate.class);
-        NatureMap.setNature("roleConstraint", RoleConstraint.class);
-        NatureMap.setNature("updateAttributeAction", UpdateAttributeAction.class);
-        NatureMap.setNature("addToCollectionAction", AddToCollectionAction.class);
         NatureMap.setNature("linkedObject", LinkedObjectTemplate.class);
         NatureMap.setNature("linkedObjects", LinkedObjectsTemplate.class);
+        // Security
+        NatureMap.setNature("hasRole", RoleConstraint.class);
+        NatureMap.setNature("hasPermission", PermissionConstraint.class);
+        NatureMap.setNature("isAdministrator", IsAdministratorConstraint.class);
+        // Actions
+        NatureMap.setNature("updateAttribute", UpdateAttributeAction.class);
+        NatureMap.setNature("addToCollection", AddToCollectionAction.class);
     }
     
     public static String getTemplateNature(Class<? extends ObjectWithNature> templateType){

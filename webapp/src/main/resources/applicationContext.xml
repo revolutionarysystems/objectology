@@ -8,6 +8,7 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
     <import resource="securityContext.xml"/>
+    <import resource="applicationContextExtend.xml"/>
     
     <context:annotation-config/>
     

@@ -58,7 +58,7 @@ public class JacksonTemplateSerialiserTest {
         statusProperty.setTemplate(statusTemplate);
         statusTemplate.setValue(statusProperty);
         RoleConstraint roleConstraint = new RoleConstraint("test:test");
-        template.getSecurityConstraints().add(roleConstraint);
+        template.getViewConstraints().add(roleConstraint);
         UpdateAttributeAction replacePropertyAction = new UpdateAttributeAction("status");
         template.getActions().put("changeStatus", replacePropertyAction);
         template.getAttributeTemplates().put("seq", new SequenceTemplate("seq1", 4));
@@ -88,8 +88,8 @@ public class JacksonTemplateSerialiserTest {
         assertEquals("property", json.getJSONObject("attributes").getJSONObject("status").get("nature"));
         assertEquals("{status}", json.getJSONObject("attributes").getJSONObject("status").getString("value"));
         assertEquals("measurement", json.getJSONObject("attributes").getJSONObject("limits").getJSONObject("memberTemplate").getString("nature"));
-        assertEquals("test:test", json.getJSONArray("securityConstraints").getJSONObject(0).getString("role"));
-        assertEquals("roleConstraint", json.getJSONArray("securityConstraints").getJSONObject(0).getString("nature"));
+        assertEquals("test:test", json.getJSONArray("viewConstraints").getJSONObject(0).getString("role"));
+        assertEquals("hasRole", json.getJSONArray("viewConstraints").getJSONObject(0).getString("nature"));
         assertEquals("status", json.getJSONObject("actions").getJSONObject("changeStatus").getString("attribute"));
         assertEquals("account", json.getJSONObject("attributes").getJSONObject("account").getString("type"));
         assertEquals("subscription", json.getJSONObject("attributes").getJSONObject("account").getString("link"));

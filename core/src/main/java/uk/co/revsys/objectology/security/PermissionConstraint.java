@@ -29,7 +29,7 @@ public class PermissionConstraint implements SecurityConstraint{
 
     @Override
     public String getNature() {
-        return "permissionConstraint";
+        return "hasPermission";
     }
     
 }

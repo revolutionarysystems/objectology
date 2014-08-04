@@ -9,5 +9,18 @@ public abstract class AbstractLink<A extends AttributeTemplate> extends Abstract
     public abstract String getReference();
     
     public abstract OlogyObject getAssociatedObject() throws DaoException;
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof AbstractLink){
+            obj = ((AbstractLink)obj).getReference();
+        }
+        if(getReference() == null){
+            return obj == null;
+        }
+        return getReference().equals(obj);
+    }
+    
+    
     
 }

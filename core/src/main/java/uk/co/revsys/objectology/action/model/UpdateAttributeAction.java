@@ -21,7 +21,7 @@ public class UpdateAttributeAction extends AbstractAction {
 
     @Override
     public String getNature() {
-        return "updateAttributeAction";
+        return "updateAttribute";
     }
 
 }

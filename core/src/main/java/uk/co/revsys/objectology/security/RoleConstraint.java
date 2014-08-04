@@ -29,7 +29,7 @@ public class RoleConstraint implements SecurityConstraint{
 
     @Override
     public String getNature() {
-        return "roleConstraint";
+        return "hasRole";
     }
     
 }

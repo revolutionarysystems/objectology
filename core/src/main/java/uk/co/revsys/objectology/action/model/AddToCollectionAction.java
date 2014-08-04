@@ -31,7 +31,7 @@ public class AddToCollectionAction extends AbstractAction {
 
     @Override
     public String getNature() {
-        return "addToCollectionAction";
+        return "addToCollection";
     }
 
 }

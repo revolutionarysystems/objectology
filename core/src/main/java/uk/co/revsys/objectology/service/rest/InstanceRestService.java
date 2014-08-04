@@ -136,10 +136,10 @@ public class InstanceRestService extends AbstractRestService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createFromXML(String xml) {
         try {
-            if (!isAdministrator()) {
+            OlogyInstance object = xmlObjectMapper.deserialise(xml, OlogyInstance.class);
+            if (!isAuthorisedToCreate(object)) {
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
-            OlogyInstance object = xmlObjectMapper.deserialise(xml, OlogyInstance.class);
             object = service.create(object);
             return buildResponse(object);
         } catch (DeserialiserException ex) {
@@ -157,10 +157,10 @@ public class InstanceRestService extends AbstractRestService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createFromJSON(String json) {
         try {
-            if (!isAdministrator()) {
+            OlogyInstance object = getJsonObjectMapper().deserialise(json, OlogyInstance.class);
+            if (!isAuthorisedToCreate(object)) {
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
-            OlogyInstance object = getJsonObjectMapper().deserialise(json, OlogyInstance.class);
             object = service.create(object);
             return buildResponse(object);
         } catch (DeserialiserException ex) {
@@ -305,7 +305,7 @@ public class InstanceRestService extends AbstractRestService {
     }
 
     private boolean isAuthorisedToView(OlogyInstance instance) {
-        return getAuthorisationHandler().isAuthorised(instance, instance.getTemplate().getSecurityConstraints());
+        return getAuthorisationHandler().isAuthorised(instance, instance.getTemplate().getViewConstraints());
     }
 
     private boolean isAuthorisedToView(List<OlogyInstance> instances) {
@@ -317,6 +317,10 @@ public class InstanceRestService extends AbstractRestService {
             }
         }
         return true;
+    }
+    
+    private boolean isAuthorisedToCreate(OlogyInstance instance){
+        return getAuthorisationHandler().isAuthorised(instance, instance.getTemplate().getCreationConstraints());
     }
 
     private boolean isAuthorisedToInvokeAction(OlogyInstance instance, Action action) {

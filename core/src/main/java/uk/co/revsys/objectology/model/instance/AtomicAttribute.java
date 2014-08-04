@@ -37,5 +37,16 @@ public abstract class AtomicAttribute<V extends Object> extends AbstractAttribut
         }
         return getValue().toString();
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof AtomicAttribute){
+            obj = ((AtomicAttribute)obj).getValue();
+        }
+        if(getValue()==null){
+            return obj == null;
+        }
+        return getValue().equals(obj);
+    }
 	
 }
