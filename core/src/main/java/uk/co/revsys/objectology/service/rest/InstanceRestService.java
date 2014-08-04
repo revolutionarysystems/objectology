@@ -190,6 +190,26 @@ public class InstanceRestService extends AbstractRestService {
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         }
     }
+    
+    @GET
+    @Path("/{type}/name/{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response findByName(@PathParam("type") String type, @PathParam("name") String name, @QueryParam("depth") int depth) {
+        System.out.println("findByName = " + name);
+        try {
+            OlogyInstance result = service.findByName(type, name);
+            if (result == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            if (!isAuthorisedToView(result)) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
+            return buildResponse(result, depth);
+        } catch (DaoException ex) {
+            LOG.error("Error finding instance " + type + ":" + name, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+        }
+    }
 
     @POST
     @Path("/{type}/{id}")

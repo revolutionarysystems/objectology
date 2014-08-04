@@ -64,6 +64,16 @@
                 <simple>{{service.endpoint}}/${header.instanceType}/${header.instanceId}?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
             </recipientList>
         </route>
+        
+        <route>
+            <from uri="direct-vm://esb.service.objectology.instance.retrieveByName"/>
+            <setHeader headerName="CamelHttpMethod">
+                <constant>GET</constant>
+            </setHeader>
+            <recipientList>
+                <simple>{{service.endpoint}}/${header.instanceType}/name/${header.instanceName}?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
+            </recipientList>
+        </route>
 
         <route>
             <from uri="direct-vm://esb.service.objectology.instance.query"/>
@@ -74,7 +84,7 @@
                 <constant>application/json</constant>
             </setHeader>
             <recipientList>
-                <simple>{{service.endpoint}}/${header.instanceType}/${header.instanceId}/query?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
+                <simple>{{service.endpoint}}/${header.instanceType}/query?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
             </recipientList>
         </route>
 
