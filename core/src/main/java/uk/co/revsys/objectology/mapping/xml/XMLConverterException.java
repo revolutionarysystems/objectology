@@ -1,6 +1,8 @@
 package uk.co.revsys.objectology.mapping.xml;
 
-public class XMLConverterException extends Exception{
+import uk.co.revsys.objectology.mapping.DeserialiserException;
+
+public class XMLConverterException extends DeserialiserException{
 
     public XMLConverterException() {
     }

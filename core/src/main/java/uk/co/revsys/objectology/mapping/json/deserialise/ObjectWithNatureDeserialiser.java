@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import uk.co.revsys.objectology.mapping.NatureMap;
+import uk.co.revsys.objectology.mapping.UnknownNatureException;
 import uk.co.revsys.objectology.model.ObjectWithNature;
 
 public class ObjectWithNatureDeserialiser<O extends ObjectWithNature> extends JsonDeserializer<O> {
@@ -18,6 +19,9 @@ public class ObjectWithNatureDeserialiser<O extends ObjectWithNature> extends Js
         JsonNode root = jp.getCodec().readTree(jp);
         String nature = root.get("nature").asText();
         Class<? extends ObjectWithNature> templateType = NatureMap.getTemplateType(nature);
+        if(templateType == null){
+            throw new UnknownNatureException(nature);
+        }
         ObjectWithNature object = mapper.readValue(root.toString(), templateType);
         return (O)object;
     }

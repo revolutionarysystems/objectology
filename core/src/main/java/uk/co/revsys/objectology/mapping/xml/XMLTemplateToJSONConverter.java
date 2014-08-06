@@ -9,12 +9,14 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import uk.co.revsys.objectology.mapping.DeserialiserException;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.mapping.NatureMap;
+import uk.co.revsys.objectology.mapping.UnknownNatureException;
 
 public class XMLTemplateToJSONConverter {
 
-    public String convert(String source) throws XMLConverterException {
+    public String convert(String source) throws DeserialiserException {
         try {
             Node xml = DocumentHelper.parseText(source).getRootElement();
             return convert(xml, OlogyTemplate.class).toString();
@@ -23,7 +25,7 @@ public class XMLTemplateToJSONConverter {
         }
     }
 
-    private Object convert(Node xml, Class type) {
+    private Object convert(Node xml, Class type) throws UnknownNatureException {
         if (type.equals(String.class) || type.isPrimitive()) {
             return xml.getText();
         } else if (List.class.isAssignableFrom(type) || Array.class.isAssignableFrom(type)) {
@@ -58,12 +60,16 @@ public class XMLTemplateToJSONConverter {
         }
     }
 
-    private Class getType(Node xml, Class parentType) {
+    private Class getType(Node xml, Class parentType) throws UnknownNatureException {
         String nodeName = xml.getName();
         Node natureNode = xml.selectSingleNode("@o:nature");
         if (natureNode != null) {
             String nature = natureNode.getText();
-            return NatureMap.getTemplateType(nature);
+            Class type = NatureMap.getTemplateType(nature);
+            if(type==null){
+                throw new UnknownNatureException(nature);
+            }
+            return type;
         }
         Method[] methods = parentType.getMethods();
         for (Method method : methods) {
