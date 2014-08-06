@@ -71,7 +71,7 @@
                 <constant>GET</constant>
             </setHeader>
             <recipientList>
-                <simple>{{service.endpoint}}/${header.instanceType}/name/${header.instanceName}?bridgeEndpoint=true&amp;throwExceptionOnFailure=true</simple>
+                <simple>{{service.endpoint}}/${header.instanceType}/name/${header.instanceName}?bridgeEndpoint=true&amp;throwExceptionOnFailure=true&amp;authMethod=Basic&amp;authUsername=${property.username}&amp;authPassword=${property.password}</simple>
             </recipientList>
         </route>
 
