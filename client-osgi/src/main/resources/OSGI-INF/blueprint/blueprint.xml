@@ -15,7 +15,7 @@
         <route>
             <from uri="direct-vm://esb.service.objectology.proxy"/>
             <recipientList>
-                <simple>{{service.endpoint}}?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
+                <simple>{{service.endpoint}}?bridgeEndpoint=true&amp;throwExceptionOnFailure=true</simple>
             </recipientList>
         </route>
         
@@ -28,7 +28,7 @@
                 <constant>application/json</constant>
             </setHeader>
             <recipientList>
-                <simple>{{service.endpoint}}/instance?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
+                <simple>{{service.endpoint}}/instance?bridgeEndpoint=true&amp;throwExceptionOnFailure=true&amp;authMethod=Basic&amp;authUsername=${property.username}&amp;authPassword=${property.password}</simple>
             </recipientList>
         </route>
 
@@ -41,7 +41,7 @@
                 <constant>application/json</constant>
             </setHeader>
             <recipientList>
-                <simple>{{service.endpoint}}/${header.instanceType}/${header.instanceId}?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
+                <simple>{{service.endpoint}}/${header.instanceType}/${header.instanceId}?bridgeEndpoint=true&amp;throwExceptionOnFailure=true&amp;authMethod=Basic&amp;authUsername=${property.username}&amp;authPassword=${property.password}</simple>
             </recipientList>
         </route>
         
@@ -51,7 +51,7 @@
                 <constant>PUT</constant>
             </setHeader>
             <recipientList>
-                <simple>{{service.endpoint}}/${header.instanceType}/${header.instanceId}/action/${header.action}?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
+                <simple>{{service.endpoint}}/${header.instanceType}/${header.instanceId}/action/${header.action}?bridgeEndpoint=true&amp;throwExceptionOnFailure=true</simple>
             </recipientList>
         </route>
 
@@ -61,7 +61,7 @@
                 <constant>GET</constant>
             </setHeader>
             <recipientList>
-                <simple>{{service.endpoint}}/${header.instanceType}/${header.instanceId}?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
+                <simple>{{service.endpoint}}/${header.instanceType}/${header.instanceId}?bridgeEndpoint=true&amp;throwExceptionOnFailure=true</simple>
             </recipientList>
         </route>
         
@@ -71,7 +71,7 @@
                 <constant>GET</constant>
             </setHeader>
             <recipientList>
-                <simple>{{service.endpoint}}/${header.instanceType}/name/${header.instanceName}?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
+                <simple>{{service.endpoint}}/${header.instanceType}/name/${header.instanceName}?bridgeEndpoint=true&amp;throwExceptionOnFailure=true</simple>
             </recipientList>
         </route>
 
@@ -84,7 +84,7 @@
                 <constant>application/json</constant>
             </setHeader>
             <recipientList>
-                <simple>{{service.endpoint}}/${header.instanceType}/query?bridgeEndpoint=true&amp;throwExceptionOnFailure=false</simple>
+                <simple>{{service.endpoint}}/${header.instanceType}/query?bridgeEndpoint=true&amp;throwExceptionOnFailure=true</simple>
             </recipientList>
         </route>
 
