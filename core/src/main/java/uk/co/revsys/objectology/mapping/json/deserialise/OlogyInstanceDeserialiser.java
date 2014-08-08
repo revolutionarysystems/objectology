@@ -32,7 +32,6 @@ public class OlogyInstanceDeserialiser extends JsonDeserializer<OlogyInstance> {
             instance.setName(root.get("name").asText());
         }
         OlogyTemplate template = (OlogyTemplate) dc.getAttribute("template");
-        System.out.println("template = " + template);
         if (template == null) {
             String templateId = null;
             if (root.has("template")) {

@@ -38,9 +38,10 @@
                     <constructor-arg index="0" ref="instanceService"/>
                     <constructor-arg index="1" ref="xmlObjectMapper"/>
                     <constructor-arg index="2" ref="jsonInstanceMapper"/>
-                    <constructor-arg index="3" ref="instanceViewMap"/>
-                    <constructor-arg index="4" ref="authorisationHandler"/>
-                    <constructor-arg index="5" ref="actionHandlerFactory"/>
+                    <constructor-arg index="3" ref="xmlInstanceToJSONConverter"/>
+                    <constructor-arg index="4" ref="instanceViewMap"/>
+                    <constructor-arg index="5" ref="authorisationHandler"/>
+                    <constructor-arg index="6" ref="actionHandlerFactory"/>
                 </bean>
             </set>
         </property>

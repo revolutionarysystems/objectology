@@ -22,6 +22,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -39,6 +43,9 @@ import uk.co.revsys.objectology.query.QueryImpl;
 import uk.co.revsys.objectology.mapping.DeserialiserException;
 import uk.co.revsys.objectology.mapping.ObjectMapper;
 import uk.co.revsys.objectology.mapping.SerialiserException;
+import uk.co.revsys.objectology.mapping.xml.XMLConverterException;
+import uk.co.revsys.objectology.mapping.xml.XMLInstanceToJSONConverter;
+import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.security.AuthorisationHandler;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
 import uk.co.revsys.objectology.view.ViewNotFoundException;
@@ -51,12 +58,14 @@ public class InstanceRestService extends AbstractRestService {
     private final OlogyInstanceService<OlogyInstance> service;
     private final ObjectMapper xmlObjectMapper;
     private final ActionHandlerFactory actionHandlerFactory;
+    private final XMLInstanceToJSONConverter xmlInstanceToJsonConverter;
 
-    public InstanceRestService(OlogyInstanceService service, ObjectMapper xmlObjectMapper, ObjectMapper jsonObjectMapper, HashMap<String, Class> viewMap, AuthorisationHandler authorisationHandler, ActionHandlerFactory actionHandlerFactory) {
+    public InstanceRestService(OlogyInstanceService service, ObjectMapper xmlObjectMapper, ObjectMapper jsonObjectMapper, XMLInstanceToJSONConverter xmlInstanceToJsonConverter, HashMap<String, Class> viewMap, AuthorisationHandler authorisationHandler, ActionHandlerFactory actionHandlerFactory) {
         super(jsonObjectMapper, viewMap, authorisationHandler);
         this.service = service;
         this.xmlObjectMapper = xmlObjectMapper;
         this.actionHandlerFactory = actionHandlerFactory;
+        this.xmlInstanceToJsonConverter = xmlInstanceToJsonConverter;
     }
 
     @GET
@@ -237,6 +246,38 @@ public class InstanceRestService extends AbstractRestService {
         } catch (SerialiserException ex) {
             LOG.error("Error updating instance " + type + ":" + id, ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+        }
+    }
+    
+    @POST
+    @Path("/{type}/{id}")
+    @Consumes(MediaType.TEXT_XML)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateFromXML(@PathParam("type") String type, @PathParam("id") String id, String xml) {
+        try {
+            if (!isAdministrator()) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
+            System.out.println(xml);
+            OlogyInstance existingObject = service.findById(type, id);
+            OlogyTemplate template = existingObject.getTemplate();
+            Document xmlDoc = DocumentHelper.parseText(xml);
+            Element templateEl = DocumentHelper.createElement("template");
+            templateEl.setText(template.getId());
+            xmlDoc.getRootElement().add(templateEl);
+            System.out.println(xmlDoc.asXML());
+            String json = xmlInstanceToJsonConverter.convert(xmlDoc.asXML());
+            System.out.println("json = " + json);
+            return updateFromJSON(type, id, json);
+        } catch (XMLConverterException ex) {
+            LOG.error("Error updating instance " + type + ":" + id, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+        } catch (DaoException ex) {
+            LOG.error("Error updating instance " + type + ":" + id, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+        } catch (DocumentException ex) {
+            LOG.error("Error updating instance " + type + ":" + id, ex);
+            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
         }
     }
 
