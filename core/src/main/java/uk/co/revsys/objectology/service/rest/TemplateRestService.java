@@ -40,8 +40,8 @@ public class TemplateRestService extends AbstractRestService {
     private final ObjectMapper xmlObjectMapper;
     private final TemplateLoader templateLoader;
 
-    public TemplateRestService(OlogyTemplateService service, TemplateLoader templateLoader, ObjectMapper xmlObjectMapper, ObjectMapper jsonObjectMapper, HashMap<String, Class> viewMap, AuthorisationHandler authorisationHandler) {
-        super(jsonObjectMapper, viewMap, authorisationHandler);
+    public TemplateRestService(OlogyTemplateService service, TemplateLoader templateLoader, ObjectMapper xmlObjectMapper, ObjectMapper jsonObjectMapper, AuthorisationHandler authorisationHandler) {
+        super(jsonObjectMapper, authorisationHandler);
         this.service = service;
         this.xmlObjectMapper = xmlObjectMapper;
         this.templateLoader = templateLoader;
@@ -49,20 +49,16 @@ public class TemplateRestService extends AbstractRestService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findAll(@QueryParam("view") String viewName) {
+    public Response findAll() {
         try {
             if (!isAdministrator()) {
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
-            Class view = getView(viewName);
-            List<OlogyTemplate> results = service.findAll(view);
+            List<OlogyTemplate> results = service.findAll();
             return buildResponse(results);
         } catch (DaoException ex) {
             LOG.error("Error retrieving all templates", ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
-        } catch (ViewNotFoundException ex) {
-            LOG.error("Error retrieving all templates", ex);
-            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
         }
     }
 
@@ -70,21 +66,17 @@ public class TemplateRestService extends AbstractRestService {
     @Path("/query")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response query(@QueryParam("view") String viewName, String json) {
+    public Response query(String json) {
         try {
             if (!isAdministrator()) {
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
-            Class view = getView(viewName);
             Query query = new QueryImpl(json);
-            List<OlogyTemplate> results = service.find(query, view);
+            List<OlogyTemplate> results = service.find(query);
             return buildResponse(results);
         } catch (DaoException ex) {
             LOG.error("Error querying templates", ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
-        } catch (ViewNotFoundException ex) {
-            LOG.error("Error querying templates", ex);
-            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
         }
     }
 
@@ -105,15 +97,11 @@ public class TemplateRestService extends AbstractRestService {
             query.put(queryParam.getKey(), queryParam.getValue().get(0));
         }
         try {
-            Class view = getView(viewName);
-            List<OlogyTemplate> results = service.find(query, view);
+            List<OlogyTemplate> results = service.find(query);
             return buildResponse(results);
         } catch (DaoException ex) {
             LOG.error("Error querying templates", ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
-        } catch (ViewNotFoundException ex) {
-            LOG.error("Error querying templates", ex);
-            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
         }
     }
 

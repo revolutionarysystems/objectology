@@ -65,7 +65,7 @@ public class InstanceRestServiceTest extends AbstractShiroTest {
         OlogyInstanceService mockInstanceService = mocksControl.createMock(OlogyInstanceService.class);
         OlogyTemplateService mockTemplateService = mocksControl.createMock(OlogyTemplateService.class);
         OlogyObjectServiceFactory.setOlogyTemplateService(mockTemplateService);
-        InstanceRestService instanceRestService = new InstanceRestService(mockInstanceService, null, new JsonInstanceMapper(new InMemorySequenceGenerator()), null, null, new AllowAllAuthorisationHandler(), null);
+        InstanceRestService instanceRestService = new InstanceRestService(mockInstanceService, null, new JsonInstanceMapper(new InMemorySequenceGenerator()), null, new AllowAllAuthorisationHandler(), null, null, null);
         OlogyTemplate template = new OlogyTemplate();
         template.setId("abcd");
         template.getAttributeTemplates().put("prop1", new PropertyTemplate());
@@ -116,7 +116,7 @@ public class InstanceRestServiceTest extends AbstractShiroTest {
         OlogyInstanceService mockInstanceService = mocksControl.createMock(OlogyInstanceService.class);
         OlogyTemplateService mockTemplateService = mocksControl.createMock(OlogyTemplateService.class);
         OlogyObjectServiceFactory.setOlogyTemplateService(mockTemplateService);
-        InstanceRestService instanceRestService = new InstanceRestService(mockInstanceService, null, new JsonInstanceMapper(new InMemorySequenceGenerator()), new XMLInstanceToJSONConverter(mockTemplateService), null, new AllowAllAuthorisationHandler(), null);
+        InstanceRestService instanceRestService = new InstanceRestService(mockInstanceService, null, new JsonInstanceMapper(new InMemorySequenceGenerator()), new XMLInstanceToJSONConverter(mockTemplateService), new AllowAllAuthorisationHandler(), null, null, null);
         OlogyTemplate template = new OlogyTemplate();
         template.setId("abcd");
         template.setType("subscription");

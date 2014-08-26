@@ -52,6 +52,10 @@ public class XMLTemplateToJSONConverterTest {
 		source.append("<user o:nature='link' o:assocType='user'/>");
 		source.append("</accountHolder>");
         source.append("</attributes>");
+        source.append("<views>");
+        source.append("<summary>");
+        source.append("</summary>");
+        source.append("</views>");
 		source.append("</subscription>");
         XMLTemplateToJSONConverter instance = new XMLTemplateToJSONConverter();
         String result = instance.convert(source.toString());
@@ -61,6 +65,7 @@ public class XMLTemplateToJSONConverterTest {
         assertEquals("subscription", json.getString("type"));
         assertEquals("measurement", json.getJSONObject("attributes").getJSONObject("limit").getString("nature"));
         assertEquals("Template", json.getJSONObject("attributes").getJSONObject("status").getString("value"));
+        assertNotNull(json.getJSONObject("views").getJSONObject("summary"));
     }
 
 }

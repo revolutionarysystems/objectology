@@ -31,17 +31,28 @@
                     <constructor-arg index="1" ref="templateLoader"/>
                     <constructor-arg index="2" ref="xmlObjectMapper"/>
                     <constructor-arg index="3" ref="jsonTemplateMapper"/>
-                    <constructor-arg index="4" ref="templateViewMap"/>
-                    <constructor-arg index="5" ref="authorisationHandler"/>
+                    <constructor-arg index="4" ref="authorisationHandler"/>
+                </bean>
+                <bean class="uk.co.revsys.objectology.service.rest.ViewRestService">
+                    <constructor-arg index="0" ref="viewService"/>
+                    <constructor-arg index="1" ref="viewDefinitionParser"/>
+                    <constructor-arg index="2" ref="jsonTemplateMapper"/>
+                    <constructor-arg index="3" ref="authorisationHandler"/>
+                </bean>
+                <bean class="uk.co.revsys.objectology.service.rest.AdminRestService">
+                    <constructor-arg index="0" ref="adminDao"/>
+                    <constructor-arg index="1" ref="jsonTemplateMapper"/>
+                    <constructor-arg index="2" ref="authorisationHandler"/>
                 </bean>
                 <bean class="uk.co.revsys.objectology.service.rest.InstanceRestService">
                     <constructor-arg index="0" ref="instanceService"/>
                     <constructor-arg index="1" ref="xmlObjectMapper"/>
                     <constructor-arg index="2" ref="jsonInstanceMapper"/>
                     <constructor-arg index="3" ref="xmlInstanceToJSONConverter"/>
-                    <constructor-arg index="4" ref="instanceViewMap"/>
-                    <constructor-arg index="5" ref="authorisationHandler"/>
-                    <constructor-arg index="6" ref="actionHandlerFactory"/>
+                    <constructor-arg index="4" ref="authorisationHandler"/>
+                    <constructor-arg index="5" ref="actionHandlerFactory"/>
+                    <constructor-arg index="6" ref="pathEvaluator"/>
+                    <constructor-arg index="7" ref="viewService"/>
                 </bean>
             </set>
         </property>
@@ -75,6 +86,11 @@
         <constructor-arg index="2" ref="jsonDBInstanceMapper"/>
         <constructor-arg index="3" value="uk.co.revsys.objectology.model.instance.OlogyInstance"/>
     </bean>
+    
+    <bean id="adminDao" class="uk.co.revsys.objectology.dao.mongo.MongoAdminDao">
+        <constructor-arg index="0" ref="mongoClient"/>
+        <constructor-arg index="1" value="${db.name}"/>
+    </bean>
 	
     <bean id="mongoClient" class="com.mongodb.MongoClient">
         <constructor-arg index="0" value="${db.host}"/>
@@ -105,10 +121,6 @@
 	
     <bean id="jsonTemplateMapper" class="uk.co.revsys.objectology.mapping.json.JsonTemplateMapper">
     </bean>
-	
-    <bean id="templateViewMap" class="uk.co.revsys.objectology.view.DefaultTemplateViewMap"/>
-	
-    <bean id="instanceViewMap" class="uk.co.revsys.objectology.view.DefaultInstanceViewMap"/>
     
     <bean id="templateProvider" class="uk.co.revsys.resource.repository.provider.ResourceProvider">
         <constructor-arg index="0" ref="templateRepository"/>
@@ -212,5 +224,27 @@
     <bean id="actionHandlerFactory" class="uk.co.revsys.objectology.action.handler.DefaultActionHandlerFactory">
         <constructor-arg index="0" ref="jsonInstanceMapper"/>
     </bean>
+    
+    <bean id="pathEvaluator" class="uk.co.revsys.objectology.transform.path.PathEvaluatorImpl"/>
+    
+    <bean id="viewService" class="uk.co.revsys.objectology.service.ViewServiceImpl">
+        <constructor-arg index="0" ref="viewDefinitionDao"/>
+        <constructor-arg index="1" ref="ologyTransformer"/>
+        <constructor-arg index="2" ref="defaultViewDefinitionMap"/>
+    </bean>
+    
+    <bean id="defaultViewDefinitionMap" class="uk.co.revsys.objectology.view.definition.DefaultViewDefinitionMap"/>
+    
+    <bean id="viewDefinitionDao" class="uk.co.revsys.objectology.dao.mongo.MongoViewDefinitionDao">
+        <constructor-arg index="0" ref="mongoClient"/>
+        <constructor-arg index="1" value="${db.name}"/>
+        <constructor-arg index="2" ref="jsonViewDefinitionMapper"/>
+    </bean>
+    
+    <bean id="jsonViewDefinitionMapper" class="uk.co.revsys.objectology.mapping.json.JsonViewDefinitionMapper"/>
+    
+    <bean id="ologyTransformer" class="uk.co.revsys.objectology.transform.OlogyTransformerImpl"></bean>
+    
+    <bean id="viewDefinitionParser" class="uk.co.revsys.objectology.view.definition.parser.ViewDefinitionParserImpl"/>
 
 </beans>

@@ -1,21 +1,21 @@
-package uk.co.revsys.objectology.action.model;
+package uk.co.revsys.objectology.view;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import uk.co.revsys.objectology.security.SecurityConstraint;
 
-public abstract class AbstractAction implements Action{
+public class View {
 
-    private List<SecurityConstraint> securityConstraints = new ArrayList<SecurityConstraint>();
+    private List<SecurityConstraint> securityConstraints = new LinkedList<SecurityConstraint>();
 
-    public AbstractAction() {
+    public View() {
+        
     }
 
-    public AbstractAction(List<SecurityConstraint> securityConstraints) {
+    public View(List<SecurityConstraint> securityConstraints) {
         this.securityConstraints = securityConstraints;
     }
-    
-    @Override
+
     public List<SecurityConstraint> getSecurityConstraints() {
         return securityConstraints;
     }
@@ -23,5 +23,4 @@ public abstract class AbstractAction implements Action{
     public void setSecurityConstraints(List<SecurityConstraint> securityConstraints) {
         this.securityConstraints = securityConstraints;
     }
-    
 }

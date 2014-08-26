@@ -15,6 +15,7 @@ import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.mapping.json.deserialise.AttributeTemplatesDeserialiser;
 import uk.co.revsys.objectology.mapping.xml.XMLRootElement;
 import uk.co.revsys.objectology.security.SecurityConstraint;
+import uk.co.revsys.objectology.view.View;
 
 //@JsonDeserialize(using = TemplateDeserialiser.class)
 @XMLRootElement(field = "type")
@@ -26,6 +27,12 @@ public class OlogyTemplate extends OlogyObject implements AttributeTemplate<Olog
     private List<SecurityConstraint> viewConstraints = new ArrayList<SecurityConstraint>();
     private List<SecurityConstraint> creationConstraints = new ArrayList<SecurityConstraint>();
     private Map<String, Action> actions = new HashMap<String, Action>();
+    private Map<String, View> views = new HashMap<String, View>();
+
+    public OlogyTemplate() {
+        views.put("default", new View());
+        views.put("identifier", new View());
+    }
 
 	public String getType() {
 		return type;
@@ -123,6 +130,20 @@ public class OlogyTemplate extends OlogyObject implements AttributeTemplate<Olog
 
     public void setActions(Map<String, Action> actions) {
         this.actions = actions;
+    }
+
+    public Map<String, View> getViews() {
+        return views;
+    }
+
+    public void setViews(Map<String, View> views) {
+        if(!views.containsKey("default")){
+            views.put("default", new View());
+        }
+        if(!views.containsKey("identifier")){
+            views.put("identifier", new View());
+        }
+        this.views = views;
     }
 
     @Override

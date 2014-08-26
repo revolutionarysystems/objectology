@@ -3,7 +3,7 @@ package uk.co.revsys.objectology.service.rest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,10 +48,15 @@ import uk.co.revsys.objectology.mapping.xml.XMLInstanceToJSONConverter;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.security.AuthorisationHandler;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
+import uk.co.revsys.objectology.service.ViewService;
+import uk.co.revsys.objectology.transform.TransformException;
+import uk.co.revsys.objectology.transform.path.PathEvaluator;
+import uk.co.revsys.objectology.transform.path.PathEvaluatorException;
+import uk.co.revsys.objectology.view.View;
 import uk.co.revsys.objectology.view.ViewNotFoundException;
 
 @Path("/")
-public class InstanceRestService extends AbstractRestService {
+public class InstanceRestService extends ObjectRestService {
 
     private static final Logger LOG = LoggerFactory.getLogger(InstanceRestService.class);
 
@@ -59,13 +64,15 @@ public class InstanceRestService extends AbstractRestService {
     private final ObjectMapper xmlObjectMapper;
     private final ActionHandlerFactory actionHandlerFactory;
     private final XMLInstanceToJSONConverter xmlInstanceToJsonConverter;
+    private final ViewService viewService;
 
-    public InstanceRestService(OlogyInstanceService service, ObjectMapper xmlObjectMapper, ObjectMapper jsonObjectMapper, XMLInstanceToJSONConverter xmlInstanceToJsonConverter, HashMap<String, Class> viewMap, AuthorisationHandler authorisationHandler, ActionHandlerFactory actionHandlerFactory) {
-        super(jsonObjectMapper, viewMap, authorisationHandler);
+    public InstanceRestService(OlogyInstanceService service, ObjectMapper xmlObjectMapper, ObjectMapper jsonObjectMapper, XMLInstanceToJSONConverter xmlInstanceToJsonConverter, AuthorisationHandler authorisationHandler, ActionHandlerFactory actionHandlerFactory, PathEvaluator pathEvaluator, ViewService viewService) {
+        super(jsonObjectMapper, authorisationHandler, pathEvaluator);
         this.service = service;
         this.xmlObjectMapper = xmlObjectMapper;
         this.actionHandlerFactory = actionHandlerFactory;
         this.xmlInstanceToJsonConverter = xmlInstanceToJsonConverter;
+        this.viewService = viewService;
     }
 
     @GET
@@ -76,14 +83,11 @@ public class InstanceRestService extends AbstractRestService {
             if (!isAdministrator()) {
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
-            Class view = getView(viewName);
-            List<OlogyInstance> results = service.findAll(type, view);
+            List<OlogyInstance> results = service.findAll(type);
             return buildResponse(results, depth);
         } catch (DaoException ex) {
             LOG.error("Error retrieving all instances of type " + type, ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
-        } catch (ViewNotFoundException ex) {
-            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
         }
     }
 
@@ -93,11 +97,18 @@ public class InstanceRestService extends AbstractRestService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response query(@PathParam("type") String type, @QueryParam("view") String viewName, @QueryParam("depth") int depth, String json) {
         try {
-            Class view = getView(viewName);
             Query query = new QueryImpl(json);
-            List<OlogyInstance> results = service.find(type, query, view);
-            if (!isAuthorisedToView(results)) {
-                return Response.status(Response.Status.FORBIDDEN).build();
+            List<OlogyInstance> instances = service.find(type, query);
+            List results = new LinkedList();
+            for(OlogyInstance instance: instances){
+                View view = getView(instance, viewName);
+                if(!isAuthorisedToView(instance, view)){
+                    return Response.status(Response.Status.FORBIDDEN).build();
+                }
+                results.add(viewService.transform(instance, viewName));
+            }
+            if (!isAdministrator()) {
+                depth = 1;
             }
             return buildResponse(results, depth);
         } catch (DaoException ex) {
@@ -106,6 +117,9 @@ public class InstanceRestService extends AbstractRestService {
         } catch (ViewNotFoundException ex) {
             LOG.error("Error querying instances of type " + type, ex);
             return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
+        } catch (TransformException ex) {
+            LOG.error("Error querying instances of type " + type, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         }
     }
 
@@ -124,10 +138,20 @@ public class InstanceRestService extends AbstractRestService {
             query.put(queryParam.getKey(), queryParam.getValue().get(0).replace("+", " "));
         }
         try {
-            Class view = getView(viewName);
-            List<OlogyInstance> results = service.find(type, query, view);
-            if (!isAuthorisedToView(results)) {
-                return Response.status(Response.Status.FORBIDDEN).build();
+            List<OlogyInstance> instances = service.find(type, query);
+            List results = new LinkedList();
+            for(OlogyInstance instance: instances){
+                View view = getView(instance, viewName);
+                if(!isAuthorisedToView(instance, view)){
+                    return Response.status(Response.Status.FORBIDDEN).build();
+                }
+                results.add(viewService.transform(instance, viewName));
+            }
+            if (!isAdministrator()) {
+                depth = 1;
+            }
+            if (!isAdministrator()) {
+                depth = 1;
             }
             return buildResponse(results, depth);
         } catch (DaoException ex) {
@@ -135,7 +159,10 @@ public class InstanceRestService extends AbstractRestService {
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         } catch (ViewNotFoundException ex) {
             LOG.error("Error querying instances of type " + type, ex);
-            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+        } catch (TransformException ex) {
+            LOG.error("Error querying instances of type " + type, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         }
     }
 
@@ -184,39 +211,69 @@ public class InstanceRestService extends AbstractRestService {
     @GET
     @Path("/{type}/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findById(@PathParam("type") String type, @PathParam("id") String id, @QueryParam("depth") int depth) {
+    public Response findById(@PathParam("type") String type, @PathParam("id") String id, @QueryParam("depth") int depth, @QueryParam("path") String path, @QueryParam("view") String viewName) {
         try {
-            OlogyInstance result = service.findById(type, id);
-            if (result == null) {
+            OlogyInstance instance = service.findById(type, id);
+            Object result;
+            if (instance == null) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
-            if (!isAuthorisedToView(result)) {
+            View view = getView(instance, viewName);
+            if (!isAuthorisedToView(instance, view)) {
                 return Response.status(Response.Status.FORBIDDEN).build();
+            }
+            result = viewService.transform(instance, viewName);
+            if (!isAdministrator()) {
+                depth = 1;
+            }
+            if (path != null && isAdministrator()) {
+                result = getPathEvaluator().evaluate(instance, path);
             }
             return buildResponse(result, depth);
         } catch (DaoException ex) {
             LOG.error("Error finding instance " + type + ":" + id, ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+        } catch (PathEvaluatorException ex) {
+            LOG.error("Error finding instance " + type + ":" + id + ":" + path, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+        } catch (TransformException ex) {
+            LOG.error("Error finding instance " + type + ":" + id + ":" + viewName, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+        } catch (ViewNotFoundException ex) {
+            LOG.error("Error finding instance " + type + ":" + id + ":" + viewName, ex);
+            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
         }
     }
-    
+
     @GET
     @Path("/{type}/name/{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findByName(@PathParam("type") String type, @PathParam("name") String name, @QueryParam("depth") int depth) {
+    public Response findByName(@PathParam("type") String type, @PathParam("name") String name, @QueryParam("depth") int depth, @QueryParam("path") String path, @QueryParam("view") String viewName) {
         System.out.println("findByName = " + name);
         try {
-            OlogyInstance result = service.findByName(type, name);
-            if (result == null) {
+            OlogyInstance instance = service.findById(type, name);
+            Object result;
+            if (instance == null) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
-            if (!isAuthorisedToView(result)) {
+            View view = getView(instance, viewName);
+            if (!isAuthorisedToView(instance, view)) {
                 return Response.status(Response.Status.FORBIDDEN).build();
+            }
+            result = viewService.transform(instance, viewName);
+            if (!isAdministrator()) {
+                depth = 1;
             }
             return buildResponse(result, depth);
         } catch (DaoException ex) {
             LOG.error("Error finding instance " + type + ":" + name, ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+        } catch (TransformException ex) {
+            LOG.error("Error finding instance " + type + ":" + name + ":" + viewName, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+        } catch (ViewNotFoundException ex) {
+            LOG.error("Error finding instance " + type + ":" + name + ":" + viewName, ex);
+            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
         }
     }
 
@@ -248,7 +305,7 @@ public class InstanceRestService extends AbstractRestService {
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         }
     }
-    
+
     @POST
     @Path("/{type}/{id}")
     @Consumes(MediaType.TEXT_XML)
@@ -345,27 +402,28 @@ public class InstanceRestService extends AbstractRestService {
         }
     }
 
-    private boolean isAuthorisedToView(OlogyInstance instance) {
-        return getAuthorisationHandler().isAuthorised(instance, instance.getTemplate().getViewConstraints());
+    private boolean isAuthorisedToView(OlogyInstance instance, View view) {
+        return getAuthorisationHandler().isAuthorised(instance, view.getSecurityConstraints());
     }
 
-    private boolean isAuthorisedToView(List<OlogyInstance> instances) {
-        Iterator<OlogyInstance> iterator = instances.iterator();
-        while (iterator.hasNext()) {
-            OlogyInstance instance = iterator.next();
-            if (!isAuthorisedToView(instance)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    
-    private boolean isAuthorisedToCreate(OlogyInstance instance){
+    private boolean isAuthorisedToCreate(OlogyInstance instance) {
         return getAuthorisationHandler().isAuthorised(instance, instance.getTemplate().getCreationConstraints());
     }
 
     private boolean isAuthorisedToInvokeAction(OlogyInstance instance, Action action) {
         return getAuthorisationHandler().isAuthorised(instance, action.getSecurityConstraints());
+    }
+
+    private View getView(OlogyInstance instance, String viewName) throws ViewNotFoundException {
+        View view = null;
+        if (viewName == null) {
+            viewName = "default";
+        }
+        view = instance.getTemplate().getViews().get(viewName);
+        if (view == null) {
+            throw new ViewNotFoundException("View not found " + viewName);
+        }
+        return view;
     }
 
     protected JSONObject mergeJSON(JSONObject json1, JSONObject json2) {
