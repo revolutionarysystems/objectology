@@ -1,0 +1,14 @@
+<user xmlns:o="http://test/" o:name="Test User Template">
+    <attributes>
+        <account o:nature="link"/>
+        <status o:nature="property"/>
+        <firstName o:nature="property"/>
+        <surname o:nature="property"/>
+        <creationTime o:nature="time"/>
+    </attributes>
+    <views>
+        <user-summary>
+            <securityConstraints/>
+        </user-summary>
+    </views>
+</user>

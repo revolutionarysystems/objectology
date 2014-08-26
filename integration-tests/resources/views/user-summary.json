@@ -1,0 +1,9 @@
+{
+    "name": "user-summary",
+    "templates":{
+        "$":{
+            "id": "$.id",
+            "name": "$.attributes.firstName.value + ' ' + $.attributes.surname.value"
+        }
+    }
+}
