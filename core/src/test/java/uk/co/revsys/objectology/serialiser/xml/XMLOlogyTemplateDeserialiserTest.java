@@ -92,9 +92,6 @@ public class XMLOlogyTemplateDeserialiserTest {
 		assertTrue(result.getAttributeTemplate("accountHolder", OlogyTemplate.class).getAttributeTemplate("user") instanceof LinkTemplate);
 		assertTrue(result.getAttributeTemplate("limits") instanceof CollectionTemplate);
 		assertEquals(MeasurementTemplate.class, result.getAttributeTemplate("limits", CollectionTemplate.class).getMemberTemplate().getClass());
-        assertEquals(1, result.getViewConstraints().size());
-        assertEquals(RoleConstraint.class, result.getViewConstraints().get(0).getClass());
-        assertEquals("test:test", ((RoleConstraint)result.getViewConstraints().get(0)).getRole());
         assertEquals(1, result.getActions().size());
         assertEquals(UpdateAttributeAction.class, result.getActions().get("changeStatus").getClass());
         assertEquals("status", ((UpdateAttributeAction)result.getActions().get("changeStatus")).getAttribute());

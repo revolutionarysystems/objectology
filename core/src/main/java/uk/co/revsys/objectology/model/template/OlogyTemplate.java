@@ -24,7 +24,6 @@ public class OlogyTemplate extends OlogyObject implements AttributeTemplate<Olog
 	private String type;
 	private OlogyInstance value;
 	private Map<String, AttributeTemplate> attributeTemplates = new HashMap<String, AttributeTemplate>();
-    private List<SecurityConstraint> viewConstraints = new ArrayList<SecurityConstraint>();
     private List<SecurityConstraint> creationConstraints = new ArrayList<SecurityConstraint>();
     private Map<String, Action> actions = new HashMap<String, Action>();
     private Map<String, View> views = new HashMap<String, View>();
@@ -107,14 +106,6 @@ public class OlogyTemplate extends OlogyObject implements AttributeTemplate<Olog
 	public <A extends Attribute> A getAttribute(String key, Class<? extends A> type) {
 		return (A) getAttribute(key);
 	}
-
-    public List<SecurityConstraint> getViewConstraints() {
-        return viewConstraints;
-    }
-
-    public void setViewConstraints(List<SecurityConstraint> viewConstraints) {
-        this.viewConstraints = viewConstraints;
-    }
 
     public List<SecurityConstraint> getCreationConstraints() {
         return creationConstraints;

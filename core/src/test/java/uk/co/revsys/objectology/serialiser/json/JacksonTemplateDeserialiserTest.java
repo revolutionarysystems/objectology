@@ -49,7 +49,7 @@ public class JacksonTemplateDeserialiserTest {
     @Test
     public void testDoDeserialiseJSON() throws Exception {
         ObjectMapper objectMapper = new JsonTemplateMapper();
-        String json = "{\"id\":\"1234\",\"name\": \"Test Template\",\"nature\":\"object\", \"views\": {\"summary\": {}}, \"actions\": {\"changeStatus\": {\"nature\": \"updateAttribute\", \"attribute\": \"status\"}}, \"viewConstraints\": [{\"nature\": \"hasRole\", \"role\": \"test:test\"}], \"attributes\":{\"account\": {\"nature\": \"linkedObject\", \"type\":\"account\", \"link\":\"subscription\"}, \"seq\": {\"nature\": \"sequence\", \"name\": \"seq1\", \"length\": 4}, \"startTime\":{\"nature\":\"time\"},\"limit\":{\"nature\":\"measurement\"},\"limits\":{\"memberTemplate\":{\"nature\":\"measurement\"},\"nature\":\"collection\"},\"status\":{\"nature\":\"property\", \"value\": \"{status}\"},\"accountHolder\":{\"nature\":\"object\",\"attributes\":{\"permissions\":{\"nature\":\"property\"},\"user\":{\"nature\":\"link\", \"referenceType\": \"name\", \"associatedType\": \"user\"}}},\"features\":{\"memberTemplate\":{\"nature\":\"object\",\"attributes\":{\"name\":{\"nature\":\"property\"}}},\"nature\":\"collection\"}},\"type\":\"subscription\"}";
+        String json = "{\"id\":\"1234\",\"name\": \"Test Template\",\"nature\":\"object\", \"views\": {\"summary\": {\"securityConstraints\": [{\"nature\": \"hasRole\", \"role\": \"test:test\"}]}}, \"actions\": {\"changeStatus\": {\"nature\": \"updateAttribute\", \"attribute\": \"status\"}}, \"attributes\":{\"account\": {\"nature\": \"linkedObject\", \"type\":\"account\", \"link\":\"subscription\"}, \"seq\": {\"nature\": \"sequence\", \"name\": \"seq1\", \"length\": 4}, \"startTime\":{\"nature\":\"time\"},\"limit\":{\"nature\":\"measurement\"},\"limits\":{\"memberTemplate\":{\"nature\":\"measurement\"},\"nature\":\"collection\"},\"status\":{\"nature\":\"property\", \"value\": \"{status}\"},\"accountHolder\":{\"nature\":\"object\",\"attributes\":{\"permissions\":{\"nature\":\"property\"},\"user\":{\"nature\":\"link\", \"referenceType\": \"name\", \"associatedType\": \"user\"}}},\"features\":{\"memberTemplate\":{\"nature\":\"object\",\"attributes\":{\"name\":{\"nature\":\"property\"}}},\"nature\":\"collection\"}},\"type\":\"subscription\"}";
         OlogyTemplate result = objectMapper.deserialise(json, OlogyTemplate.class);
         assertNotNull(result);
         assertEquals("subscription", result.getType());
@@ -68,9 +68,6 @@ public class JacksonTemplateDeserialiserTest {
         assertEquals(ReferenceType.name, userLinkTemplate.getReferenceType());
         assertTrue(result.getAttributeTemplate("limits") instanceof CollectionTemplate);
         assertEquals(MeasurementTemplate.class, result.getAttributeTemplate("limits", CollectionTemplate.class).getMemberTemplate().getClass());
-        assertEquals(1, result.getViewConstraints().size());
-        assertEquals(RoleConstraint.class, result.getViewConstraints().get(0).getClass());
-        assertEquals("test:test", ((RoleConstraint)result.getViewConstraints().get(0)).getRole());
         assertEquals(1, result.getActions().size());
         assertEquals(UpdateAttributeAction.class, result.getActions().get("changeStatus").getClass());
         assertEquals("status", ((UpdateAttributeAction)result.getActions().get("changeStatus")).getAttribute());
@@ -79,6 +76,9 @@ public class JacksonTemplateDeserialiserTest {
         assertTrue(result.getViews().get("summary") instanceof View);
         assertNotNull(result.getViews().get("default"));
         assertNotNull(result.getViews().get("identifier"));
+        assertEquals(1, result.getViews().get("summary").getSecurityConstraints().size());
+        assertEquals(RoleConstraint.class, result.getViews().get("summary").getSecurityConstraints().get(0).getClass());
+        assertEquals("test:test", ((RoleConstraint)result.getViews().get("summary").getSecurityConstraints().get(0)).getRole());
     }
 
 }
