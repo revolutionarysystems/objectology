@@ -6,6 +6,7 @@ import uk.co.revsys.objectology.dao.ViewDefinitionDao;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.transform.OlogyTransformer;
 import uk.co.revsys.objectology.transform.TransformException;
+import uk.co.revsys.objectology.view.View;
 import uk.co.revsys.objectology.view.definition.ViewDefinition;
 
 public class ViewServiceImpl implements ViewService {
@@ -46,13 +47,11 @@ public class ViewServiceImpl implements ViewService {
     }
     
     @Override
-    public Object transform(OlogyInstance instance, String view) throws TransformException, DaoException {
-        if(view == null){
-            view = "default";
-        }
-        ViewDefinition viewDefinition = defaultViewDefinitions.get(view);
+    public Object transform(OlogyInstance instance, View view) throws TransformException, DaoException {
+        String viewName = view.getName();
+        ViewDefinition viewDefinition = defaultViewDefinitions.get(viewName);
         if(viewDefinition == null){
-            viewDefinition = findByName(view);
+            viewDefinition = findByName(viewName);
         }
         return transformer.transform(instance, viewDefinition);
     }

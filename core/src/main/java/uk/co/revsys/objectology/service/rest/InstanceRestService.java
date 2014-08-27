@@ -105,7 +105,7 @@ public class InstanceRestService extends ObjectRestService {
                 if(!isAuthorisedToView(instance, view)){
                     return Response.status(Response.Status.FORBIDDEN).build();
                 }
-                results.add(viewService.transform(instance, viewName));
+                results.add(viewService.transform(instance, view));
             }
             if (!isAdministrator()) {
                 depth = 1;
@@ -145,7 +145,7 @@ public class InstanceRestService extends ObjectRestService {
                 if(!isAuthorisedToView(instance, view)){
                     return Response.status(Response.Status.FORBIDDEN).build();
                 }
-                results.add(viewService.transform(instance, viewName));
+                results.add(viewService.transform(instance, view));
             }
             if (!isAdministrator()) {
                 depth = 1;
@@ -222,7 +222,7 @@ public class InstanceRestService extends ObjectRestService {
             if (!isAuthorisedToView(instance, view)) {
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
-            result = viewService.transform(instance, viewName);
+            result = viewService.transform(instance, view);
             if (!isAdministrator()) {
                 depth = 1;
             }
@@ -260,7 +260,7 @@ public class InstanceRestService extends ObjectRestService {
             if (!isAuthorisedToView(instance, view)) {
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
-            result = viewService.transform(instance, viewName);
+            result = viewService.transform(instance, view);
             if (!isAdministrator()) {
                 depth = 1;
             }

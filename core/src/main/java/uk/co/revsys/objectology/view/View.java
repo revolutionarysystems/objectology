@@ -6,10 +6,23 @@ import uk.co.revsys.objectology.security.SecurityConstraint;
 
 public class View {
 
+    private String name;
     private List<SecurityConstraint> securityConstraints = new LinkedList<SecurityConstraint>();
 
     public View() {
         
+    }
+
+    public View(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public View(List<SecurityConstraint> securityConstraints) {

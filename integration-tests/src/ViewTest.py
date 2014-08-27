@@ -40,7 +40,7 @@ class  ViewTest(unittest.TestCase):
         id = result["id"]
         # Retrieve view
         connection = httplib.HTTPConnection(localisation.server)
-        connection.request("GET", "/" + localisation.webapp + "/user/" + id + "?view=user-summary")
+        connection.request("GET", "/" + localisation.webapp + "/user/" + id + "?view=summary")
         response = connection.getresponse()
         self.assertEqual(200, response.status)
         body = response.read()

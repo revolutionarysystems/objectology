@@ -7,8 +7,8 @@
         <creationTime o:nature="time"/>
     </attributes>
     <views>
-        <user-summary>
+        <summary o:name="user-summary">
             <securityConstraints/>
-        </user-summary>
+        </summary>
     </views>
 </user>
