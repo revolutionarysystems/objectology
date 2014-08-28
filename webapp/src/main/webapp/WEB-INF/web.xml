@@ -40,6 +40,20 @@
 		<url-pattern>/refreshInstances</url-pattern>
 	</servlet-mapping>
     
+    <servlet>
+		<servlet-name>refreshViewsServlet</servlet-name>
+		<servlet-class>uk.co.revsys.objectology.servlet.AuthorisingResourceRefreshServlet</servlet-class>
+        <init-param>
+            <param-name>beanId</param-name>
+            <param-value>viewProvider</param-value>
+        </init-param>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>refreshViewsServlet</servlet-name>
+		<url-pattern>/refreshViews</url-pattern>
+	</servlet-mapping>
+    
 	<servlet>
 		<servlet-name>restServlet</servlet-name>
 		<servlet-class>org.apache.wink.server.internal.servlet.RestServlet</servlet-class>

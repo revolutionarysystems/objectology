@@ -35,7 +35,7 @@
                 </bean>
                 <bean class="uk.co.revsys.objectology.service.rest.ViewRestService">
                     <constructor-arg index="0" ref="viewService"/>
-                    <constructor-arg index="1" ref="viewDefinitionParser"/>
+                    <constructor-arg index="1" ref="viewDefinitionLoader"/>
                     <constructor-arg index="2" ref="jsonTemplateMapper"/>
                     <constructor-arg index="3" ref="authorisationHandler"/>
                 </bean>
@@ -136,6 +136,13 @@
         <constructor-arg index="3" ref="instanceLoader"/>
     </bean>
     
+    <bean id="viewProvider" class="uk.co.revsys.resource.repository.provider.ResourceProvider">
+        <constructor-arg index="0" ref="viewRepository"/>
+        <constructor-arg index="1" value="${view.path}"/>
+        <constructor-arg index="2" ref="jsonFilter"/>
+        <constructor-arg index="3" ref="viewDefinitionLoader"/>
+    </bean>
+    
     <bean id="resourceRepositoryFactory" class="uk.co.revsys.resource.repository.ResourceRepositoryFactory">
         <constructor-arg index="0">
             <map key-type="java.lang.String" value-type="uk.co.revsys.resource.repository.ResourceRepositoryBuilder">
@@ -143,6 +150,8 @@
                 <entry key="template-cloud" value-ref="cloudTemplateRepositoryBuilder"/>
                 <entry key="instance-local" value-ref="localDiskInstanceRepositoryBuilder"/>
                 <entry key="instance-cloud" value-ref="cloudInstanceRepositoryBuilder"/>
+                <entry key="view-local" value-ref="localDiskViewRepositoryBuilder"/>
+                <entry key="view-cloud" value-ref="cloudViewRepositoryBuilder"/>
             </map>
         </constructor-arg>
     </bean>
@@ -177,8 +186,27 @@
         <constructor-arg index="0" value="instance-${instance.repository.type}"/>
     </bean>
     
+    <bean id="localDiskViewRepositoryBuilder" class="uk.co.revsys.resource.repository.LocalDiskResourceRepositoryBuilder">
+        <constructor-arg index="0" value="${view.container}"/>
+    </bean>
+    
+    <bean id="cloudViewRepositoryBuilder" class="uk.co.revsys.resource.repository.cloud.JCloudResourceRepositoryBuilder">
+        <constructor-arg index="0" value="${cloud.type}"/>
+        <constructor-arg index="1" value="${cloud.identity}"/>
+        <constructor-arg index="2" value="${cloud.credential}"/>
+        <constructor-arg index="3" value="${view.container}"/>
+    </bean>
+	
+    <bean id="viewRepository" factory-bean="resourceRepositoryFactory" factory-method="build">
+        <constructor-arg index="0" value="view-${view.repository.type}"/>
+    </bean>
+    
     <bean id="xmlFilter" class="uk.co.revsys.resource.repository.provider.filter.ExtensionFilter">
         <constructor-arg index="0" value=".xml"/>
+    </bean>
+    
+    <bean id="jsonFilter" class="uk.co.revsys.resource.repository.provider.filter.ExtensionFilter">
+        <constructor-arg index="0" value=".json"/>
     </bean>
     
     <bean id="templateLoader" class="uk.co.revsys.objectology.service.TemplateLoader">
@@ -244,6 +272,11 @@
     <bean id="jsonViewDefinitionMapper" class="uk.co.revsys.objectology.mapping.json.JsonViewDefinitionMapper"/>
     
     <bean id="ologyTransformer" class="uk.co.revsys.objectology.transform.OlogyTransformerImpl"></bean>
+    
+    <bean id="viewDefinitionLoader" class="uk.co.revsys.objectology.service.ViewDefinitionLoader">
+        <constructor-arg index="0" ref="viewDefinitionParser"/>
+        <constructor-arg index="1" ref="viewService"/>
+    </bean>
     
     <bean id="viewDefinitionParser" class="uk.co.revsys.objectology.view.definition.parser.ViewDefinitionParserImpl"/>
 
