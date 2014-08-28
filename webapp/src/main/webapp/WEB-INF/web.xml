@@ -3,7 +3,6 @@
     <display-name>Objectology</display-name>
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-        <listener-class>uk.co.revsys.objectology.service.ServiceInitializer</listener-class>
     </listener>
     <context-param>
         <param-name>contextConfigLocation</param-name>

@@ -29,8 +29,8 @@ public class OlogyTemplate extends OlogyObject implements AttributeTemplate<Olog
     private Map<String, View> views = new HashMap<String, View>();
 
     public OlogyTemplate() {
-        views.put("default", new View());
-        views.put("identifier", new View());
+        views.put("default", new View("default"));
+        views.put("identifier", new View("identifier"));
     }
 
 	public String getType() {
@@ -129,10 +129,10 @@ public class OlogyTemplate extends OlogyObject implements AttributeTemplate<Olog
 
     public void setViews(Map<String, View> views) {
         if(!views.containsKey("default")){
-            views.put("default", new View());
+            views.put("default", new View("default"));
         }
         if(!views.containsKey("identifier")){
-            views.put("identifier", new View());
+            views.put("identifier", new View("identifier"));
         }
         this.views = views;
     }

@@ -17,15 +17,19 @@ class  InstanceTest(unittest.TestCase):
         pass
 
     def test_instances(self):
+        connection = httplib.HTTPConnection(localisation.server)
+        connection.request("GET", "/" + localisation.webapp + "/admin/clear");
+        response = connection.getresponse();
+        self.assertEqual(200, response.status)
+        body = response.read();
         # Create template
         source = open("resources/templates/user.xml").read()
-        connection = httplib.HTTPConnection(localisation.server)
         connection.request("POST", "/" + localisation.webapp + "/template", source, {"Content-Type": "text/xml"})
         response = connection.getresponse()
         self.assertEqual(200, response.status)
+        body = response.read();
         # Create instance
         source = open("resources/instances/user.json").read()
-        connection = httplib.HTTPConnection(localisation.server)
         connection.request("POST", "/" + localisation.webapp + "/user", source, {"Content-Type": "application/json"})
         response = connection.getresponse()
         self.assertEqual(200, response.status)
@@ -33,13 +37,20 @@ class  InstanceTest(unittest.TestCase):
         result = eval(body)
         id = result["id"]
         self.assertFalse(id == None)
-        # Retrieve instance
+        # Retrieve instance by id
         connection.request("GET", "/" + localisation.webapp + "/user/" + id)
         response = connection.getresponse()
         self.assertEqual(200, response.status)
         body = response.read()
         result = eval(body)
         self.assertEqual(id, result["id"])
+        # Retrieve instance by query
+        connection.request("GET", "/" + localisation.webapp + "/user/query?firstName=Test")
+        response = connection.getresponse()
+        self.assertEqual(200, response.status)
+        body = response.read()
+        result = eval(body)
+        self.assertEqual(id, result[0]["id"])
         # Delete template
         connection.request("DELETE", "/" + localisation.webapp + "/user/" + id)
         response = connection.getresponse()

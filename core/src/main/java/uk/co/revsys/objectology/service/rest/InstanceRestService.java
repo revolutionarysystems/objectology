@@ -83,9 +83,20 @@ public class InstanceRestService extends ObjectRestService {
             if (!isAdministrator()) {
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
-            List<OlogyInstance> results = service.findAll(type);
+            List<OlogyInstance> instances = service.findAll(type);
+            List results = new LinkedList();
+            for(OlogyInstance instance: instances){
+                View view = getView(instance, viewName);
+                results.add(viewService.transform(instance, view));
+            }
             return buildResponse(results, depth);
         } catch (DaoException ex) {
+            LOG.error("Error retrieving all instances of type " + type, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+        } catch (ViewNotFoundException ex) {
+            LOG.error("Error retrieving all instances of type " + type, ex);
+            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
+        } catch (TransformException ex) {
             LOG.error("Error retrieving all instances of type " + type, ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         }
@@ -146,9 +157,6 @@ public class InstanceRestService extends ObjectRestService {
                     return Response.status(Response.Status.FORBIDDEN).build();
                 }
                 results.add(viewService.transform(instance, view));
-            }
-            if (!isAdministrator()) {
-                depth = 1;
             }
             if (!isAdministrator()) {
                 depth = 1;

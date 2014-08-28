@@ -27,30 +27,10 @@ public class ViewRestService extends AbstractRestService {
         this.service = service;
         this.parser = parser;
     }
-
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response create(String json) {
-        try {
-            if(!isAdministrator()){
-                return Response.status(Response.Status.FORBIDDEN).build();
-            }
-            ViewDefinition definition = parser.parse(json);
-            service.create(definition);
-            return Response.ok().build();
-        }catch(DuplicateKeyException ex){
-            return buildErrorResponse(Response.Status.CONFLICT, ex);
-        }catch (DaoException ex) {
-            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
-        } catch (ViewDefinitionParsingException ex) {
-            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
-        }
-    }
     
     @POST
-    @Path("/{name}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("name") String name, String json) {
+    public Response update(String json) {
         try {
             if(!isAdministrator()){
                 return Response.status(Response.Status.FORBIDDEN).build();

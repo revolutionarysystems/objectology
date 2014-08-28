@@ -17,9 +17,13 @@ class  TemplateTest(unittest.TestCase):
         pass
 
     def test_templates(self):
+        connection = httplib.HTTPConnection(localisation.server)
+        connection.request("GET", "/" + localisation.webapp + "/admin/clear");
+        response = connection.getresponse();
+        self.assertEqual(200, response.status)
+        body = response.read();
         # Create template
         source = open("resources/templates/user.xml").read()
-        connection = httplib.HTTPConnection(localisation.server)
         connection.request("POST", "/" + localisation.webapp + "/template", source, {"Content-Type": "text/xml"})
         response = connection.getresponse()
         self.assertEqual(200, response.status)
