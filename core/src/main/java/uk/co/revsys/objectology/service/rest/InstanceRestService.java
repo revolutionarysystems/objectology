@@ -81,6 +81,7 @@ public class InstanceRestService extends ObjectRestService {
     public Response findAll(@PathParam("type") String type, @QueryParam("view") String viewName, @QueryParam("depth") int depth) {
         try {
             if (!isAdministrator()) {
+                LOG.warn("Forbidden Access");
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
             List<OlogyInstance> instances = service.findAll(type);
@@ -114,6 +115,7 @@ public class InstanceRestService extends ObjectRestService {
             for(OlogyInstance instance: instances){
                 View view = getView(instance, viewName);
                 if(!isAuthorisedToView(instance, view)){
+                    LOG.warn("Forbidden Access");
                     return Response.status(Response.Status.FORBIDDEN).build();
                 }
                 results.add(viewService.transform(instance, view));
@@ -142,6 +144,7 @@ public class InstanceRestService extends ObjectRestService {
         queryParams.remove("view");
         queryParams.remove("depth");
         if (queryParams.isEmpty()) {
+            LOG.warn("Empty query params");
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
         JSONQuery query = new JSONQuery();
@@ -154,6 +157,7 @@ public class InstanceRestService extends ObjectRestService {
             for(OlogyInstance instance: instances){
                 View view = getView(instance, viewName);
                 if(!isAuthorisedToView(instance, view)){
+                    LOG.warn("Forbidden Access");
                     return Response.status(Response.Status.FORBIDDEN).build();
                 }
                 results.add(viewService.transform(instance, view));
@@ -182,6 +186,7 @@ public class InstanceRestService extends ObjectRestService {
         try {
             OlogyInstance object = xmlObjectMapper.deserialise(xml, OlogyInstance.class);
             if (!isAuthorisedToCreate(object)) {
+                LOG.warn("Forbidden Accesss");
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
             object = service.create(object);
@@ -203,6 +208,7 @@ public class InstanceRestService extends ObjectRestService {
         try {
             OlogyInstance object = getJsonObjectMapper().deserialise(json, OlogyInstance.class);
             if (!isAuthorisedToCreate(object)) {
+                LOG.warn("Forbidden Access");
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
             object = service.create(object);
@@ -224,10 +230,12 @@ public class InstanceRestService extends ObjectRestService {
             OlogyInstance instance = service.findById(type, id);
             Object result;
             if (instance == null) {
+                LOG.warn("Entity not found " + type + ":" + id);
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
             View view = getView(instance, viewName);
             if (!isAuthorisedToView(instance, view)) {
+                LOG.warn("Forbidden Access");
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
             result = viewService.transform(instance, view);
@@ -259,13 +267,15 @@ public class InstanceRestService extends ObjectRestService {
     public Response findByName(@PathParam("type") String type, @PathParam("name") String name, @QueryParam("depth") int depth, @QueryParam("path") String path, @QueryParam("view") String viewName) {
         System.out.println("findByName = " + name);
         try {
-            OlogyInstance instance = service.findById(type, name);
+            OlogyInstance instance = service.findByName(type, name);
             Object result;
             if (instance == null) {
+                LOG.warn("Entity not found " + type + ":" + name);
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
             View view = getView(instance, viewName);
             if (!isAuthorisedToView(instance, view)) {
+                LOG.warn("Forbidden Access");
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
             result = viewService.transform(instance, view);
@@ -292,6 +302,7 @@ public class InstanceRestService extends ObjectRestService {
     public Response updateFromJSON(@PathParam("type") String type, @PathParam("id") String id, String json) {
         try {
             if (!isAdministrator()) {
+                LOG.warn("Forbidden Access");
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
             OlogyInstance existingObject = service.findById(type, id);
@@ -321,6 +332,7 @@ public class InstanceRestService extends ObjectRestService {
     public Response updateFromXML(@PathParam("type") String type, @PathParam("id") String id, String xml) {
         try {
             if (!isAdministrator()) {
+                LOG.warn("Forbidden Access");
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
             System.out.println(xml);
@@ -355,13 +367,16 @@ public class InstanceRestService extends ObjectRestService {
         try {
             OlogyInstance entity = service.findById(type, id);
             if (entity == null) {
+                LOG.warn("Entity not found " + type + ":" + id);
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
             Action action = entity.getTemplate().getActions().get(actionName);
             if (action == null) {
+                LOG.warn("Action " + action + " doesn't exist for " + type + ":" + id);
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
             if (!isAuthorisedToInvokeAction(entity, action)) {
+                LOG.warn("Forbidden Access");
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
             ActionRequest request = new ActionRequest();
@@ -399,6 +414,7 @@ public class InstanceRestService extends ObjectRestService {
     public Response delete(@PathParam("type") String type, @PathParam("id") String id) {
         try {
             if (!isAdministrator()) {
+                LOG.warn("Forbidden Access");
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
             OlogyInstance result = service.findById(type, id);
