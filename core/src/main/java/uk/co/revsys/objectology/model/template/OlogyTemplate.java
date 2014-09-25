@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import uk.co.revsys.objectology.action.model.Action;
+import uk.co.revsys.objectology.exception.ValidationException;
 import uk.co.revsys.objectology.model.OlogyObject;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
@@ -53,7 +55,7 @@ public class OlogyTemplate extends OlogyObject implements AttributeTemplate<Olog
 	
     @JsonProperty("attributes")
 	public Map<String, AttributeTemplate> getAttributeTemplates() {
-		return attributeTemplates;
+		return Collections.unmodifiableMap(attributeTemplates);
 	}
 
     @JsonProperty("attributes")
@@ -61,6 +63,10 @@ public class OlogyTemplate extends OlogyObject implements AttributeTemplate<Olog
 	public void setAttributeTemplates(Map<String, AttributeTemplate> attributeTemplates) {
 		this.attributeTemplates = attributeTemplates;
 	}
+    
+    public void setAttributeTemplate(String key, AttributeTemplate template){
+        attributeTemplates.put(key, template);
+    }
 	
 	public AttributeTemplate getAttributeTemplate(String key){
 		return attributeTemplates.get(key);
@@ -140,6 +146,11 @@ public class OlogyTemplate extends OlogyObject implements AttributeTemplate<Olog
     @Override
     public String getNature() {
         return "object";
+    }
+
+    @Override
+    public void validate(OlogyInstance attribute) throws ValidationException {
+        
     }
 
 }

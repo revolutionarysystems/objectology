@@ -1,7 +1,8 @@
 package uk.co.revsys.objectology.model;
 
 import java.util.Map;
-import javax.xml.bind.annotation.XmlTransient;
+import uk.co.revsys.objectology.exception.UnexpectedAttributeException;
+import uk.co.revsys.objectology.exception.ValidationException;
 import uk.co.revsys.objectology.model.instance.Attribute;
 
 public abstract class OlogyObject {
@@ -27,9 +28,9 @@ public abstract class OlogyObject {
 
 	public abstract Map<String, Attribute> getAttributes();
 
-	public abstract void setAttributes(Map<String, Attribute> attributes);
+	public abstract void setAttributes(Map<String, Attribute> attributes) throws UnexpectedAttributeException, ValidationException;
 	
-	public abstract void setAttribute(String key, Attribute attribute);
+	public abstract void setAttribute(String key, Attribute attribute) throws UnexpectedAttributeException, ValidationException;
 	
 	public abstract Attribute getAttribute(String key);
 	

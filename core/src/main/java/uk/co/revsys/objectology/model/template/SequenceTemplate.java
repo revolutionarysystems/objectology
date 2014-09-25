@@ -1,6 +1,5 @@
 package uk.co.revsys.objectology.model.template;
 
-import uk.co.revsys.objectology.model.instance.Property;
 import uk.co.revsys.objectology.model.instance.Sequence;
 
 public class SequenceTemplate extends PropertyTemplate<Sequence>{

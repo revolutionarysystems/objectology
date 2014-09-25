@@ -10,17 +10,15 @@ import uk.co.revsys.objectology.action.model.UpdateAttributeAction;
 import uk.co.revsys.objectology.mapping.ObjectMapper;
 import uk.co.revsys.objectology.mapping.json.JsonTemplateMapper;
 import uk.co.revsys.objectology.model.ReferenceType;
-import uk.co.revsys.objectology.model.instance.Property;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.model.template.LinkedObjectTemplate;
 import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
-import uk.co.revsys.objectology.model.template.PropertyTemplate;
+import uk.co.revsys.objectology.model.template.SelectTemplate;
 import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
 import uk.co.revsys.objectology.security.RoleConstraint;
-import uk.co.revsys.objectology.view.View;
 
 public class JacksonTemplateDeserialiserTest {
 
@@ -49,7 +47,7 @@ public class JacksonTemplateDeserialiserTest {
     @Test
     public void testDoDeserialiseJSON() throws Exception {
         ObjectMapper objectMapper = new JsonTemplateMapper();
-        String json = "{\"id\":\"1234\",\"name\": \"Test Template\",\"nature\":\"object\", \"views\": {\"summary\": {\"name\": \"test-summary\", \"securityConstraints\": [{\"nature\": \"hasRole\", \"role\": \"test:test\"}]}}, \"actions\": {\"changeStatus\": {\"nature\": \"updateAttribute\", \"attribute\": \"status\"}}, \"attributes\":{\"account\": {\"nature\": \"linkedObject\", \"type\":\"account\", \"link\":\"subscription\"}, \"seq\": {\"nature\": \"sequence\", \"name\": \"seq1\", \"length\": 4}, \"startTime\":{\"nature\":\"time\"},\"limit\":{\"nature\":\"measurement\"},\"limits\":{\"memberTemplate\":{\"nature\":\"measurement\"},\"nature\":\"collection\"},\"status\":{\"nature\":\"property\", \"value\": \"{status}\"},\"accountHolder\":{\"nature\":\"object\",\"attributes\":{\"permissions\":{\"nature\":\"property\"},\"user\":{\"nature\":\"link\", \"referenceType\": \"name\", \"associatedType\": \"user\"}}},\"features\":{\"memberTemplate\":{\"nature\":\"object\",\"attributes\":{\"name\":{\"nature\":\"property\"}}},\"nature\":\"collection\"}},\"type\":\"subscription\"}";
+        String json = "{\"id\":\"1234\",\"name\": \"Test Template\",\"nature\":\"object\", \"views\": {\"summary\": {\"name\": \"test-summary\", \"securityConstraints\": [{\"nature\": \"hasRole\", \"role\": \"test:test\"}]}}, \"actions\": {\"changeStatus\": {\"nature\": \"updateAttribute\", \"attribute\": \"status\"}}, \"attributes\":{\"account\": {\"nature\": \"linkedObject\", \"type\":\"account\", \"link\":\"subscription\"}, \"seq\": {\"nature\": \"sequence\", \"name\": \"seq1\", \"length\": 4}, \"startTime\":{\"nature\":\"time\"},\"limit\":{\"nature\":\"measurement\"},\"limits\":{\"memberTemplate\":{\"nature\":\"measurement\"},\"nature\":\"collection\"},\"status\":{\"nature\":\"select\", \"options\": [\"Active\", \"Suspended\"]},\"accountHolder\":{\"nature\":\"object\",\"attributes\":{\"permissions\":{\"nature\":\"property\"},\"user\":{\"nature\":\"link\", \"referenceType\": \"name\", \"associatedType\": \"user\"}}},\"features\":{\"memberTemplate\":{\"nature\":\"object\",\"attributes\":{\"name\":{\"nature\":\"property\"}}},\"nature\":\"collection\"}},\"type\":\"subscription\"}";
         OlogyTemplate result = objectMapper.deserialise(json, OlogyTemplate.class);
         assertNotNull(result);
         assertEquals("subscription", result.getType());
@@ -57,9 +55,11 @@ public class JacksonTemplateDeserialiserTest {
         assertEquals("Test Template", result.getName());
         assertEquals("seq1", result.getAttributeTemplate("seq", SequenceTemplate.class).getName());
         assertEquals(4, result.getAttributeTemplate("seq", SequenceTemplate.class).getLength());
-        assertTrue(result.getAttributeTemplate("status") instanceof PropertyTemplate);
+        assertTrue(result.getAttributeTemplate("status") instanceof SelectTemplate);
+        assertEquals(2, result.getAttributeTemplate("status", SelectTemplate.class).getOptions().size());
+        assertTrue(result.getAttributeTemplate("status", SelectTemplate.class).getOptions().contains("Active"));
+        assertTrue(result.getAttributeTemplate("status", SelectTemplate.class).getOptions().contains("Suspended"));
         assertTrue(result.getAttributeTemplate("startTime") instanceof TimeTemplate);
-        assertEquals("{status}", ((Property) result.getAttributeTemplate("status", PropertyTemplate.class).getValue()).getValue());
         assertTrue(result.getAttributeTemplate("limit") instanceof MeasurementTemplate);
         assertTrue(result.getAttributeTemplate("accountHolder") instanceof OlogyTemplate);
         assertNotNull(result.getAttributeTemplate("accountHolder", OlogyTemplate.class).getAttributeTemplate("permissions"));

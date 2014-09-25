@@ -1,6 +1,4 @@
-package uk.co.revsys.objectology.action.handler;
-
-import uk.co.revsys.objectology.action.handler.ActionInvocationException;
+package uk.co.revsys.objectology.action.handler.exception;
 
 public class MissingParameterException extends ActionInvocationException{
 

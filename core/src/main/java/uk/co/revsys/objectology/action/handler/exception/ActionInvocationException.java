@@ -1,4 +1,4 @@
-package uk.co.revsys.objectology.action.handler;
+package uk.co.revsys.objectology.action.handler.exception;
 
 public class ActionInvocationException extends Exception{
 

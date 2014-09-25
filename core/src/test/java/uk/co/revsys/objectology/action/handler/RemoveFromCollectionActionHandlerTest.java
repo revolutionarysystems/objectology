@@ -1,9 +1,8 @@
+
 package uk.co.revsys.objectology.action.handler;
 
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import static org.easymock.EasyMock.capture;
-import static org.easymock.EasyMock.expect;
 import org.easymock.IMocksControl;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -12,19 +11,20 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import uk.co.revsys.objectology.action.ActionRequest;
-import uk.co.revsys.objectology.action.model.AddToCollectionAction;
+import uk.co.revsys.objectology.action.model.RemoveFromCollectionAction;
 import uk.co.revsys.objectology.mapping.json.JsonInstanceMapper;
 import uk.co.revsys.objectology.model.instance.Collection;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
+import uk.co.revsys.objectology.model.instance.Property;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
-import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
+import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
 import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
 
-public class AddToCollectionActionHandlerTest {
+public class RemoveFromCollectionActionHandlerTest {
 
-    public AddToCollectionActionHandlerTest() {
+    public RemoveFromCollectionActionHandlerTest() {
     }
 
     @BeforeClass
@@ -46,26 +46,28 @@ public class AddToCollectionActionHandlerTest {
     @Test
     public void testInvoke() throws Exception {
         IMocksControl mocksControl = EasyMock.createControl();
-        OlogyInstanceService mockService = mocksControl.createMock(OlogyInstanceService.class);
-        OlogyObjectServiceFactory.setOlogyInstanceService(mockService);
+        OlogyInstanceService mockInstanceService = mocksControl.createMock(OlogyInstanceService.class);
+        OlogyObjectServiceFactory.setOlogyInstanceService(mockInstanceService);
         OlogyTemplate template = new OlogyTemplate();
-        CollectionTemplate collectionTemplate = new CollectionTemplate(new MeasurementTemplate());
-        template.setAttributeTemplate("collection", collectionTemplate);
+        template.setAttributeTemplate("collection", new CollectionTemplate(new PropertyTemplate()));
         OlogyInstance instance = new OlogyInstance(template);
         Collection collection = new Collection();
+        collection.add(new Property("m1"));
+        collection.add(new Property("m2"));
+        collection.add(new Property("m3"));
         instance.setAttribute("collection", collection);
+        RemoveFromCollectionAction action = new RemoveFromCollectionAction("collection", "item");
+        RemoveFromCollectionActionHandler handler = new RemoveFromCollectionActionHandler(new JsonInstanceMapper(null));
         ActionRequest request = new ActionRequest();
-        request.getParameters().put("item", "2");
-        AddToCollectionAction action = new AddToCollectionAction("collection", "item");
-        Capture<OlogyInstance> capture = new Capture<OlogyInstance>();
-        expect(mockService.update(capture(capture))).andReturn(null);
+        request.setParameter("item", "m2");
+        Capture<OlogyInstance> updateCapture = new Capture<OlogyInstance>();
+        EasyMock.expect(mockInstanceService.update(EasyMock.capture(updateCapture))).andReturn(null);
         mocksControl.replay();
-        AddToCollectionActionHandler actionHandler = new AddToCollectionActionHandler(new JsonInstanceMapper(null));
-        actionHandler.invoke(instance, action, request);
+        handler.invoke(instance, action, request);
+        Collection updatedCollection = updateCapture.getValue().getAttribute("collection", Collection.class);
+        assertEquals(2, updatedCollection.size());
+        assertFalse(updatedCollection.contains(new Property("m2")));
         mocksControl.verify();
-        OlogyInstance result = capture.getValue();
-        assertEquals(1, result.getAttribute("collection", Collection.class).getMembers().size());
-        assertEquals("2", result.getAttribute("collection", Collection.class).getMembers().get(0).toString());
     }
 
 }

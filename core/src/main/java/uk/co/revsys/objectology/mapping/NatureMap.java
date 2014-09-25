@@ -11,6 +11,7 @@ import uk.co.revsys.objectology.model.template.LinkedObjectsTemplate;
 import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
+import uk.co.revsys.objectology.model.template.SelectTemplate;
 import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
 import uk.co.revsys.objectology.security.IsAdministratorConstraint;
@@ -32,6 +33,7 @@ public class NatureMap {
         NatureMap.setNature("sequence", SequenceTemplate.class);
         NatureMap.setNature("linkedObject", LinkedObjectTemplate.class);
         NatureMap.setNature("linkedObjects", LinkedObjectsTemplate.class);
+        NatureMap.setNature("select", SelectTemplate.class);
         // Security
         NatureMap.setNature("hasRole", RoleConstraint.class);
         NatureMap.setNature("hasPermission", PermissionConstraint.class);

@@ -8,6 +8,7 @@ import java.io.IOException;
 import uk.co.revsys.objectology.dao.SequenceException;
 import uk.co.revsys.objectology.dao.SequenceGenerator;
 import uk.co.revsys.objectology.mapping.DeserialiserException;
+import uk.co.revsys.objectology.exception.ValidationException;
 import uk.co.revsys.objectology.model.instance.Sequence;
 import uk.co.revsys.objectology.model.template.SequenceTemplate;
 
@@ -22,15 +23,19 @@ public class SequenceDeserialiser extends JsonDeserializer<Sequence>{
     @Override
     public Sequence deserialize(JsonParser jp, DeserializationContext dc) throws IOException, JsonProcessingException {
         String value = jp.readValueAs(String.class);
+        SequenceTemplate template = (SequenceTemplate) dc.getAttribute("template");
         if(value.isEmpty()){
-            SequenceTemplate template = (SequenceTemplate) dc.getAttribute("template");
             try {
                 value = sequenceGenerator.getNextSequence(template.getName(), template.getLength());
             } catch (SequenceException ex) {
                 throw new DeserialiserException(ex);
             }
         }
-        return new Sequence(value);
+        try {
+            return new Sequence(value);
+        } catch (ValidationException ex) {
+            throw new DeserialiserException(ex);
+        }
     }
 
 }

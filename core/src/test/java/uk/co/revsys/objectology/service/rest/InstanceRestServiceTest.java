@@ -14,7 +14,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
-import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.dao.InMemorySequenceGenerator;
 import uk.co.revsys.objectology.mapping.json.JsonInstanceMapper;
 import uk.co.revsys.objectology.mapping.xml.XMLInstanceToJSONConverter;
@@ -58,7 +57,7 @@ public class InstanceRestServiceTest extends AbstractShiroTest {
     }
 
     @Test
-    public void testUpdateFromJSON() throws DaoException {
+    public void testUpdateFromJSON() throws Exception {
         String type = "subscription";
         String id = "1234";
         String json = "{\"prop2\": \"value3\", \"collection1\": [\"c1\", \"c3\"], \"collection2\": {\"$add\": [\"c5\"]}}";
@@ -68,11 +67,11 @@ public class InstanceRestServiceTest extends AbstractShiroTest {
         InstanceRestService instanceRestService = new InstanceRestService(mockInstanceService, null, new JsonInstanceMapper(new InMemorySequenceGenerator()), null, new AllowAllAuthorisationHandler(), null, null, null);
         OlogyTemplate template = new OlogyTemplate();
         template.setId("abcd");
-        template.getAttributeTemplates().put("prop1", new PropertyTemplate());
-        template.getAttributeTemplates().put("prop2", new PropertyTemplate());
-        template.getAttributeTemplates().put("collection1", new CollectionTemplate(new PropertyTemplate()));
-        template.getAttributeTemplates().put("collection2", new CollectionTemplate(new PropertyTemplate()));
-        OlogyInstance instance = new OlogyInstance();
+        template.setAttributeTemplate("prop1", new PropertyTemplate());
+        template.setAttributeTemplate("prop2", new PropertyTemplate());
+        template.setAttributeTemplate("collection1", new CollectionTemplate(new PropertyTemplate()));
+        template.setAttributeTemplate("collection2", new CollectionTemplate(new PropertyTemplate()));
+        OlogyInstance instance = new OlogyInstance(template);
         instance.setId(id);
         instance.setAttribute("prop1", new Property("value1"));
         instance.setAttribute("prop2", new Property("value2"));
@@ -109,7 +108,7 @@ public class InstanceRestServiceTest extends AbstractShiroTest {
     }
     
     @Test
-    public void testUpdateFromXML() throws DaoException {
+    public void testUpdateFromXML() throws Exception {
         String type = "subscription";
         String id = "1234";
         String xml = "<subscription xmlns:o=\"http://test/\"><prop2>value3</prop2><collection1><property>c1</property><property>c3</property></collection1><collection2 o:action=\"add\"><property>c5</property></collection2></subscription>";
@@ -120,13 +119,13 @@ public class InstanceRestServiceTest extends AbstractShiroTest {
         OlogyTemplate template = new OlogyTemplate();
         template.setId("abcd");
         template.setType("subscription");
-        template.getAttributeTemplates().put("prop1", new PropertyTemplate());
-        template.getAttributeTemplates().put("prop2", new PropertyTemplate());
+        template.setAttributeTemplate("prop1", new PropertyTemplate());
+        template.setAttributeTemplate("prop2", new PropertyTemplate());
         CollectionTemplate collection1Template = new CollectionTemplate(new PropertyTemplate());
-        template.getAttributeTemplates().put("collection1", collection1Template);
+        template.setAttributeTemplate("collection1", collection1Template);
         CollectionTemplate collection2Template = new CollectionTemplate(new PropertyTemplate());
-        template.getAttributeTemplates().put("collection2", collection2Template);
-        OlogyInstance instance = new OlogyInstance();
+        template.setAttributeTemplate("collection2", collection2Template);
+        OlogyInstance instance = new OlogyInstance(template);
         instance.setId(id);
         instance.setAttribute("prop1", new Property("value1"));
         instance.setAttribute("prop2", new Property("value2"));

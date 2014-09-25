@@ -2,37 +2,40 @@ package uk.co.revsys.objectology.model.instance;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.text.ParseException;
+import uk.co.revsys.objectology.exception.ValidationException;
+import uk.co.revsys.objectology.model.template.AtomicAttributeTemplate;
 
-public abstract class AtomicAttribute<V extends Object> extends AbstractAttribute{
-
-	private V value;
-
-	public AtomicAttribute() {
-	}
-
-	public AtomicAttribute(V value) {
-		this.value = value;
-	}
+public abstract class AtomicAttribute<T extends AtomicAttributeTemplate, V extends Object> extends AbstractAttribute<T> {
     
-    public AtomicAttribute(String value) throws ParseException{
-        setValueFromString(value);
+    private V value;
+    
+    public AtomicAttribute() {
     }
-
-	public V getValue() {
-		return value;
-	}
-
-	public void setValue(V value) {
-		this.value = value;
-	}
     
-    public abstract void setValueFromString(String value) throws ParseException;
-
+    public AtomicAttribute(String value) throws ValidationException, ParseException{
+        setValue(parseValueFromString(value));
+    }
+    
+    public AtomicAttribute(V value) throws ValidationException{
+        setValue(value);
+    }
+    
+    public V getValue() {
+        return value;
+    }
+    
+    public void setValue(V value) throws ValidationException {
+        this.value = value;
+        validate();
+    }
+    
+    public abstract V parseValueFromString(String value) throws ParseException;
+    
     @Override
     @JsonValue
     public String toString() {
         V value = getValue();
-        if(value == null){
+        if (value == null) {
             return "";
         }
         return getValue().toString();
@@ -40,13 +43,13 @@ public abstract class AtomicAttribute<V extends Object> extends AbstractAttribut
     
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof AtomicAttribute){
-            obj = ((AtomicAttribute)obj).getValue();
+        if (obj instanceof AtomicAttribute) {
+            obj = ((AtomicAttribute) obj).getValue();
         }
-        if(getValue()==null){
+        if (getValue() == null) {
             return obj == null;
         }
         return getValue().equals(obj);
     }
-	
+    
 }

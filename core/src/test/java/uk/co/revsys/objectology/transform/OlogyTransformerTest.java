@@ -6,10 +6,8 @@ import uk.co.revsys.objectology.view.definition.rule.OneToOneMappingRule;
 import uk.co.revsys.objectology.view.definition.rule.ViewDefinitionRuleSet;
 import uk.co.revsys.objectology.view.definition.rule.DelegateRule;
 import uk.co.revsys.objectology.view.definition.rule.ReplaceRootRule;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import javax.swing.text.html.ObjectView;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -19,7 +17,9 @@ import static org.junit.Assert.*;
 import uk.co.revsys.objectology.model.instance.Collection;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.instance.Property;
+import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
+import uk.co.revsys.objectology.model.template.PropertyTemplate;
 
 public class OlogyTransformerTest {
 
@@ -43,9 +43,13 @@ public class OlogyTransformerTest {
     }
 
     @Test
-    public void testTransform() throws TransformException, JsonProcessingException {
+    public void testTransform() throws Exception {
         OlogyTemplate template = new OlogyTemplate();
         template.setType("Instance");
+        OlogyTemplate partTemplate = new OlogyTemplate();
+        template.setAttributeTemplate("part", partTemplate);
+        CollectionTemplate propertiesTemplate = new CollectionTemplate(new PropertyTemplate());
+        template.setAttributeTemplate("properties", propertiesTemplate);
         OlogyInstance instance = new OlogyInstance();
         instance.setId("1234");
         instance.setName("Test");
@@ -54,8 +58,8 @@ public class OlogyTransformerTest {
         part.setId("5678");
         instance.setAttribute("part", part);
         Collection collection = new Collection();
-        collection.getMembers().add(new Property("abc"));
-        collection.getMembers().add(new Property("def"));
+        collection.add(new Property("abc"));
+        collection.add(new Property("def"));
         instance.setAttribute("properties", collection);
         ViewDefinitionRuleSet rootRuleSet1 = new ViewDefinitionRuleSet();
         rootRuleSet1.addRule(new OneToOneMappingRule("uid", "$.id"));

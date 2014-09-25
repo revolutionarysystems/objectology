@@ -23,4 +23,8 @@ public class ActionHandlerFactory {
         return getHandler(action.getClass());
     }
     
+    public void setHandler(Class<? extends Action> actionType, ActionHandler handler){
+        handlers.put(actionType, handler);
+    }
+    
 }

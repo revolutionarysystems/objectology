@@ -39,9 +39,9 @@ public class OlogyTemplateServiceImplTest {
 		OlogyObjectDao<OlogyTemplate> templateDao = new InMemoryOlogyObjectDao<OlogyTemplate>();
 		OlogyTemplateServiceImpl<OlogyTemplate> templateService = new OlogyTemplateServiceImpl<OlogyTemplate>(templateDao, new OlogyTemplateValidator());
 		OlogyTemplate template1 = new OlogyTemplate();
-		template1.getAttributeTemplates().put("property1", new PropertyTemplate());
+		template1.setAttributeTemplate("property1", new PropertyTemplate());
 		OlogyTemplate template1Part1 = new OlogyTemplate();
-		template1.getAttributeTemplates().put("part1", template1Part1);
+		template1.setAttributeTemplate("part1", template1Part1);
 		OlogyTemplate result1 = templateService.create(template1);
 		assertNotNull(result1);
 		String template1Id = result1.getId();

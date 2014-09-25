@@ -22,4 +22,8 @@ public class ActionRequest {
         this.parameters = parameters;
     }
     
+    public void setParameter(String key, String value){
+        this.parameters.put(key, value);
+    }
+    
 }

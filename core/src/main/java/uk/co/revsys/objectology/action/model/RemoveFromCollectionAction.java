@@ -1,0 +1,37 @@
+package uk.co.revsys.objectology.action.model;
+
+public class RemoveFromCollectionAction extends AbstractAction{
+
+    private String collection;
+    private String item;
+
+    public RemoveFromCollectionAction() {
+    }
+
+    public RemoveFromCollectionAction(String collection, String item) {
+        this.collection = collection;
+        this.item = item;
+    }
+
+    public String getCollection() {
+        return collection;
+    }
+
+    public void setCollection(String collection) {
+        this.collection = collection;
+    }
+
+    public String getItem() {
+        return item;
+    }
+
+    public void setItem(String item) {
+        this.item = item;
+    }
+    
+    @Override
+    public String getNature() {
+        return "removeFromCollection";
+    }
+
+}

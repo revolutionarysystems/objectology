@@ -1,6 +1,5 @@
 package uk.co.revsys.objectology.serialiser.json;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -10,7 +9,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import uk.co.revsys.objectology.action.model.UpdateAttributeAction;
 import uk.co.revsys.objectology.mapping.ObjectMapper;
-import uk.co.revsys.objectology.model.instance.Property;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.model.template.MeasurementTemplate;
@@ -18,10 +16,10 @@ import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
-import uk.co.revsys.objectology.mapping.SerialiserException;
 import uk.co.revsys.objectology.mapping.json.JsonObjectMapper;
+import uk.co.revsys.objectology.model.instance.Property;
 import uk.co.revsys.objectology.model.template.LinkedObjectTemplate;
-import uk.co.revsys.objectology.security.RoleConstraint;
+import uk.co.revsys.objectology.model.template.SelectTemplate;
 
 public class JacksonTemplateSerialiserTest {
 
@@ -48,30 +46,31 @@ public class JacksonTemplateSerialiserTest {
      * Test of serialiseJSON method, of class JSONOlogyTemplateSerialiser.
      */
     @Test
-    public void testSerialiseJSON() throws SerialiserException, JsonProcessingException {
+    public void testSerialiseJSON() throws Exception {
         ObjectMapper objectMapper = new JsonObjectMapper();
         OlogyTemplate template = new OlogyTemplate();
         template.setId("1234");
         template.setType("subscription");
-        PropertyTemplate statusTemplate = new PropertyTemplate();
-        Property statusProperty = new Property("{status}");
-        statusProperty.setTemplate(statusTemplate);
-        statusTemplate.setValue(statusProperty);
+        SelectTemplate statusTemplate = new SelectTemplate();
+        statusTemplate.getOptions().add("Active");
+        statusTemplate.getOptions().add("Suspended");
+        statusTemplate.setValue(new Property("Active"));
         UpdateAttributeAction replacePropertyAction = new UpdateAttributeAction("status");
         template.getActions().put("changeStatus", replacePropertyAction);
-        template.getAttributeTemplates().put("seq", new SequenceTemplate("seq1", 4));
-        template.getAttributeTemplates().put("status", statusTemplate);
-        template.getAttributeTemplates().put("startTime", new TimeTemplate());
-        template.getAttributeTemplates().put("limit", new MeasurementTemplate());
-        template.getAttributeTemplates().put("limits", new CollectionTemplate(new MeasurementTemplate()));
-        template.getAttributeTemplates().put("account", new LinkedObjectTemplate("account", "subscription"));
+        template.setAttributeTemplate("seq", new SequenceTemplate("seq1", 4));
+        template.setAttributeTemplate("status", statusTemplate);
+        template.setAttributeTemplate("description", new PropertyTemplate());
+        template.setAttributeTemplate("startTime", new TimeTemplate());
+        template.setAttributeTemplate("limit", new MeasurementTemplate());
+        template.setAttributeTemplate("limits", new CollectionTemplate(new MeasurementTemplate()));
+        template.setAttributeTemplate("account", new LinkedObjectTemplate("account", "subscription"));
         OlogyTemplate partTemplate = new OlogyTemplate();
-        partTemplate.getAttributeTemplates().put("permissions", new PropertyTemplate());
-        partTemplate.getAttributeTemplates().put("user", new LinkTemplate());
-        template.getAttributeTemplates().put("accountHolder", partTemplate);
+        partTemplate.setAttributeTemplate("permissions", new PropertyTemplate());
+        partTemplate.setAttributeTemplate("user", new LinkTemplate());
+        template.setAttributeTemplate("accountHolder", partTemplate);
         OlogyTemplate featureTemplate = new OlogyTemplate();
-        featureTemplate.getAttributeTemplates().put("name", new PropertyTemplate());
-        template.getAttributeTemplates().put("features", new CollectionTemplate(featureTemplate));
+        featureTemplate.setAttributeTemplate("name", new PropertyTemplate());
+        template.setAttributeTemplate("features", new CollectionTemplate(featureTemplate));
         String result = objectMapper.serialise(template);
         System.out.println("result = " + result);
         JSONObject json = new JSONObject(result);
@@ -83,8 +82,9 @@ public class JacksonTemplateSerialiserTest {
         assertEquals("sequence", seqJson.getString("nature"));
         assertEquals("seq1", seqJson.getString("name"));
         assertEquals(4, seqJson.getInt("length"));
-        assertEquals("property", json.getJSONObject("attributes").getJSONObject("status").get("nature"));
-        assertEquals("{status}", json.getJSONObject("attributes").getJSONObject("status").getString("value"));
+        assertEquals("property", json.getJSONObject("attributes").getJSONObject("description").get("nature"));
+        assertEquals("select", json.getJSONObject("attributes").getJSONObject("status").get("nature"));
+        assertEquals("Active", json.getJSONObject("attributes").getJSONObject("status").getString("value"));
         assertEquals("measurement", json.getJSONObject("attributes").getJSONObject("limits").getJSONObject("memberTemplate").getString("nature"));
         assertEquals("status", json.getJSONObject("actions").getJSONObject("changeStatus").getString("attribute"));
         assertEquals("account", json.getJSONObject("attributes").getJSONObject("account").getString("type"));

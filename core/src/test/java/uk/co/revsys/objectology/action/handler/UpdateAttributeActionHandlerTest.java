@@ -48,7 +48,7 @@ public class UpdateAttributeActionHandlerTest {
         OlogyInstanceService mockService = mocksControl.createMock(OlogyInstanceService.class);
         OlogyObjectServiceFactory.setOlogyInstanceService(mockService);
         OlogyTemplate template = new OlogyTemplate();
-        template.getAttributeTemplates().put("status", new PropertyTemplate());
+        template.setAttributeTemplate("status", new PropertyTemplate());
         OlogyInstance instance = new OlogyInstance();
         instance.setTemplate(template);
         instance.setAttribute("status", new Property("enabled"));
@@ -66,16 +66,16 @@ public class UpdateAttributeActionHandlerTest {
     }
     
     @Test
-    public void testInvoke2() throws Exception {
+    public void testInvokeUpdateObject() throws Exception {
         IMocksControl mocksControl = EasyMock.createControl();
         OlogyInstanceService mockService = mocksControl.createMock(OlogyInstanceService.class);
         OlogyObjectServiceFactory.setOlogyInstanceService(mockService);
         OlogyTemplate template = new OlogyTemplate();
         OlogyTemplate partTemplate = new OlogyTemplate();
-        template.getAttributeTemplates().put("part", partTemplate);
+        template.setAttributeTemplate("part", partTemplate);
         OlogyInstance instance = new OlogyInstance();
         instance.setTemplate(template);
-        partTemplate.getAttributeTemplates().put("p1", new PropertyTemplate());
+        partTemplate.setAttributeTemplate("p1", new PropertyTemplate());
         OlogyInstance part = new OlogyInstance();
         part.setTemplate(partTemplate);
         instance.setAttribute("part", part);
@@ -93,6 +93,30 @@ public class UpdateAttributeActionHandlerTest {
         System.out.println("result.getAttribute(\"part\") = " + result.getAttribute("part"));
         System.out.println("result = " + result.getAttribute("part", OlogyInstance.class).getAttribute("p1"));
         assertEquals("v1", result.getAttribute("part", OlogyInstance.class).getAttribute("p1").toString());
+    }
+    
+    @Test
+    public void testInvokeWithSetValue() throws Exception {
+        IMocksControl mocksControl = EasyMock.createControl();
+        OlogyInstanceService mockService = mocksControl.createMock(OlogyInstanceService.class);
+        OlogyObjectServiceFactory.setOlogyInstanceService(mockService);
+        OlogyTemplate template = new OlogyTemplate();
+        template.setAttributeTemplate("status", new PropertyTemplate());
+        OlogyInstance instance = new OlogyInstance();
+        instance.setTemplate(template);
+        instance.setAttribute("status", new Property("enabled"));
+        ActionRequest request = new ActionRequest();
+        request.getParameters().put("status", "disabled");
+        UpdateAttributeAction action = new UpdateAttributeAction("status");
+        action.setValue("suspended");
+        Capture<OlogyInstance> capture = new Capture<OlogyInstance>();
+        expect(mockService.update(capture(capture))).andReturn(null);
+        mocksControl.replay();
+        UpdateAttributeActionHandler actionHandler = new UpdateAttributeActionHandler(new JsonInstanceMapper(null));
+        actionHandler.invoke(instance, action, request);
+        mocksControl.verify();
+        OlogyInstance result = capture.getValue();
+        assertEquals("suspended", result.getAttribute("status").toString());
     }
 
 }

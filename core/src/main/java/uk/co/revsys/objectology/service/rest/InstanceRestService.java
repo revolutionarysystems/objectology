@@ -31,7 +31,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.revsys.objectology.action.model.Action;
-import uk.co.revsys.objectology.action.handler.ActionInvocationException;
+import uk.co.revsys.objectology.action.handler.exception.ActionInvocationException;
 import uk.co.revsys.objectology.action.ActionRequest;
 import uk.co.revsys.objectology.action.handler.ActionHandler;
 import uk.co.revsys.objectology.action.handler.ActionHandlerFactory;

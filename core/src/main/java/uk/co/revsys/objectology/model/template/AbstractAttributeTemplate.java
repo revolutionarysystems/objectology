@@ -1,5 +1,6 @@
 package uk.co.revsys.objectology.model.template;
 
+import uk.co.revsys.objectology.exception.ValidationException;
 import uk.co.revsys.objectology.model.instance.Attribute;
 
 public abstract class AbstractAttributeTemplate<A extends Attribute> implements AttributeTemplate<A>{
@@ -15,5 +16,10 @@ public abstract class AbstractAttributeTemplate<A extends Attribute> implements 
 	public void setValue(A value) {
 		this.value = value;
 	}
+
+    @Override
+    public void validate(A attribute) throws ValidationException {
+        
+    }
 
 }

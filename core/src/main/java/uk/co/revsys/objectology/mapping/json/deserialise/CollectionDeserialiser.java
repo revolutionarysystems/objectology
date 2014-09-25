@@ -7,6 +7,10 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import uk.co.revsys.objectology.exception.ValidationException;
+import uk.co.revsys.objectology.mapping.DeserialiserException;
 import uk.co.revsys.objectology.mapping.json.JsonObjectMapper;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.Collection;
@@ -22,10 +26,14 @@ public class CollectionDeserialiser extends JsonDeserializer<Collection>{
         JsonNode root = mapper.readTree(jp);
         Iterator<JsonNode> iterator = root.iterator();
         while(iterator.hasNext()){
-            JsonNode memberJson = iterator.next();
-            Attribute member = (Attribute) mapper.reader(template.getMemberTemplate().getAttributeType()).withAttribute("template", template.getMemberTemplate()).readValue(memberJson.toString());
-            member.setTemplate(template.getMemberTemplate());
-            collection.getMembers().add(member);
+            try {
+                JsonNode memberJson = iterator.next();
+                Attribute member = (Attribute) mapper.reader(template.getMemberTemplate().getAttributeType()).withAttribute("template", template.getMemberTemplate()).readValue(memberJson.toString());
+                member.setTemplate(template.getMemberTemplate());
+                collection.add(member);
+            } catch (ValidationException ex) {
+                throw new DeserialiserException(ex);
+            }
         }
         return collection;
     }

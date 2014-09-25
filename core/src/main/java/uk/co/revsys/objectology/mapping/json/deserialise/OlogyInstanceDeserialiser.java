@@ -7,7 +7,11 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import uk.co.revsys.objectology.dao.DaoException;
+import uk.co.revsys.objectology.exception.UnexpectedAttributeException;
+import uk.co.revsys.objectology.exception.ValidationException;
 import uk.co.revsys.objectology.mapping.DeserialiserException;
 import uk.co.revsys.objectology.mapping.json.JSONNullType;
 import uk.co.revsys.objectology.mapping.json.JsonObjectMapper;
@@ -77,10 +81,16 @@ public class OlogyInstanceDeserialiser extends JsonDeserializer<OlogyInstance> {
                 }
             }
             Attribute attribute = (Attribute) mapper.reader(attributeTemplate.getAttributeType()).withAttribute("template", attributeTemplate).readValue(attributeJson);
-            if (attribute != null) {
-                attribute.setTemplate(attributeTemplate);
+            try {
+                if (attribute != null) {
+                    attribute.setTemplate(attributeTemplate);
+                }
+                instance.setAttribute(attributeName, attribute);
+            } catch (UnexpectedAttributeException ex) {
+                throw new DeserialiserException(ex);
+            } catch (ValidationException ex) {
+                throw new DeserialiserException(ex);
             }
-            instance.setAttribute(attributeName, attribute);
         }
         return instance;
     }

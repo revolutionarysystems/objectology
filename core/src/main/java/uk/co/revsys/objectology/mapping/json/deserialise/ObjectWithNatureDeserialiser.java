@@ -22,6 +22,8 @@ public class ObjectWithNatureDeserialiser<O extends ObjectWithNature> extends Js
         if(templateType == null){
             throw new UnknownNatureException(nature);
         }
+        System.out.println("root: " + root.toString());
+        System.out.println("templateType: " + templateType);
         ObjectWithNature object = mapper.readValue(root.toString(), templateType);
         return (O)object;
     }

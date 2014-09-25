@@ -1,5 +1,6 @@
 package uk.co.revsys.objectology.action.handler;
 
+import uk.co.revsys.objectology.action.handler.exception.MissingParameterException;
 import uk.co.revsys.objectology.action.ActionRequest;
 import uk.co.revsys.objectology.action.model.Action;
 
