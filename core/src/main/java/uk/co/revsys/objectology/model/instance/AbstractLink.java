@@ -1,14 +1,14 @@
 package uk.co.revsys.objectology.model.instance;
 
 import uk.co.revsys.objectology.dao.DaoException;
-import uk.co.revsys.objectology.model.OlogyObject;
+import uk.co.revsys.objectology.model.PersistedObject;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
 
-public abstract class AbstractLink<A extends AttributeTemplate> extends AbstractAttribute<A>{
+public abstract class AbstractLink<L extends AbstractLink, T extends AttributeTemplate> extends AbstractAttribute<L, T>{
 
     public abstract String getReference();
     
-    public abstract OlogyObject getAssociatedObject() throws DaoException;
+    public abstract PersistedObject getAssociatedObject() throws DaoException;
 
     @Override
     public boolean equals(Object obj) {

@@ -22,9 +22,7 @@ public class ViewDefinitionParserImpl implements ViewDefinitionParser{
         Map<String, JSONObject> ruleSetsJson = new HashMap<String, JSONObject>();
         for(Object key: templates.keySet()){
             String path = (String)key;
-            System.out.println("path = " + path);
             Object template = templates.get(path);
-            System.out.println("template = " + template);
             ViewDefinitionRule rule;
             if(template instanceof String){
                 rule = new ReplaceRootRule((String)template);

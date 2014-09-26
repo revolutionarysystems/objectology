@@ -10,16 +10,16 @@ import com.mongodb.util.JSON;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import uk.co.revsys.objectology.dao.AbstractOlogyObjectDao;
+import uk.co.revsys.objectology.dao.AbstractDao;
 import uk.co.revsys.objectology.dao.DaoException;
-import uk.co.revsys.objectology.model.OlogyObject;
+import uk.co.revsys.objectology.model.PersistedObject;
 import uk.co.revsys.objectology.query.JSONQuery;
 import uk.co.revsys.objectology.query.Query;
 import uk.co.revsys.objectology.mapping.DeserialiserException;
 import uk.co.revsys.objectology.mapping.SerialiserException;
 import uk.co.revsys.objectology.mapping.json.JsonObjectMapper;
 
-public class MongoDao<O extends OlogyObject> extends AbstractOlogyObjectDao<O> {
+public class MongoDao<O extends PersistedObject> extends AbstractDao<O> {
 
 	private final DBCollection dbCollection;
 	private final Class<? extends O> objectClass;

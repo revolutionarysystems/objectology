@@ -16,7 +16,7 @@ import uk.co.revsys.objectology.model.instance.AtomicAttribute;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
-import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
+import uk.co.revsys.objectology.service.ServiceFactory;
 
 public class UpdateAttributeActionHandler extends AbstractActionHandler<UpdateAttributeAction> {
 
@@ -43,7 +43,7 @@ public class UpdateAttributeActionHandler extends AbstractActionHandler<UpdateAt
             deserialisationParameters.put("template", attributeTemplate);
             Attribute attribute = (Attribute) instanceMapper.deserialise(value, attributeType, deserialisationParameters);
             instance.setAttribute(attributeName, attribute);
-            return OlogyObjectServiceFactory.getOlogyInstanceService().update(instance);
+            return ServiceFactory.getOlogyInstanceService().update(instance);
         } catch (DeserialiserException ex) {
             throw new ActionInvocationException(ex);
         } catch (DaoException ex) {

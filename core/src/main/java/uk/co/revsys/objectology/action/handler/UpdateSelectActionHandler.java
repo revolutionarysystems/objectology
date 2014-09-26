@@ -8,7 +8,7 @@ import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.exception.ValidationException;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.instance.Property;
-import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
+import uk.co.revsys.objectology.service.ServiceFactory;
 
 public class UpdateSelectActionHandler extends AttributeActionHandler<UpdateSelectAction, Property>{
 
@@ -32,7 +32,7 @@ public class UpdateSelectActionHandler extends AttributeActionHandler<UpdateSele
                 newValue = getRequiredParameter(request, action.getSelect());
             }
             select.setValue(newValue);
-            return OlogyObjectServiceFactory.getOlogyInstanceService().update(instance);
+            return ServiceFactory.getOlogyInstanceService().update(instance);
         } catch (ValidationException ex) {
             throw new ActionInvocationException(ex);
         } catch (DaoException ex) {

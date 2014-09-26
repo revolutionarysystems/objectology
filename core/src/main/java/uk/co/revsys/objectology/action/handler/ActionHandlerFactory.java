@@ -16,7 +16,11 @@ public class ActionHandlerFactory {
     }
 
     public ActionHandler getHandler(Class<? extends Action> actionType){
-        return handlers.get(actionType);
+        ActionHandler handler = handlers.get(actionType);
+        if(handler instanceof ActionHandlerFactoryAware){
+            ((ActionHandlerFactoryAware)handler).setActionHandlerFactory(this);
+        }
+        return handler;
     }
     
     public ActionHandler getHandler(Action action){

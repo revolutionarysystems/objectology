@@ -6,12 +6,12 @@ import uk.co.revsys.objectology.action.model.Action;
 import uk.co.revsys.objectology.action.model.CompoundAction;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 
-public class CompoundActionHandler extends AbstractActionHandler<CompoundAction>{
+public class CompoundActionHandler extends AbstractActionHandler<CompoundAction> implements ActionHandlerFactoryAware{
 
-    private final ActionHandlerFactory actionHandlerFactory;
+    private ActionHandlerFactory actionHandlerFactory;
 
-    public CompoundActionHandler(ActionHandlerFactory actionHandlerFactory) {
-        this.actionHandlerFactory = actionHandlerFactory;
+    public CompoundActionHandler() {
+        
     }
     
     @Override
@@ -21,6 +21,11 @@ public class CompoundActionHandler extends AbstractActionHandler<CompoundAction>
             instance = handler.invoke(instance, action, request);
         }
         return instance;
+    }
+
+    @Override
+    public void setActionHandlerFactory(ActionHandlerFactory actionHandlerFactory) {
+        this.actionHandlerFactory = actionHandlerFactory;
     }
 
 }

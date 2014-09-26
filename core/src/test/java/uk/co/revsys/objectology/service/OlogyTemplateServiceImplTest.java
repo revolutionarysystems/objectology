@@ -6,8 +6,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import uk.co.revsys.objectology.dao.InMemoryOlogyObjectDao;
-import uk.co.revsys.objectology.dao.OlogyObjectDao;
+import uk.co.revsys.objectology.dao.InMemoryDao;
+import uk.co.revsys.objectology.dao.Dao;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import static org.junit.Assert.*;
@@ -36,8 +36,8 @@ public class OlogyTemplateServiceImplTest {
 
 	@Test
 	public void test() throws DaoException{
-		OlogyObjectDao<OlogyTemplate> templateDao = new InMemoryOlogyObjectDao<OlogyTemplate>();
-		OlogyTemplateServiceImpl<OlogyTemplate> templateService = new OlogyTemplateServiceImpl<OlogyTemplate>(templateDao, new OlogyTemplateValidator());
+		Dao<OlogyTemplate> templateDao = new InMemoryDao<OlogyTemplate>();
+		OlogyTemplateServiceImpl<OlogyTemplate> templateService = new OlogyTemplateServiceImpl<OlogyTemplate>(templateDao);
 		OlogyTemplate template1 = new OlogyTemplate();
 		template1.setAttributeTemplate("property1", new PropertyTemplate());
 		OlogyTemplate template1Part1 = new OlogyTemplate();
@@ -55,8 +55,8 @@ public class OlogyTemplateServiceImplTest {
 
 	@Test
 	public void testTemplateName() throws DaoException{
-		OlogyObjectDao<OlogyTemplate> templateDao = new InMemoryOlogyObjectDao<OlogyTemplate>();
-		OlogyTemplateServiceImpl<OlogyTemplate> templateService = new OlogyTemplateServiceImpl<OlogyTemplate>(templateDao, new OlogyTemplateValidator());
+		Dao<OlogyTemplate> templateDao = new InMemoryDao<OlogyTemplate>();
+		OlogyTemplateServiceImpl<OlogyTemplate> templateService = new OlogyTemplateServiceImpl<OlogyTemplate>(templateDao);
 		OlogyTemplate template1 = new OlogyTemplate();
                 template1.setName("Test template");
 		OlogyTemplate result1 = templateService.create(template1);

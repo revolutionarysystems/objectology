@@ -5,7 +5,7 @@ import java.text.ParseException;
 import uk.co.revsys.objectology.exception.ValidationException;
 import uk.co.revsys.objectology.model.template.AtomicAttributeTemplate;
 
-public abstract class AtomicAttribute<T extends AtomicAttributeTemplate, V extends Object> extends AbstractAttribute<T> {
+public abstract class AtomicAttribute<A extends AtomicAttribute, T extends AtomicAttributeTemplate, V extends Object> extends AbstractAttribute<A, T> {
     
     private V value;
     

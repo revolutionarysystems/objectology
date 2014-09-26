@@ -6,7 +6,7 @@ import java.util.List;
 import uk.co.revsys.objectology.exception.ValidationException;
 import uk.co.revsys.objectology.model.instance.Property;
 
-public class SelectTemplate extends PropertyTemplate<Property>{
+public class SelectTemplate extends PropertyTemplate{
 
     private List<String> options = new LinkedList<String>();
 

@@ -7,8 +7,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import uk.co.revsys.objectology.dao.InMemoryOlogyObjectDao;
-import uk.co.revsys.objectology.dao.OlogyObjectDao;
+import uk.co.revsys.objectology.dao.InMemoryDao;
+import uk.co.revsys.objectology.dao.Dao;
 import uk.co.revsys.objectology.mapping.ObjectMapper;
 import uk.co.revsys.objectology.mapping.json.JsonInstanceMapper;
 import uk.co.revsys.objectology.mapping.xml.XMLInstanceToJSONConverter;
@@ -26,9 +26,8 @@ import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
 import uk.co.revsys.objectology.mapping.xml.XMLObjectMapper;
 import uk.co.revsys.objectology.model.template.LinkedObjectsTemplate;
-import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
+import uk.co.revsys.objectology.service.ServiceFactory;
 import uk.co.revsys.objectology.service.OlogyTemplateServiceImpl;
-import uk.co.revsys.objectology.service.OlogyTemplateValidator;
 
 public class XMLOlogyInstanceDeserialiserTest {
 
@@ -56,12 +55,13 @@ public class XMLOlogyInstanceDeserialiserTest {
 	 */
 	@Test
 	public void testDeserialise() throws Exception {
-		OlogyObjectDao dao = new InMemoryOlogyObjectDao();
-		OlogyTemplateServiceImpl templateService = new OlogyTemplateServiceImpl(dao, new OlogyTemplateValidator());
-        OlogyObjectServiceFactory.setOlogyTemplateService(templateService);
-		ObjectMapper objectMapper = new XMLObjectMapper(null, new XMLInstanceToJSONConverter(templateService), null, new JsonInstanceMapper(null));
+		Dao dao = new InMemoryDao();
+		OlogyTemplateServiceImpl templateService = new OlogyTemplateServiceImpl(dao);
+        ServiceFactory.setOlogyTemplateService(templateService);
+		ObjectMapper objectMapper = new XMLObjectMapper(null, new XMLInstanceToJSONConverter(templateService), null, new JsonInstanceMapper());
 		OlogyTemplate template = new OlogyTemplate();
 		template.setAttributeTemplate("status", new PropertyTemplate());
+        template.setAttributeTemplate("ref", new PropertyTemplate());
 		template.setAttributeTemplate("startTime", new TimeTemplate());
 		template.setAttributeTemplate("limit", new MeasurementTemplate());
 		template.setAttributeTemplate("endTime", new TimeTemplate());
@@ -107,7 +107,8 @@ public class XMLOlogyInstanceDeserialiserTest {
 		assertEquals("2001-01-01T00:00:00+0000", instance.getAttribute("startTime", Time.class).toString());
 		assertEquals("1000", instance.getAttribute("limit", Measurement.class).toString());
 		assertNull(instance.getAttribute("other"));
-		assertNull(instance.getAttribute("endTime"));
+		assertNotNull(instance.getAttribute("endTime"));
+        assertNotNull(instance.getAttribute("ref"));
         assertNotNull(instance.getAttribute("ids"));
 		assertNotNull(instance.getAttribute("accountHolder"));
 		assertEquals("all", instance.getAttribute("accountHolder", OlogyInstance.class).getAttribute("permissions", Property.class).getValue());

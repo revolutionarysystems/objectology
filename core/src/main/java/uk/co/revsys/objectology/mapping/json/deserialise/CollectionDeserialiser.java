@@ -24,6 +24,7 @@ public class CollectionDeserialiser extends JsonDeserializer<Collection>{
         CollectionTemplate template = (CollectionTemplate) dc.getAttribute("template");
         Collection collection = new Collection();
         JsonNode root = mapper.readTree(jp);
+        System.out.println(root.asText());
         Iterator<JsonNode> iterator = root.iterator();
         while(iterator.hasNext()){
             try {

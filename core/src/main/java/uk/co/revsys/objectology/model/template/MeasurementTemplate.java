@@ -14,6 +14,11 @@ public class MeasurementTemplate extends AtomicAttributeTemplate<Measurement>{
 		this.unit = unit;
 	}
 
+    @Override
+    public Measurement newInstance() {
+        return new Measurement();
+    }
+
 	@Override
 	public Class<? extends Measurement> getAttributeType() {
 		return Measurement.class;

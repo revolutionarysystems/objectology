@@ -8,12 +8,12 @@ import uk.co.revsys.objectology.action.model.AddToCollectionAction;
 import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.mapping.DeserialiserException;
 import uk.co.revsys.objectology.mapping.json.JsonInstanceMapper;
-import uk.co.revsys.objectology.model.instance.AtomicAttribute;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.Collection;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
+import uk.co.revsys.objectology.model.template.AtomicAttributeTemplate;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
-import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
+import uk.co.revsys.objectology.service.ServiceFactory;
 
 public class AddToCollectionActionHandler extends AttributeActionHandler<AddToCollectionAction, Collection<Attribute>>{
 
@@ -33,14 +33,14 @@ public class AddToCollectionActionHandler extends AttributeActionHandler<AddToCo
         try {
             String json = getRequiredParameter(request, action.getItem());
             AttributeTemplate memberTemplate = collection.getTemplate().getMemberTemplate();
-            if(memberTemplate instanceof AtomicAttribute){
+            if(memberTemplate instanceof AtomicAttributeTemplate){
                 json = "\"" + json + "\"";
             }
             Map<String, Object> deserialisationParameters = new HashMap<String, Object>();
             deserialisationParameters.put("template", memberTemplate);
             Attribute item = (Attribute) instanceMapper.deserialise(json, memberTemplate.getAttributeType(), deserialisationParameters);
             collection.add(item);
-            instance = OlogyObjectServiceFactory.getOlogyInstanceService().update(instance);
+            instance = ServiceFactory.getOlogyInstanceService().update(instance);
             return instance;
         } catch (DeserialiserException ex) {
             throw new ActionInvocationException(ex);

@@ -7,8 +7,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import uk.co.revsys.objectology.dao.DaoException;
-import uk.co.revsys.objectology.dao.InMemoryOlogyObjectDaoFactory;
-import uk.co.revsys.objectology.dao.OlogyObjectDaoFactory;
+import uk.co.revsys.objectology.dao.InMemoryDaoFactory;
+import uk.co.revsys.objectology.dao.DaoFactory;
 import uk.co.revsys.objectology.exception.UnexpectedAttributeException;
 import uk.co.revsys.objectology.exception.ValidationException;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
@@ -39,8 +39,8 @@ public class OlogyInstanceServiceTest {
 
     @Test
     public void test() throws DaoException, UnexpectedAttributeException, ValidationException {
-        OlogyObjectDaoFactory instanceDaoFactory = new InMemoryOlogyObjectDaoFactory();
-        OlogyInstanceServiceImpl<OlogyInstance> instanceService = new OlogyInstanceServiceImpl<OlogyInstance>(instanceDaoFactory, new OlogyInstanceValidator<OlogyInstance>());
+        DaoFactory instanceDaoFactory = new InMemoryDaoFactory();
+        OlogyInstanceServiceImpl<OlogyInstance> instanceService = new OlogyInstanceServiceImpl<OlogyInstance>(instanceDaoFactory);
         OlogyTemplate template1 = new OlogyTemplate();
         template1.setAttributeTemplate("property1", new PropertyTemplate());
         OlogyInstance instance1 = new OlogyInstance();

@@ -20,7 +20,7 @@ import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
-import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
+import uk.co.revsys.objectology.service.ServiceFactory;
 
 public class RemoveFromCollectionActionHandlerTest {
 
@@ -47,7 +47,7 @@ public class RemoveFromCollectionActionHandlerTest {
     public void testInvoke() throws Exception {
         IMocksControl mocksControl = EasyMock.createControl();
         OlogyInstanceService mockInstanceService = mocksControl.createMock(OlogyInstanceService.class);
-        OlogyObjectServiceFactory.setOlogyInstanceService(mockInstanceService);
+        ServiceFactory.setOlogyInstanceService(mockInstanceService);
         OlogyTemplate template = new OlogyTemplate();
         template.setAttributeTemplate("collection", new CollectionTemplate(new PropertyTemplate()));
         OlogyInstance instance = new OlogyInstance(template);
@@ -57,7 +57,7 @@ public class RemoveFromCollectionActionHandlerTest {
         collection.add(new Property("m3"));
         instance.setAttribute("collection", collection);
         RemoveFromCollectionAction action = new RemoveFromCollectionAction("collection", "item");
-        RemoveFromCollectionActionHandler handler = new RemoveFromCollectionActionHandler(new JsonInstanceMapper(null));
+        RemoveFromCollectionActionHandler handler = new RemoveFromCollectionActionHandler(new JsonInstanceMapper());
         ActionRequest request = new ActionRequest();
         request.setParameter("item", "m2");
         Capture<OlogyInstance> updateCapture = new Capture<OlogyInstance>();

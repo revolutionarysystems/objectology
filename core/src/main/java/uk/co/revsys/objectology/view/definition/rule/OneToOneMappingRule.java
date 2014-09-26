@@ -38,8 +38,6 @@ public class OneToOneMappingRule implements ViewDefinitionRule{
     @Override
     public OlogyView evaluate(Object object, OlogyView result, ViewDefinition transform, OlogyTransformer transformer) throws TransformException{
         try {
-            System.out.println(getLabel());
-            System.out.println(getPath());
             result.put(getLabel(), transformer.getPathEvaluator().evaluate(object, getPath()));
             return result;
         } catch (PathEvaluatorException ex) {

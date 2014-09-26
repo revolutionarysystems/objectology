@@ -25,7 +25,7 @@ import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.security.AllowAllAuthorisationHandler;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
-import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
+import uk.co.revsys.objectology.service.ServiceFactory;
 import uk.co.revsys.objectology.service.OlogyTemplateService;
 import uk.co.revsys.user.manager.test.util.AbstractShiroTest;
 
@@ -63,8 +63,9 @@ public class InstanceRestServiceTest extends AbstractShiroTest {
         String json = "{\"prop2\": \"value3\", \"collection1\": [\"c1\", \"c3\"], \"collection2\": {\"$add\": [\"c5\"]}}";
         OlogyInstanceService mockInstanceService = mocksControl.createMock(OlogyInstanceService.class);
         OlogyTemplateService mockTemplateService = mocksControl.createMock(OlogyTemplateService.class);
-        OlogyObjectServiceFactory.setOlogyTemplateService(mockTemplateService);
-        InstanceRestService instanceRestService = new InstanceRestService(mockInstanceService, null, new JsonInstanceMapper(new InMemorySequenceGenerator()), null, new AllowAllAuthorisationHandler(), null, null, null);
+        ServiceFactory.setOlogyTemplateService(mockTemplateService);
+        ServiceFactory.setSequenceGenerator(new InMemorySequenceGenerator());
+        InstanceRestService instanceRestService = new InstanceRestService(mockInstanceService, null, new JsonInstanceMapper(), null, new AllowAllAuthorisationHandler(), null, null, null);
         OlogyTemplate template = new OlogyTemplate();
         template.setId("abcd");
         template.setAttributeTemplate("prop1", new PropertyTemplate());
@@ -114,8 +115,9 @@ public class InstanceRestServiceTest extends AbstractShiroTest {
         String xml = "<subscription xmlns:o=\"http://test/\"><prop2>value3</prop2><collection1><property>c1</property><property>c3</property></collection1><collection2 o:action=\"add\"><property>c5</property></collection2></subscription>";
         OlogyInstanceService mockInstanceService = mocksControl.createMock(OlogyInstanceService.class);
         OlogyTemplateService mockTemplateService = mocksControl.createMock(OlogyTemplateService.class);
-        OlogyObjectServiceFactory.setOlogyTemplateService(mockTemplateService);
-        InstanceRestService instanceRestService = new InstanceRestService(mockInstanceService, null, new JsonInstanceMapper(new InMemorySequenceGenerator()), new XMLInstanceToJSONConverter(mockTemplateService), new AllowAllAuthorisationHandler(), null, null, null);
+        ServiceFactory.setOlogyTemplateService(mockTemplateService);
+        ServiceFactory.setSequenceGenerator(new InMemorySequenceGenerator());
+        InstanceRestService instanceRestService = new InstanceRestService(mockInstanceService, null, new JsonInstanceMapper(), new XMLInstanceToJSONConverter(mockTemplateService), new AllowAllAuthorisationHandler(), null, null, null);
         OlogyTemplate template = new OlogyTemplate();
         template.setId("abcd");
         template.setType("subscription");

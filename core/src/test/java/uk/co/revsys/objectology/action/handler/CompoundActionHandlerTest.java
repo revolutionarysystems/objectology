@@ -19,7 +19,7 @@ import uk.co.revsys.objectology.model.instance.Property;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
-import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
+import uk.co.revsys.objectology.service.ServiceFactory;
 
 public class CompoundActionHandlerTest {
 
@@ -46,7 +46,7 @@ public class CompoundActionHandlerTest {
     public void testInvoke() throws Exception {
         IMocksControl mocksControl = EasyMock.createControl();
         OlogyInstanceService mockInstanceService = mocksControl.createMock(OlogyInstanceService.class);
-        OlogyObjectServiceFactory.setOlogyInstanceService(mockInstanceService);
+        ServiceFactory.setOlogyInstanceService(mockInstanceService);
         OlogyTemplate template = new OlogyTemplate();
         template.setAttributeTemplate("a1", new PropertyTemplate());
         template.setAttributeTemplate("a2", new PropertyTemplate());
@@ -56,7 +56,8 @@ public class CompoundActionHandlerTest {
         CompoundAction compoundAction = new CompoundAction();
         compoundAction.addAction(new UpdateAttributeAction("a1"));
         compoundAction.addAction(new UpdateAttributeAction("a2"));
-        CompoundActionHandler handler = new CompoundActionHandler(new DefaultActionHandlerFactory(new JsonInstanceMapper(null)));
+        CompoundActionHandler handler = new CompoundActionHandler();
+        handler.setActionHandlerFactory(new DefaultActionHandlerFactory(new JsonInstanceMapper()));
         ActionRequest request = new ActionRequest();
         request.setParameter("a1", "c1");
         request.setParameter("a2", "c2");

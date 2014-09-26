@@ -2,19 +2,17 @@ package uk.co.revsys.objectology.service;
 
 import java.util.List;
 import uk.co.revsys.objectology.dao.DaoException;
-import uk.co.revsys.objectology.dao.OlogyObjectDao;
-import uk.co.revsys.objectology.dao.OlogyObjectDaoFactory;
+import uk.co.revsys.objectology.dao.Dao;
+import uk.co.revsys.objectology.dao.DaoFactory;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.query.Query;
 
 public class OlogyInstanceServiceImpl<I extends OlogyInstance> implements OlogyInstanceService<I>{
 
-	private final OlogyObjectDaoFactory daoFactory;
-	private final OlogyObjectValidator<I> validator;
+	private final DaoFactory daoFactory;
 
-	public OlogyInstanceServiceImpl(OlogyObjectDaoFactory daoFactory, OlogyObjectValidator<I> validator) {
+	public OlogyInstanceServiceImpl(DaoFactory daoFactory) {
 		this.daoFactory = daoFactory;
-		this.validator = validator;
 	}
 
 	@Override
@@ -49,13 +47,11 @@ public class OlogyInstanceServiceImpl<I extends OlogyInstance> implements OlogyI
 
 	@Override
 	public I create(I object) throws DaoException{
-		object = validator.validate(object);
 		return getDao(object.getType()).create(object);
 	}
 
 	@Override
 	public I update(I object) throws DaoException{
-		object = validator.validate(object);
 		return getDao(object.getType()).update(object);
 	}
 
@@ -64,7 +60,7 @@ public class OlogyInstanceServiceImpl<I extends OlogyInstance> implements OlogyI
 		getDao(object.getType()).delete(object);
 	}
 	
-	public OlogyObjectDao<I> getDao(String type){
+	public Dao<I> getDao(String type){
 		return daoFactory.getDao(type);
 	}
 

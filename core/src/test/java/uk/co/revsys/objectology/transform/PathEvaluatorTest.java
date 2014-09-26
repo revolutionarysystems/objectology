@@ -22,7 +22,7 @@ import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
-import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
+import uk.co.revsys.objectology.service.ServiceFactory;
 
 public class PathEvaluatorTest {
 
@@ -49,7 +49,7 @@ public class PathEvaluatorTest {
     public void testEvaluate() throws Exception {
         IMocksControl mocksControl = EasyMock.createControl();
         OlogyInstanceService mockInstanceServce = mocksControl.createMock(OlogyInstanceService.class);
-        OlogyObjectServiceFactory.setOlogyInstanceService(mockInstanceServce);
+        ServiceFactory.setOlogyInstanceService(mockInstanceServce);
         OlogyTemplate template = new OlogyTemplate();
         template.setAttributeTemplate("p1", new PropertyTemplate());
         OlogyTemplate partTemplate = new OlogyTemplate();

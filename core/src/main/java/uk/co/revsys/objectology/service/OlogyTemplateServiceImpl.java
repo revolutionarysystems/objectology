@@ -2,18 +2,16 @@ package uk.co.revsys.objectology.service;
 
 import java.util.List;
 import uk.co.revsys.objectology.dao.DaoException;
-import uk.co.revsys.objectology.dao.OlogyObjectDao;
+import uk.co.revsys.objectology.dao.Dao;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.query.Query;
 
 public class OlogyTemplateServiceImpl<T extends OlogyTemplate> implements OlogyTemplateService<T>{
 
-	private final OlogyObjectDao<T> dao;
-	private final OlogyObjectValidator<T> validator;
+	private final Dao<T> dao;
 
-	public OlogyTemplateServiceImpl(OlogyObjectDao<T> dao, OlogyObjectValidator<T> validator) {
+	public OlogyTemplateServiceImpl(Dao<T> dao) {
 		this.dao = dao;
-		this.validator = validator;
 	}
 
 	@Override
@@ -48,13 +46,11 @@ public class OlogyTemplateServiceImpl<T extends OlogyTemplate> implements OlogyT
 
 	@Override
 	public T create(T object) throws DaoException{
-		object = validator.validate(object);
 		return dao.create(object);
 	}
 
 	@Override
 	public T update(T object) throws DaoException{
-		object = validator.validate(object);
 		return dao.update(object);
 	}
 
@@ -63,7 +59,7 @@ public class OlogyTemplateServiceImpl<T extends OlogyTemplate> implements OlogyT
 		dao.delete(object);
 	}
 
-	public OlogyObjectDao<T> getDao() {
+	public Dao<T> getDao() {
 		return dao;
 	}
 	

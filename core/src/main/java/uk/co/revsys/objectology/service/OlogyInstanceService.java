@@ -5,7 +5,7 @@ import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.query.Query;
 
-public interface OlogyInstanceService<I extends OlogyInstance> extends OlogyObjectService<I> {
+public interface OlogyInstanceService<I extends OlogyInstance> extends PersistedObjectService<I> {
 
 	public List<I> findAll(String type) throws DaoException;
 	

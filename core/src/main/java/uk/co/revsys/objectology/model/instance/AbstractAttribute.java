@@ -5,7 +5,7 @@ import uk.co.revsys.objectology.exception.NoTemplateException;
 import uk.co.revsys.objectology.exception.ValidationException;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
 
-public abstract class AbstractAttribute<T extends AttributeTemplate> implements Attribute<T> {
+public abstract class AbstractAttribute<A extends Attribute, T extends AttributeTemplate> implements Attribute<A, T> {
 
     private T template;
     private OlogyInstance parent;

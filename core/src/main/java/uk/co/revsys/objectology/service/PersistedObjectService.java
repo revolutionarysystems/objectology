@@ -2,9 +2,9 @@ package uk.co.revsys.objectology.service;
 
 import java.util.List;
 import uk.co.revsys.objectology.dao.DaoException;
-import uk.co.revsys.objectology.model.OlogyObject;
+import uk.co.revsys.objectology.model.PersistedObject;
 
-public interface OlogyObjectService<O extends OlogyObject>{
+public interface PersistedObjectService<O extends PersistedObject>{
 	
 	public O create(O object) throws DaoException;
 	

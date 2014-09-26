@@ -13,5 +13,9 @@ public interface AttributeTemplate<A extends Attribute> extends ObjectWithNature
 	public Class<? extends A> getAttributeType();
     
     public void validate(A attribute) throws ValidationException;
+    
+    public boolean isStatic();
+    
+    public A newInstance();
 	
 }

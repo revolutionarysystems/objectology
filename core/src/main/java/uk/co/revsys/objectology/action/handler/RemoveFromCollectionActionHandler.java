@@ -13,7 +13,7 @@ import uk.co.revsys.objectology.model.instance.Collection;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.template.AtomicAttributeTemplate;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
-import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
+import uk.co.revsys.objectology.service.ServiceFactory;
 
 public class RemoveFromCollectionActionHandler extends AttributeActionHandler<RemoveFromCollectionAction, Collection<Attribute>> {
 
@@ -40,7 +40,7 @@ public class RemoveFromCollectionActionHandler extends AttributeActionHandler<Re
             deserialisationParameters.put("template", memberTemplate);
             Attribute item = (Attribute) instanceMapper.deserialise(json, memberTemplate.getAttributeType(), deserialisationParameters);
             collection.remove(item);
-            instance = OlogyObjectServiceFactory.getOlogyInstanceService().update(instance);
+            instance = ServiceFactory.getOlogyInstanceService().update(instance);
             return instance;
         } catch (DeserialiserException ex) {
             throw new ActionInvocationException(ex);

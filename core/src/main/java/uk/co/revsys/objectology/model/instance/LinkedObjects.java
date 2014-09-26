@@ -9,15 +9,15 @@ import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.mapping.json.JSONNullType;
 import uk.co.revsys.objectology.model.template.LinkedObjectsTemplate;
 import uk.co.revsys.objectology.query.JSONQuery;
-import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
+import uk.co.revsys.objectology.service.ServiceFactory;
 
 @JSONNullType("{}")
-public class LinkedObjects extends AbstractAttribute<LinkedObjectsTemplate> implements GeneratedAttribute {
+public class LinkedObjects extends AbstractAttribute<LinkedObjects, LinkedObjectsTemplate> implements GeneratedAttribute {
 
     @JsonValue
     public List<LinkedObject> getObjects() throws DaoException {
         LinkedObjectsTemplate template = getTemplate();
-        List<OlogyInstance> instances = OlogyObjectServiceFactory.getOlogyInstanceService().find(template.getType(), new JSONQuery(template.getLink(), getParent().getId()));
+        List<OlogyInstance> instances = ServiceFactory.getOlogyInstanceService().find(template.getType(), new JSONQuery(template.getLink(), getParent().getId()));
         List<LinkedObject> linkedObjects = new ArrayList<LinkedObject>();
         for(OlogyInstance instance: instances){
             LinkedObject linkedObject = new LinkedObject();
@@ -34,6 +34,11 @@ public class LinkedObjects extends AbstractAttribute<LinkedObjectsTemplate> impl
             instances.add(linkedObject.getAssociatedObject());
         }
         return instances;
+    }
+
+    @Override
+    public LinkedObjects copy() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

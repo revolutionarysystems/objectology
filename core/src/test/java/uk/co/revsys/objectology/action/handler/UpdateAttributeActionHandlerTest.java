@@ -19,7 +19,7 @@ import uk.co.revsys.objectology.model.instance.Property;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
-import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
+import uk.co.revsys.objectology.service.ServiceFactory;
 
 public class UpdateAttributeActionHandlerTest {
 
@@ -46,7 +46,7 @@ public class UpdateAttributeActionHandlerTest {
     public void testInvoke() throws Exception {
         IMocksControl mocksControl = EasyMock.createControl();
         OlogyInstanceService mockService = mocksControl.createMock(OlogyInstanceService.class);
-        OlogyObjectServiceFactory.setOlogyInstanceService(mockService);
+        ServiceFactory.setOlogyInstanceService(mockService);
         OlogyTemplate template = new OlogyTemplate();
         template.setAttributeTemplate("status", new PropertyTemplate());
         OlogyInstance instance = new OlogyInstance();
@@ -58,7 +58,7 @@ public class UpdateAttributeActionHandlerTest {
         Capture<OlogyInstance> capture = new Capture<OlogyInstance>();
         expect(mockService.update(capture(capture))).andReturn(null);
         mocksControl.replay();
-        UpdateAttributeActionHandler actionHandler = new UpdateAttributeActionHandler(new JsonInstanceMapper(null));
+        UpdateAttributeActionHandler actionHandler = new UpdateAttributeActionHandler(new JsonInstanceMapper());
         actionHandler.invoke(instance, action, request);
         mocksControl.verify();
         OlogyInstance result = capture.getValue();
@@ -69,7 +69,7 @@ public class UpdateAttributeActionHandlerTest {
     public void testInvokeUpdateObject() throws Exception {
         IMocksControl mocksControl = EasyMock.createControl();
         OlogyInstanceService mockService = mocksControl.createMock(OlogyInstanceService.class);
-        OlogyObjectServiceFactory.setOlogyInstanceService(mockService);
+        ServiceFactory.setOlogyInstanceService(mockService);
         OlogyTemplate template = new OlogyTemplate();
         OlogyTemplate partTemplate = new OlogyTemplate();
         template.setAttributeTemplate("part", partTemplate);
@@ -85,7 +85,7 @@ public class UpdateAttributeActionHandlerTest {
         Capture<OlogyInstance> capture = new Capture<OlogyInstance>();
         expect(mockService.update(capture(capture))).andReturn(null);
         mocksControl.replay();
-        UpdateAttributeActionHandler actionHandler = new UpdateAttributeActionHandler(new JsonInstanceMapper(null));
+        UpdateAttributeActionHandler actionHandler = new UpdateAttributeActionHandler(new JsonInstanceMapper());
         actionHandler.invoke(instance, action, request);
         mocksControl.verify();
         OlogyInstance result = capture.getValue();
@@ -99,7 +99,7 @@ public class UpdateAttributeActionHandlerTest {
     public void testInvokeWithSetValue() throws Exception {
         IMocksControl mocksControl = EasyMock.createControl();
         OlogyInstanceService mockService = mocksControl.createMock(OlogyInstanceService.class);
-        OlogyObjectServiceFactory.setOlogyInstanceService(mockService);
+        ServiceFactory.setOlogyInstanceService(mockService);
         OlogyTemplate template = new OlogyTemplate();
         template.setAttributeTemplate("status", new PropertyTemplate());
         OlogyInstance instance = new OlogyInstance();
@@ -112,7 +112,7 @@ public class UpdateAttributeActionHandlerTest {
         Capture<OlogyInstance> capture = new Capture<OlogyInstance>();
         expect(mockService.update(capture(capture))).andReturn(null);
         mocksControl.replay();
-        UpdateAttributeActionHandler actionHandler = new UpdateAttributeActionHandler(new JsonInstanceMapper(null));
+        UpdateAttributeActionHandler actionHandler = new UpdateAttributeActionHandler(new JsonInstanceMapper());
         actionHandler.invoke(instance, action, request);
         mocksControl.verify();
         OlogyInstance result = capture.getValue();

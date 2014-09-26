@@ -9,7 +9,7 @@ import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.mapping.json.deserialise.CollectionDeserialiser;
 
 @JsonDeserialize(using = CollectionDeserialiser.class)
-public class Collection<M extends Attribute> extends AbstractAttribute<CollectionTemplate>{
+public class Collection<M extends Attribute> extends AbstractAttribute<Collection, CollectionTemplate>{
 
 	private List<M> members = new ArrayList<M>();
 
@@ -39,6 +39,17 @@ public class Collection<M extends Attribute> extends AbstractAttribute<Collectio
     
     public int size(){
         return members.size();
+    }
+
+    @Override
+    public Collection copy() {
+        List<M> membersCopy = new ArrayList<M>();
+        for(M member: members){
+            membersCopy.add((M) member.copy());
+        }
+        Collection collection = new Collection();
+        collection.setMembers(membersCopy);
+        return collection;
     }
 	
 }

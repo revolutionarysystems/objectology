@@ -30,6 +30,11 @@ public class LinkedObjectTemplate extends AbstractAttributeTemplate<LinkedObject
     public void setLink(String link) {
         this.link = link;
     }
+
+    @Override
+    public LinkedObject newInstance() {
+        return new LinkedObject();
+    }
     
     @Override
     public Class<? extends LinkedObject> getAttributeType() {

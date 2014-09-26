@@ -60,12 +60,10 @@
 	
     <bean id="templateService" class="uk.co.revsys.objectology.service.OlogyTemplateServiceImpl">
         <constructor-arg index="0" ref="templateDao"/>
-        <constructor-arg index="1" ref="templateValidator"/>
     </bean>
 	
     <bean id="instanceService" class="uk.co.revsys.objectology.service.OlogyInstanceServiceImpl">
         <constructor-arg index="0" ref="instanceDaoFactory"/>
-        <constructor-arg index="1" ref="instanceValidator"/>
     </bean>
 	
     <!--bean id="templateDao" class="uk.co.revsys.objectology.dao.InMemoryOlogyObjectDao"/-->
@@ -96,10 +94,6 @@
         <constructor-arg index="0" value="${db.host}"/>
     </bean>
 	
-    <bean id="templateValidator" class="uk.co.revsys.objectology.service.OlogyTemplateValidator"/>
-	
-    <bean id="instanceValidator" class="uk.co.revsys.objectology.service.OlogyInstanceValidator"/>
-	
     <bean id="xmlObjectMapper" class="uk.co.revsys.objectology.mapping.xml.XMLObjectMapper">
         <constructor-arg index="0" ref="xmlTemplateToJSONConverter"/>
         <constructor-arg index="1" ref="xmlInstanceToJSONConverter"/>
@@ -114,7 +108,7 @@
     </bean>
 	
     <bean id="jsonInstanceMapper" class="uk.co.revsys.objectology.mapping.json.JsonInstanceMapper">
-        <constructor-arg index="0" ref="sequenceGenerator"/>
+        
     </bean>
     
     <bean id="jsonDBInstanceMapper" class="uk.co.revsys.objectology.mapping.json.JsonDBInstanceMapper"/>
@@ -225,9 +219,10 @@
         <constructor-arg index="2" value="sequence"/>
     </bean>
     
-    <bean id="objectServiceFactory" class="uk.co.revsys.objectology.service.OlogyObjectServiceFactory">
+    <bean id="serviceFactory" class="uk.co.revsys.objectology.service.ServiceFactory">
         <property name="ologyTemplateService" ref="templateService"/>
         <property name="ologyInstanceService" ref="instanceService"/>
+        <property name="sequenceGenerator" ref="sequenceGenerator"/>
     </bean>
     
     <bean id="authorisationHandlers" class="java.util.HashMap">

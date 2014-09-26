@@ -16,11 +16,13 @@ import uk.co.revsys.objectology.action.model.AddToCollectionAction;
 import uk.co.revsys.objectology.mapping.json.JsonInstanceMapper;
 import uk.co.revsys.objectology.model.instance.Collection;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
+import uk.co.revsys.objectology.model.instance.Property;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
+import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
-import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
+import uk.co.revsys.objectology.service.ServiceFactory;
 
 public class AddToCollectionActionHandlerTest {
 
@@ -44,10 +46,10 @@ public class AddToCollectionActionHandlerTest {
     }
 
     @Test
-    public void testInvoke() throws Exception {
+    public void testInvokeAddMeasurement() throws Exception {
         IMocksControl mocksControl = EasyMock.createControl();
         OlogyInstanceService mockService = mocksControl.createMock(OlogyInstanceService.class);
-        OlogyObjectServiceFactory.setOlogyInstanceService(mockService);
+        ServiceFactory.setOlogyInstanceService(mockService);
         OlogyTemplate template = new OlogyTemplate();
         CollectionTemplate collectionTemplate = new CollectionTemplate(new MeasurementTemplate());
         template.setAttributeTemplate("collection", collectionTemplate);
@@ -60,12 +62,41 @@ public class AddToCollectionActionHandlerTest {
         Capture<OlogyInstance> capture = new Capture<OlogyInstance>();
         expect(mockService.update(capture(capture))).andReturn(null);
         mocksControl.replay();
-        AddToCollectionActionHandler actionHandler = new AddToCollectionActionHandler(new JsonInstanceMapper(null));
+        AddToCollectionActionHandler actionHandler = new AddToCollectionActionHandler(new JsonInstanceMapper());
         actionHandler.invoke(instance, action, request);
         mocksControl.verify();
         OlogyInstance result = capture.getValue();
         assertEquals(1, result.getAttribute("collection", Collection.class).getMembers().size());
         assertEquals("2", result.getAttribute("collection", Collection.class).getMembers().get(0).toString());
+    }
+    
+    @Test
+    public void testInvokeAddObject() throws Exception {
+        IMocksControl mocksControl = EasyMock.createControl();
+        OlogyInstanceService mockService = mocksControl.createMock(OlogyInstanceService.class);
+        ServiceFactory.setOlogyInstanceService(mockService);
+        OlogyTemplate template = new OlogyTemplate();
+        OlogyTemplate memberTemplate = new OlogyTemplate();
+        memberTemplate.setAttributeTemplate("p1", new PropertyTemplate());
+        CollectionTemplate collectionTemplate = new CollectionTemplate(memberTemplate);
+        template.setAttributeTemplate("collection", collectionTemplate);
+        OlogyInstance instance = new OlogyInstance(template);
+        Collection collection = new Collection();
+        instance.setAttribute("collection", collection);
+        ActionRequest request = new ActionRequest();
+        request.getParameters().put("item", "{\"p1\": \"v1\"}");
+        AddToCollectionAction action = new AddToCollectionAction("collection", "item");
+        Capture<OlogyInstance> capture = new Capture<OlogyInstance>();
+        expect(mockService.update(capture(capture))).andReturn(null);
+        mocksControl.replay();
+        AddToCollectionActionHandler actionHandler = new AddToCollectionActionHandler(new JsonInstanceMapper());
+        actionHandler.invoke(instance, action, request);
+        mocksControl.verify();
+        OlogyInstance result = capture.getValue();
+        assertEquals(1, result.getAttribute("collection", Collection.class).getMembers().size());
+        OlogyInstance item = (OlogyInstance) result.getAttribute("collection", Collection.class).getMembers().get(0);
+        assertEquals(memberTemplate, item.getTemplate());
+        assertEquals("v1", item.getAttribute("p1", Property.class).getValue());
     }
 
 }

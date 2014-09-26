@@ -7,9 +7,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import uk.co.revsys.objectology.dao.InMemoryOlogyObjectDao;
+import uk.co.revsys.objectology.dao.InMemoryDao;
 import uk.co.revsys.objectology.dao.InMemorySequenceGenerator;
-import uk.co.revsys.objectology.dao.OlogyObjectDao;
+import uk.co.revsys.objectology.dao.Dao;
+import uk.co.revsys.objectology.exception.RequiredAttributeException;
+import uk.co.revsys.objectology.mapping.DeserialiserException;
 import uk.co.revsys.objectology.mapping.ObjectMapper;
 import uk.co.revsys.objectology.model.instance.Collection;
 import uk.co.revsys.objectology.model.instance.Link;
@@ -30,9 +32,8 @@ import uk.co.revsys.objectology.model.instance.LinkedObjects;
 import uk.co.revsys.objectology.model.template.LinkedObjectTemplate;
 import uk.co.revsys.objectology.model.template.LinkedObjectsTemplate;
 import uk.co.revsys.objectology.model.template.SelectTemplate;
-import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
+import uk.co.revsys.objectology.service.ServiceFactory;
 import uk.co.revsys.objectology.service.OlogyTemplateServiceImpl;
-import uk.co.revsys.objectology.service.OlogyTemplateValidator;
 
 public class JacksonInstanceDeserialiserTest {
 
@@ -60,15 +61,24 @@ public class JacksonInstanceDeserialiserTest {
 	 */
 	@Test
 	public void testDeserialiseJSON() throws Exception {
-		OlogyObjectDao dao = new InMemoryOlogyObjectDao();
-		OlogyTemplateServiceImpl templateService = new OlogyTemplateServiceImpl(dao, new OlogyTemplateValidator());
-        OlogyObjectServiceFactory.setOlogyTemplateService(templateService);
-		ObjectMapper objectMapper = new JsonInstanceMapper(new InMemorySequenceGenerator());
+		Dao dao = new InMemoryDao();
+		OlogyTemplateServiceImpl templateService = new OlogyTemplateServiceImpl(dao);
+        ServiceFactory.setOlogyTemplateService(templateService);
+        ServiceFactory.setSequenceGenerator(new InMemorySequenceGenerator());
+		ObjectMapper objectMapper = new JsonInstanceMapper();
 		OlogyTemplate template = new OlogyTemplate();
 		template.setType("subscription");
 		SelectTemplate statusTemplate = new SelectTemplate();
         statusTemplate.getOptions().add("Active");
         statusTemplate.getOptions().add("Suspended");
+        statusTemplate.setValue(new Property("Active"));
+        PropertyTemplate refTemplate = new PropertyTemplate();
+        refTemplate.setStatic(true);
+        refTemplate.setValue(new Property("abc123"));
+        PropertyTemplate descriptionTemplate = new PropertyTemplate();
+        descriptionTemplate.setRequired(true);
+        template.setAttributeTemplate("ref", refTemplate);
+        template.setAttributeTemplate("description", descriptionTemplate);
 		template.setAttributeTemplate("status", statusTemplate);
         template.setAttributeTemplate("seq", new SequenceTemplate("seq1", 4));
 		template.setAttributeTemplate("startTime", new TimeTemplate());
@@ -82,7 +92,15 @@ public class JacksonInstanceDeserialiserTest {
 		partTemplate.setAttributeTemplate("user", new LinkTemplate());
 		template.setAttributeTemplate("accountHolder", partTemplate);
 		templateService.create(template);
-		String json = "{\"id\": \"1234\", \"name\": \"Test Instance\", \"limit\":\"1000\", \"account\":\"456\", \"users\":[\"678\"], \"limits\": [\"123\"], \"startTime\":\"01/01/2001 00:00:00\",\"template\":\"" + template.getId() + "\",\"status\":\"Active\", \"accountHolder\": {\"id\": \"4321\", \"permissions\": \"all\", \"user\": \"1234\"}}";
+		String json = "{\"id\": \"1234\", \"ref\": \"xyz987\", \"name\": \"Test Instance\", \"limit\":\"1000\", \"account\":\"456\", \"users\":[\"678\"], \"limits\": [\"123\"], \"startTime\":\"01/01/2001 00:00:00\",\"template\":\"" + template.getId() + "\", \"accountHolder\": {\"id\": \"4321\", \"permissions\": \"all\", \"user\": \"1234\"}}";
+        try{
+            OlogyInstance result = objectMapper.deserialise(json, OlogyInstance.class);
+            fail("Expected DeserialiserException to be thrown");
+        }catch(DeserialiserException ex){
+            assertTrue(ex.getCause() instanceof RequiredAttributeException);
+            assertEquals("Missing Attribute: description", ex.getCause().getMessage());
+        }
+        json = "{\"id\": \"1234\", \"description\": \"Test\", \"ref\": \"xyz987\", \"name\": \"Test Instance\", \"limit\":\"1000\", \"account\":\"456\", \"users\":[\"678\"], \"limits\": [\"123\"], \"startTime\":\"01/01/2001 00:00:00\",\"template\":\"" + template.getId() + "\", \"accountHolder\": {\"id\": \"4321\", \"permissions\": \"all\", \"user\": \"1234\"}}";
 		OlogyInstance result = objectMapper.deserialise(json, OlogyInstance.class);
         assertEquals("1234", result.getId());
         assertNull(result.getParent());
@@ -91,6 +109,7 @@ public class JacksonInstanceDeserialiserTest {
 		assertEquals("Active", result.getAttribute("status", Property.class).getValue());
         assertEquals(result, result.getAttribute("status").getParent());
         assertEquals("0001", result.getAttribute("seq").toString());
+        assertNull(result.getAttribute("ref"));
 		assertEquals(statusTemplate, result.getAttribute("status").getTemplate());
 		assertEquals("2001-01-01T00:00:00+0000", result.getAttribute("startTime", Time.class).toString());
 		assertEquals("1000", result.getAttribute("limit", Measurement.class).toString());

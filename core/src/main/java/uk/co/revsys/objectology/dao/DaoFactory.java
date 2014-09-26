@@ -1,6 +1,6 @@
 package uk.co.revsys.objectology.dao;
 
-public interface OlogyObjectDaoFactory<D extends AbstractOlogyObjectDao> {
+public interface DaoFactory<D extends AbstractDao> {
 
 	public D getDao(String objectType);
 	

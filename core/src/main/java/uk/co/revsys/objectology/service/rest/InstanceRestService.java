@@ -265,7 +265,6 @@ public class InstanceRestService extends ObjectRestService {
     @Path("/{type}/name/{name}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByName(@PathParam("type") String type, @PathParam("name") String name, @QueryParam("depth") int depth, @QueryParam("path") String path, @QueryParam("view") String viewName) {
-        System.out.println("findByName = " + name);
         try {
             OlogyInstance instance = service.findByName(type, name);
             Object result;
@@ -335,16 +334,13 @@ public class InstanceRestService extends ObjectRestService {
                 LOG.warn("Forbidden Access");
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
-            System.out.println(xml);
             OlogyInstance existingObject = service.findById(type, id);
             OlogyTemplate template = existingObject.getTemplate();
             Document xmlDoc = DocumentHelper.parseText(xml);
             Element templateEl = DocumentHelper.createElement("template");
             templateEl.setText(template.getId());
             xmlDoc.getRootElement().add(templateEl);
-            System.out.println(xmlDoc.asXML());
             String json = xmlInstanceToJsonConverter.convert(xmlDoc.asXML());
-            System.out.println("json = " + json);
             return updateFromJSON(type, id, json);
         } catch (XMLConverterException ex) {
             LOG.error("Error updating instance " + type + ":" + id, ex);
@@ -382,9 +378,7 @@ public class InstanceRestService extends ObjectRestService {
             ActionRequest request = new ActionRequest();
             Map<String, String> parameters = new HashMap<String, String>();
             for (String key : formParameters.keySet()) {
-                System.out.println("key = " + key);
                 String parameter = formParameters.getFirst(key);
-                System.out.println("parameter = " + parameter);
                 if (parameter != null) {
                     try {
                         parameter = URLDecoder.decode(parameter, "UTF-8");
@@ -393,7 +387,6 @@ public class InstanceRestService extends ObjectRestService {
                         return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
                     }
                 }
-                System.out.println("parameter = " + parameter);
                 parameters.put(key, parameter);
             }
             request.setParameters(parameters);

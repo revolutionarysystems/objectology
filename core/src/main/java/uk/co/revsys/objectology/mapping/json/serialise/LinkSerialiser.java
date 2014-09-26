@@ -8,7 +8,7 @@ import java.io.IOException;
 import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.mapping.DeserialiserException;
 import uk.co.revsys.objectology.mapping.json.JsonInstanceMapper;
-import uk.co.revsys.objectology.model.OlogyObject;
+import uk.co.revsys.objectology.model.PersistedObject;
 import uk.co.revsys.objectology.model.instance.AbstractLink;
 
 public class LinkSerialiser extends JsonSerializer<AbstractLink> {
@@ -22,7 +22,7 @@ public class LinkSerialiser extends JsonSerializer<AbstractLink> {
         if (depth > 1) {
             try {
                 JsonInstanceMapper mapper = (JsonInstanceMapper) jg.getCodec();
-                OlogyObject associatedObject = link.getAssociatedObject();
+                PersistedObject associatedObject = link.getAssociatedObject();
                 if (associatedObject != null) {
                     sp.setAttribute("depth", depth - 1);
                     sp.defaultSerializeValue(associatedObject, jg);

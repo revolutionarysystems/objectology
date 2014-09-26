@@ -6,7 +6,7 @@ import uk.co.revsys.objectology.model.instance.LinkedObjects;
 public class JsonDBInstanceMapper extends JsonInstanceMapper{
 
     public JsonDBInstanceMapper() {
-        super(null);
+        super();
         addMixInAnnotations(LinkedObject.class, GeneratedAttributeMixin.class);
         addMixInAnnotations(LinkedObjects.class, GeneratedAttributeMixin.class);
     }

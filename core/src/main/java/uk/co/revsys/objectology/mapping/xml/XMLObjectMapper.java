@@ -36,14 +36,10 @@ public class XMLObjectMapper implements ObjectMapper {
     @Override
     public <O> O deserialise(String source, Class<? extends O> type) throws DeserialiserException {
         if (OlogyTemplate.class.isAssignableFrom(type)) {
-            System.out.println("source = " + source);
             String json = xmlTemplateConverter.convert(source);
-            System.out.println("json = " + json);
             return jsonTemplateMapper.deserialise(json, type);
         } else if (OlogyInstance.class.isAssignableFrom(type)) {
-            System.out.println("source = " + source);
             String json = xmlInstanceConverter.convert(source);
-            System.out.println("json = " + json);
             return jsonInstanceMapper.deserialise(json, type);
         } else {
             throw new DeserialiserException("Unable to deserialise XML. Unknown type: " + type.getName());

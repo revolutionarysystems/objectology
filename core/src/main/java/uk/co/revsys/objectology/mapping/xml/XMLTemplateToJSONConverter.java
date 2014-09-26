@@ -77,8 +77,6 @@ public class XMLTemplateToJSONConverter {
     }
 
     private Object convert(Node xml, Class parentType, Class type, Class subtype) throws UnknownNatureException {
-        System.out.println("xml = " + xml.asXML());
-        System.out.println("type = " + type);
         if (type.equals(String.class) || type.isPrimitive()) {
             return xml.getText();
         } else if (List.class.isAssignableFrom(type) || Array.class.isAssignableFrom(type)) {

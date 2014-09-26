@@ -2,11 +2,16 @@ package uk.co.revsys.objectology.model.template;
 
 import uk.co.revsys.objectology.model.instance.Property;
 
-public class PropertyTemplate<P extends Property> extends AtomicAttributeTemplate<P>{
+public class PropertyTemplate extends AtomicAttributeTemplate<Property>{
 
     @Override
-    public Class<? extends P> getAttributeType() {
-        return (Class<? extends P>) Property.class;
+    public Property newInstance() {
+        return (Property) new Property();
+    }
+
+    @Override
+    public Class<? extends Property> getAttributeType() {
+        return (Class<? extends Property>) Property.class;
     }
 
     @Override

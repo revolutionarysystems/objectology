@@ -1,10 +1,10 @@
 package uk.co.revsys.objectology.dao;
 
 import java.util.List;
-import uk.co.revsys.objectology.model.OlogyObject;
+import uk.co.revsys.objectology.model.PersistedObject;
 import uk.co.revsys.objectology.query.Query;
 
-public interface OlogyObjectDao<O extends OlogyObject> {
+public interface Dao<O extends PersistedObject> {
 
 	public O create(O object) throws DaoException;
 

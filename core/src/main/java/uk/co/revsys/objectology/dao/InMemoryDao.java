@@ -5,15 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import uk.co.revsys.objectology.model.OlogyObject;
+import uk.co.revsys.objectology.model.PersistedObject;
 import uk.co.revsys.objectology.query.Query;
 
-public class InMemoryOlogyObjectDao<O extends OlogyObject> extends AbstractOlogyObjectDao<O>{
+public class InMemoryDao<O extends PersistedObject> extends AbstractDao<O>{
 
 	private final Map<String, O> objects = new HashMap<String, O>();
 	private final Map<String, O> objectsByName = new HashMap<String, O>();
 
-	public InMemoryOlogyObjectDao() {
+	public InMemoryDao() {
 		super("");
 	}
 	

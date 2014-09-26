@@ -1,6 +1,5 @@
 package uk.co.revsys.objectology.model.template;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
@@ -8,23 +7,23 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import uk.co.revsys.objectology.action.model.Action;
 import uk.co.revsys.objectology.exception.ValidationException;
-import uk.co.revsys.objectology.model.OlogyObject;
-import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.mapping.json.deserialise.AttributeTemplatesDeserialiser;
 import uk.co.revsys.objectology.mapping.xml.XMLRootElement;
+import uk.co.revsys.objectology.model.PersistedObject;
 import uk.co.revsys.objectology.security.SecurityConstraint;
 import uk.co.revsys.objectology.view.View;
 
 //@JsonDeserialize(using = TemplateDeserialiser.class)
 @XMLRootElement(field = "type")
-public class OlogyTemplate extends OlogyObject implements AttributeTemplate<OlogyInstance>{
+public class OlogyTemplate extends AbstractAttributeTemplate<OlogyInstance> implements PersistedObject{
+    
+    private String id;
+    private String name;
     
 	private String type;
-	private OlogyInstance value;
 	private Map<String, AttributeTemplate> attributeTemplates = new HashMap<String, AttributeTemplate>();
     private List<SecurityConstraint> creationConstraints = new ArrayList<SecurityConstraint>();
     private Map<String, Action> actions = new HashMap<String, Action>();
@@ -35,22 +34,32 @@ public class OlogyTemplate extends OlogyObject implements AttributeTemplate<Olog
         views.put("identifier", new View("identifier"));
     }
 
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
 	public String getType() {
 		return type;
 	}
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	@Override
-	public OlogyInstance getValue() {
-		return value;
-	}
-
-	@Override
-	public void setValue(OlogyInstance value) {
-		this.value = value;
 	}
 	
     @JsonProperty("attributes")
@@ -79,38 +88,6 @@ public class OlogyTemplate extends OlogyObject implements AttributeTemplate<Olog
 	@Override
 	public Class<? extends OlogyInstance> getAttributeType() {
 		return OlogyInstance.class;
-	}
-
-	@Override
-    @JsonIgnore
-	public Map<String, Attribute> getAttributes() {
-		Map<String, Attribute> attributes = new HashMap<String, Attribute>();
-		for(Entry<String, AttributeTemplate> entry: getAttributeTemplates().entrySet()){
-			attributes.put(entry.getKey(), entry.getValue().getValue());
-		}
-		return attributes;
-	}
-
-	@Override
-	public void setAttributes(Map<String, Attribute> attributes) {
-		for(Entry<String, Attribute> attribute: attributes.entrySet()){
-			getAttributeTemplate(attribute.getKey()).setValue(attribute.getValue());
-		}
-	}
-
-	@Override
-	public void setAttribute(String key, Attribute attribute) {
-		getAttributeTemplate(key).setValue(attribute);
-	}
-
-	@Override
-	public Attribute getAttribute(String key) {
-		return getAttributeTemplate(key).getValue();
-	}
-
-	@Override
-	public <A extends Attribute> A getAttribute(String key, Class<? extends A> type) {
-		return (A) getAttribute(key);
 	}
 
     public List<SecurityConstraint> getCreationConstraints() {
@@ -151,6 +128,11 @@ public class OlogyTemplate extends OlogyObject implements AttributeTemplate<Olog
     @Override
     public void validate(OlogyInstance attribute) throws ValidationException {
         
+    }
+
+    @Override
+    public OlogyInstance newInstance() {
+        return null;
     }
 
 }

@@ -29,7 +29,6 @@ import uk.co.revsys.objectology.model.instance.LinkedObjects;
 import uk.co.revsys.objectology.model.instance.Measurement;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.instance.Property;
-import uk.co.revsys.objectology.model.instance.Sequence;
 import uk.co.revsys.objectology.model.instance.Time;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
@@ -42,7 +41,7 @@ import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
 import uk.co.revsys.objectology.query.JSONQuery;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
-import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
+import uk.co.revsys.objectology.service.ServiceFactory;
 
 public class JacksonInstanceSerialiserTest {
 
@@ -69,12 +68,14 @@ public class JacksonInstanceSerialiserTest {
     public void testSerialiseJSON() throws Exception {
         IMocksControl mocksControl = EasyMock.createControl();
         OlogyInstanceService mockInstanceService = mocksControl.createMock(OlogyInstanceService.class);
-        OlogyObjectServiceFactory.setOlogyInstanceService(mockInstanceService);
-        ObjectMapper objectMapper = new JsonInstanceMapper(null);
+        ServiceFactory.setOlogyInstanceService(mockInstanceService);
+        ObjectMapper objectMapper = new JsonInstanceMapper();
         OlogyTemplate template = new OlogyTemplate();
         template.setId("1234");
         template.setType("subscription");
-        template.setAttributeTemplate("status", new PropertyTemplate());
+        PropertyTemplate statusTemplate = new PropertyTemplate();
+        statusTemplate.setValue(new Property("Created"));
+        template.setAttributeTemplate("status", statusTemplate);
         template.setAttributeTemplate("seq", new SequenceTemplate("seq1", 4));
         template.setAttributeTemplate("startTime", new TimeTemplate());
         template.setAttributeTemplate("limit", new MeasurementTemplate());
@@ -93,8 +94,8 @@ public class JacksonInstanceSerialiserTest {
         template.setAttributeTemplate("features", new CollectionTemplate(featureTemplate));
         OlogyInstance object = new OlogyInstance();
         object.setTemplate(template);
-        object.setAttribute("seq", new Sequence("0001"));
         object.setAttribute("status", new Property("Created"));
+        object.setAttribute("seq", new Property("0001"));
         object.setAttribute("startTime", new Time("01/01/2001 00:00:00"));
         object.setAttribute("limit", new Measurement("1000"));
         LinkedObject accountLink = new LinkedObject();
@@ -159,7 +160,7 @@ public class JacksonInstanceSerialiserTest {
 
     @Test
     public void testSerialiseJSONWithDepthParam() throws Exception {
-        ObjectMapper objectMapper = new JsonInstanceMapper(null);
+        ObjectMapper objectMapper = new JsonInstanceMapper();
         OlogyTemplate template = new OlogyTemplate();
         template.setId("1234");
         LinkTemplate userLinkTemplate = new LinkTemplate("user");
@@ -181,7 +182,7 @@ public class JacksonInstanceSerialiserTest {
         instance.setAttribute("accounts", accountLink);
         IMocksControl mocksControl = EasyMock.createControl();
         OlogyInstanceService mockInstanceService = mocksControl.createMock(OlogyInstanceService.class);
-        OlogyObjectServiceFactory.setOlogyInstanceService(mockInstanceService);
+        ServiceFactory.setOlogyInstanceService(mockInstanceService);
         OlogyTemplate accountTemplate = new OlogyTemplate();
         accountTemplate.setAttributeTemplate("user", new LinkTemplate());
         OlogyInstance account = new OlogyInstance();
@@ -207,7 +208,7 @@ public class JacksonInstanceSerialiserTest {
     public void testSerialiseJSONForDB() throws Exception {
         IMocksControl mocksControl = EasyMock.createControl();
         OlogyInstanceService mockInstanceService = mocksControl.createMock(OlogyInstanceService.class);
-        OlogyObjectServiceFactory.setOlogyInstanceService(mockInstanceService);
+        ServiceFactory.setOlogyInstanceService(mockInstanceService);
         ObjectMapper objectMapper = new JsonDBInstanceMapper();
         OlogyTemplate template = new OlogyTemplate();
         template.setId("1234");
@@ -231,7 +232,7 @@ public class JacksonInstanceSerialiserTest {
         template.setAttributeTemplate("features", new CollectionTemplate(featureTemplate));
         OlogyInstance object = new OlogyInstance();
         object.setTemplate(template);
-        object.setAttribute("seq", new Sequence("0001"));
+        object.setAttribute("seq", new Property("0001"));
         object.setAttribute("status", new Property("Created"));
         object.setAttribute("startTime", new Time("01/01/2001 00:00:00"));
         object.setAttribute("limit", new Measurement("1000"));

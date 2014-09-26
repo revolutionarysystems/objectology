@@ -49,10 +49,8 @@ public class JsonObjectMapper extends com.fasterxml.jackson.databind.ObjectMappe
         try {
             ObjectReader reader = reader(type);
             for(Entry<String, Object> entry: parameters.entrySet()){
-                System.out.println("adding param " + entry.getKey() + " = " + entry.getValue());
                 reader = reader.withAttribute(entry.getKey(), entry.getValue());
             }
-            System.out.println(reader.getAttributes().getAttribute("template"));
             return reader.readValue(source);
         }catch(DeserialiserException ex){
             throw ex;

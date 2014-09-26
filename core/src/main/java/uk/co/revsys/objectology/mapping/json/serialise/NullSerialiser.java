@@ -11,7 +11,6 @@ public class NullSerialiser extends JsonSerializer<Object>{
 
     @Override
     public void serialize(Object t, JsonGenerator jg, SerializerProvider sp) throws IOException, JsonProcessingException {
-        System.out.println("null serialiser");
         JSONNullType jsonNullType = t.getClass().getAnnotation(JSONNullType.class);
         jg.writeRaw(":" + jsonNullType.value());
     }

@@ -8,11 +8,11 @@ import uk.co.revsys.objectology.mapping.json.JSONNullType;
 import uk.co.revsys.objectology.mapping.json.serialise.LinkSerialiser;
 import uk.co.revsys.objectology.model.template.LinkedObjectTemplate;
 import uk.co.revsys.objectology.query.JSONQuery;
-import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
+import uk.co.revsys.objectology.service.ServiceFactory;
 
 @JSONNullType("{}")
 @JsonSerialize(using = LinkSerialiser.class)
-public class LinkedObject extends AbstractLink<LinkedObjectTemplate> implements GeneratedAttribute{
+public class LinkedObject extends AbstractLink<LinkedObject, LinkedObjectTemplate> implements GeneratedAttribute{
 
     private OlogyInstance associatedObject;
 
@@ -37,12 +37,17 @@ public class LinkedObject extends AbstractLink<LinkedObjectTemplate> implements 
     public OlogyInstance getAssociatedObject() throws DaoException {
         if (associatedObject == null) {
             LinkedObjectTemplate template = getTemplate();
-            List<OlogyInstance> instances = OlogyObjectServiceFactory.getOlogyInstanceService().find(template.getType(), new JSONQuery(template.getLink(), getParent().getId()));
+            List<OlogyInstance> instances = ServiceFactory.getOlogyInstanceService().find(template.getType(), new JSONQuery(template.getLink(), getParent().getId()));
             if (!instances.isEmpty()) {
                  associatedObject = instances.get(0);
             }
         }
         return associatedObject;
+    }
+
+    @Override
+    public LinkedObject copy() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

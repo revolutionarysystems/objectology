@@ -3,7 +3,7 @@ package uk.co.revsys.objectology.dao;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class CachingOlogyObjectDaoFactory<D extends AbstractOlogyObjectDao> implements OlogyObjectDaoFactory<D>{
+public abstract class CachingDaoFactory<D extends AbstractDao> implements DaoFactory<D>{
 
 	private Map<String, D> daoMap = new HashMap<String, D>();
 	

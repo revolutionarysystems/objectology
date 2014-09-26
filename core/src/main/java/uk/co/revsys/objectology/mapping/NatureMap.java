@@ -2,7 +2,10 @@ package uk.co.revsys.objectology.mapping;
 
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import uk.co.revsys.objectology.action.model.AddToCollectionAction;
+import uk.co.revsys.objectology.action.model.CompoundAction;
+import uk.co.revsys.objectology.action.model.RemoveFromCollectionAction;
 import uk.co.revsys.objectology.action.model.UpdateAttributeAction;
+import uk.co.revsys.objectology.action.model.UpdateSelectAction;
 import uk.co.revsys.objectology.model.ObjectWithNature;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
@@ -41,6 +44,9 @@ public class NatureMap {
         // Actions
         NatureMap.setNature("updateAttribute", UpdateAttributeAction.class);
         NatureMap.setNature("addToCollection", AddToCollectionAction.class);
+        NatureMap.setNature("updateSelect", UpdateSelectAction.class);
+        NatureMap.setNature("removeFromCollection", RemoveFromCollectionAction.class);
+        NatureMap.setNature("compoundAction", CompoundAction.class);
     }
     
     public static String getTemplateNature(Class<? extends ObjectWithNature> templateType){

@@ -20,7 +20,7 @@ import uk.co.revsys.objectology.exception.UnexpectedAttributeException;
 import uk.co.revsys.objectology.exception.ValidationException;
 import uk.co.revsys.objectology.model.instance.Property;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
-import uk.co.revsys.objectology.service.OlogyObjectServiceFactory;
+import uk.co.revsys.objectology.service.ServiceFactory;
 
 public class UpdateSelectActionHandlerTest {
 
@@ -43,7 +43,7 @@ public class UpdateSelectActionHandlerTest {
     public void setUp() throws UnexpectedAttributeException, ValidationException {
         mocksControl = EasyMock.createControl();
         mockInstanceService = mocksControl.createMock(OlogyInstanceService.class);
-        OlogyObjectServiceFactory.setOlogyInstanceService(mockInstanceService);
+        ServiceFactory.setOlogyInstanceService(mockInstanceService);
         OlogyTemplate template = new OlogyTemplate();
         template.setAttributeTemplate("status", new SelectTemplate("Enabled", "Disabled"));
         instance = new OlogyInstance(template);
