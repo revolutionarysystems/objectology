@@ -20,6 +20,7 @@ public class Link extends AbstractLink<Link, LinkTemplate> {
 	public Link() {
 	}
 
+    @Override
 	public String getReference() {
 		return reference;
 	}
@@ -51,7 +52,7 @@ public class Link extends AbstractLink<Link, LinkTemplate> {
 
     @Override
     public Link copy() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new Link(getReference());
     }
 
 }

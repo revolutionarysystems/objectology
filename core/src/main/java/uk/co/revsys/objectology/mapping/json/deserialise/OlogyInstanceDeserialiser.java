@@ -71,23 +71,21 @@ public class OlogyInstanceDeserialiser extends JsonDeserializer<OlogyInstance> {
             for (Entry<String, AttributeTemplate> attributeTemplateEntry : template.getAttributeTemplates().entrySet()) {
                 String attributeName = attributeTemplateEntry.getKey();
                 AttributeTemplate attributeTemplate = attributeTemplateEntry.getValue();
-                String attributeJson = "null";
-                Attribute attribute = null;
+                Attribute attribute;
                 if (!attributeTemplate.isStatic()) {
                     if (GeneratedAttribute.class.isAssignableFrom(attributeTemplate.getAttributeType())) {
                         attribute = attributeTemplate.newInstance();
                     } else if (root.has(attributeName)) {
-                        attributeJson = root.get(attributeName).toString();
-                    } else if (attributeTemplate.getValue() != null) {
-                        attribute = attributeTemplate.getValue().copy();
-                    } else {
-                        JSONNullType jsonNullType = (JSONNullType) attributeTemplate.getAttributeType().getAnnotation(JSONNullType.class);
-                        if (jsonNullType != null) {
-                            attributeJson = jsonNullType.value();
-                        }
-                    }
-                    if (attribute == null) {
+                        String attributeJson = root.get(attributeName).toString();
                         attribute = (Attribute) mapper.reader(attributeTemplate.getAttributeType()).withAttribute("template", attributeTemplate).readValue(attributeJson);
+                    } else if (attributeTemplate.getValue() != null) {
+                        try {
+                            attribute = attributeTemplate.getValue().copy();
+                        } catch (UnsupportedOperationException ex) {
+                            attribute = attributeTemplate.newInstance();
+                        }
+                    } else {
+                        attribute = attributeTemplate.newInstance();
                     }
                     try {
                         try {
