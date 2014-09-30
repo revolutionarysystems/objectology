@@ -3,3 +3,4 @@
 /integration-tests/nbproject/private/
 /integration-tests/conf/*.class
 *.class
+/camel/target/

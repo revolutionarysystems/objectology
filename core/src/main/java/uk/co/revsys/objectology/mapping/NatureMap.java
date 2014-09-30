@@ -7,6 +7,7 @@ import uk.co.revsys.objectology.action.model.RemoveFromCollectionAction;
 import uk.co.revsys.objectology.action.model.UpdateAttributeAction;
 import uk.co.revsys.objectology.action.model.UpdateSelectAction;
 import uk.co.revsys.objectology.model.ObjectWithNature;
+import uk.co.revsys.objectology.model.template.BooleanTemplate;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.model.template.LinkedObjectTemplate;
@@ -37,6 +38,7 @@ public class NatureMap {
         NatureMap.setNature("linkedObject", LinkedObjectTemplate.class);
         NatureMap.setNature("linkedObjects", LinkedObjectsTemplate.class);
         NatureMap.setNature("select", SelectTemplate.class);
+        NatureMap.setNature("boolean", BooleanTemplate.class);
         // Security
         NatureMap.setNature("hasRole", RoleConstraint.class);
         NatureMap.setNature("hasPermission", PermissionConstraint.class);
