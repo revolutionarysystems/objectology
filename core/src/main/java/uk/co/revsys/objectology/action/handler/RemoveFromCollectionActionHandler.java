@@ -33,12 +33,7 @@ public class RemoveFromCollectionActionHandler extends AttributeActionHandler<Re
         try {
             String json = getRequiredParameter(request, action.getItem());
             AttributeTemplate memberTemplate = collection.getTemplate().getMemberTemplate();
-            if(memberTemplate instanceof AtomicAttributeTemplate){
-                json = "\"" + json + "\"";
-            }
-            Map<String, Object> deserialisationParameters = new HashMap<String, Object>();
-            deserialisationParameters.put("template", memberTemplate);
-            Attribute item = (Attribute) instanceMapper.deserialise(json, memberTemplate.getAttributeType(), deserialisationParameters);
+            Attribute item = instanceMapper.deserialise(json, memberTemplate);
             collection.remove(item);
             instance = ServiceFactory.getOlogyInstanceService().update(instance);
             return instance;

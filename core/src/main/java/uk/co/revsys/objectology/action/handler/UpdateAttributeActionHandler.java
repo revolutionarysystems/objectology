@@ -20,8 +20,8 @@ import uk.co.revsys.objectology.service.ServiceFactory;
 
 public class UpdateAttributeActionHandler extends AbstractActionHandler<UpdateAttributeAction> {
 
-    private final JsonInstanceMapper instanceMapper;
-
+    private JsonInstanceMapper instanceMapper;
+    
     public UpdateAttributeActionHandler(JsonInstanceMapper instanceMapper) {
         this.instanceMapper = instanceMapper;
     }
@@ -35,13 +35,7 @@ public class UpdateAttributeActionHandler extends AbstractActionHandler<UpdateAt
                 value = getRequiredParameter(request, attributeName);
             }
             AttributeTemplate attributeTemplate = instance.getTemplate().getAttributeTemplate(attributeName);
-            Class attributeType = attributeTemplate.getAttributeType();
-            if (AtomicAttribute.class.isAssignableFrom(attributeType)) {
-                value = "\"" + value + "\"";
-            }
-            Map<String, Object> deserialisationParameters = new HashMap<String, Object>();
-            deserialisationParameters.put("template", attributeTemplate);
-            Attribute attribute = (Attribute) instanceMapper.deserialise(value, attributeType, deserialisationParameters);
+            Attribute attribute = instanceMapper.deserialise(value, attributeTemplate);
             instance.setAttribute(attributeName, attribute);
             return ServiceFactory.getOlogyInstanceService().update(instance);
         } catch (DeserialiserException ex) {

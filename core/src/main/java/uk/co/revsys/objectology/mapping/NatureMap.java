@@ -3,14 +3,18 @@ package uk.co.revsys.objectology.mapping;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import uk.co.revsys.objectology.action.model.AddToCollectionAction;
 import uk.co.revsys.objectology.action.model.CompoundAction;
+import uk.co.revsys.objectology.action.model.RemoveDictionaryEntryAction;
 import uk.co.revsys.objectology.action.model.RemoveFromCollectionAction;
 import uk.co.revsys.objectology.action.model.UpdateAttributeAction;
+import uk.co.revsys.objectology.action.model.UpdateDictionaryAction;
+import uk.co.revsys.objectology.action.model.UpdateDictionaryEntryAction;
 import uk.co.revsys.objectology.condition.AndCondition;
 import uk.co.revsys.objectology.condition.IsEqualCondition;
 import uk.co.revsys.objectology.condition.OrCondition;
 import uk.co.revsys.objectology.model.ObjectWithNature;
 import uk.co.revsys.objectology.model.template.BooleanTemplate;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
+import uk.co.revsys.objectology.model.template.DictionaryTemplate;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.model.template.LinkedObjectTemplate;
 import uk.co.revsys.objectology.model.template.LinkedObjectsTemplate;
@@ -41,6 +45,7 @@ public class NatureMap {
         NatureMap.setNature("linkedObjects", LinkedObjectsTemplate.class);
         NatureMap.setNature("select", SelectTemplate.class);
         NatureMap.setNature("boolean", BooleanTemplate.class);
+        NatureMap.setNature("dictionary", DictionaryTemplate.class);
         // Security
         NatureMap.setNature("hasRole", RoleConstraint.class);
         NatureMap.setNature("hasPermission", PermissionConstraint.class);
@@ -50,6 +55,9 @@ public class NatureMap {
         NatureMap.setNature("addToCollection", AddToCollectionAction.class);
         NatureMap.setNature("removeFromCollection", RemoveFromCollectionAction.class);
         NatureMap.setNature("compoundAction", CompoundAction.class);
+        NatureMap.setNature("updateDictionary", UpdateDictionaryAction.class);
+        NatureMap.setNature("updateDictionaryEntry", UpdateDictionaryEntryAction.class);
+        NatureMap.setNature("removeDictionaryEntry", RemoveDictionaryEntryAction.class);
         // Conditions
         NatureMap.setNature("and", AndCondition.class);
         NatureMap.setNature("or", OrCondition.class);

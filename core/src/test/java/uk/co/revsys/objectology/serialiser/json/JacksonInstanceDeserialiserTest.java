@@ -27,8 +27,10 @@ import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
 import uk.co.revsys.objectology.mapping.json.JsonInstanceMapper;
+import uk.co.revsys.objectology.model.instance.Dictionary;
 import uk.co.revsys.objectology.model.instance.LinkedObject;
 import uk.co.revsys.objectology.model.instance.LinkedObjects;
+import uk.co.revsys.objectology.model.template.DictionaryTemplate;
 import uk.co.revsys.objectology.model.template.LinkedObjectTemplate;
 import uk.co.revsys.objectology.model.template.LinkedObjectsTemplate;
 import uk.co.revsys.objectology.model.template.SelectTemplate;
@@ -85,6 +87,7 @@ public class JacksonInstanceDeserialiserTest {
 		template.setAttributeTemplate("limit", new MeasurementTemplate());
 		template.setAttributeTemplate("limits", new CollectionTemplate(new MeasurementTemplate()));
         template.setAttributeTemplate("ids", new CollectionTemplate(new MeasurementTemplate()));
+        template.setAttributeTemplate("settings", new DictionaryTemplate(new PropertyTemplate()));
         template.setAttributeTemplate("link1", new LinkTemplate());
         template.setAttributeTemplate("account", new LinkedObjectTemplate("account", "subscription"));
         template.setAttributeTemplate("users", new LinkedObjectsTemplate("user", "subscription"));
@@ -101,7 +104,7 @@ public class JacksonInstanceDeserialiserTest {
             assertTrue(ex.getCause() instanceof RequiredAttributeException);
             assertEquals("Missing Attribute: description", ex.getCause().getMessage());
         }
-        json = "{\"id\": \"1234\", \"description\": \"Test\", \"ref\": \"xyz987\", \"name\": \"Test Instance\", \"limit\":\"1000\", \"account\":\"456\", \"users\":[\"678\"], \"limits\": [\"123\"], \"startTime\":\"01/01/2001 00:00:00\",\"template\":\"" + template.getId() + "\", \"accountHolder\": {\"id\": \"4321\", \"permissions\": \"all\", \"user\": \"1234\"}}";
+        json = "{\"id\": \"1234\", \"description\": \"Test\", \"ref\": \"xyz987\", \"name\": \"Test Instance\", \"settings\": {\"s1\": \"foo\", \"s2\": \"bar\"}, \"limit\":\"1000\", \"account\":\"456\", \"users\":[\"678\"], \"limits\": [\"123\"], \"startTime\":\"01/01/2001 00:00:00\",\"template\":\"" + template.getId() + "\", \"accountHolder\": {\"id\": \"4321\", \"permissions\": \"all\", \"user\": \"1234\"}}";
 		OlogyInstance result = objectMapper.deserialise(json, OlogyInstance.class);
         assertEquals("1234", result.getId());
         assertNull(result.getParent());
@@ -121,6 +124,8 @@ public class JacksonInstanceDeserialiserTest {
 		assertEquals("123", ((Measurement)result.getAttribute("limits", Collection.class).getMembers().get(0)).toString());
         assertEquals("account", result.getAttribute("account", LinkedObject.class).getTemplate().getType());
         assertEquals("user", result.getAttribute("users", LinkedObjects.class).getTemplate().getType());
+        assertEquals(new Property("foo"), result.getAttribute("settings", Dictionary.class).get("s1"));
+        assertEquals(new Property("bar"), result.getAttribute("settings", Dictionary.class).get("s2"));
 	}
 
 }
