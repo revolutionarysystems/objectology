@@ -14,7 +14,5 @@ public interface Attribute<A extends Attribute, T extends AttributeTemplate>{
     public OlogyInstance getParent();
     
     public void validate() throws ValidationException;
-    
-    public A copy();
 	
 }

@@ -85,7 +85,7 @@ public class XMLOlogyTemplateDeserialiserTest {
 		assertEquals("subscription", result.getType());
 		assertTrue(result.getAttributeTemplate("status") instanceof PropertyTemplate);
 		assertTrue(result.getAttributeTemplate("startTime") instanceof TimeTemplate);
-		assertEquals("Template", ((Property)result.getAttributeTemplate("status", PropertyTemplate.class).getValue()).getValue());
+		assertEquals("Template", ((Property)result.getAttributeTemplate("status", PropertyTemplate.class).createDefaultInstance()).getValue());
 		assertTrue(result.getAttributeTemplate("limit") instanceof MeasurementTemplate);
 		assertTrue(result.getAttributeTemplate("accountHolder") instanceof OlogyTemplate);
 		assertNotNull(result.getAttributeTemplate("accountHolder", OlogyTemplate.class).getAttributeTemplate("permissions"));

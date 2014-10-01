@@ -49,7 +49,7 @@ public class JacksonTemplateDeserialiserTest {
     @Test
     public void testDoDeserialiseJSON() throws Exception {
         ObjectMapper objectMapper = new JsonTemplateMapper();
-        String json = "{\"id\":\"1234\",\"name\": \"Test Template\",\"nature\":\"object\", \"views\": {\"summary\": {\"name\": \"test-summary\", \"securityConstraints\": [{\"nature\": \"hasRole\", \"role\": \"test:test\"}]}}, \"actions\": {\"changeStatus\": {\"nature\": \"updateAttribute\", \"attribute\": \"status\"}}, \"attributes\":{\"ref\": {\"nature\": \"property\", \"static\": true, \"value\": \"abc123\"}, \"account\": {\"nature\": \"linkedObject\", \"type\":\"account\", \"link\":\"subscription\"}, \"seq\": {\"nature\": \"sequence\", \"name\": \"seq1\", \"length\": 4}, \"startTime\":{\"nature\":\"time\", \"value\": \"now\"},\"limit\":{\"nature\":\"measurement\"},\"limits\":{\"memberTemplate\":{\"nature\":\"measurement\"},\"nature\":\"collection\", \"value\": null},\"status\":{\"nature\":\"select\", \"options\": [\"Active\", \"Suspended\"], \"value\": \"Active\"},\"accountHolder\":{\"nature\":\"object\",\"attributes\":{\"permissions\":{\"nature\":\"property\"},\"user\":{\"nature\":\"link\", \"referenceType\": \"name\", \"associatedType\": \"user\"}}},\"features\":{\"memberTemplate\":{\"nature\":\"object\",\"attributes\":{\"name\":{\"nature\":\"property\"}}},\"nature\":\"collection\"}},\"type\":\"subscription\"}";
+        String json = "{\"id\":\"1234\",\"name\": \"Test Template\",\"nature\":\"object\", \"views\": {\"summary\": {\"name\": \"test-summary\", \"securityConstraints\": [{\"nature\": \"hasRole\", \"role\": \"test:test\"}]}}, \"actions\": {\"changeStatus\": {\"nature\": \"updateAttribute\", \"attribute\": \"status\"}}, \"attributes\":{\"ref\": {\"nature\": \"property\", \"static\": true, \"value\": \"abc123\"}, \"account\": {\"nature\": \"linkedObject\", \"type\":\"account\", \"link\":\"subscription\"}, \"seq\": {\"nature\": \"sequence\", \"name\": \"seq1\", \"length\": 4}, \"startTime\":{\"nature\":\"time\", \"default\": \"now\"},\"limit\":{\"nature\":\"measurement\"},\"limits\":{\"memberTemplate\":{\"nature\":\"measurement\"},\"nature\":\"collection\", \"default\": null},\"status\":{\"nature\":\"select\", \"options\": [\"Active\", \"Suspended\"], \"default\": \"Active\"},\"accountHolder\":{\"nature\":\"object\",\"attributes\":{\"permissions\":{\"nature\":\"property\"},\"user\":{\"nature\":\"link\", \"referenceType\": \"name\", \"associatedType\": \"user\"}}},\"features\":{\"memberTemplate\":{\"nature\":\"object\",\"attributes\":{\"name\":{\"nature\":\"property\"}}},\"nature\":\"collection\"}},\"type\":\"subscription\"}";
         OlogyTemplate result = objectMapper.deserialise(json, OlogyTemplate.class);
         assertNotNull(result);
         assertEquals("subscription", result.getType());
@@ -59,24 +59,25 @@ public class JacksonTemplateDeserialiserTest {
         assertEquals(4, result.getAttributeTemplate("seq", SequenceTemplate.class).getLength());
         assertTrue(result.getAttributeTemplate("status") instanceof SelectTemplate);
         assertEquals(2, result.getAttributeTemplate("status", SelectTemplate.class).getOptions().size());
-        assertEquals(new Property("Active"), result.getAttributeTemplate("status", PropertyTemplate.class).getValue());
+        assertEquals("Active", result.getAttributeTemplate("status", PropertyTemplate.class).getRawDefaultValue());
+        assertEquals(new Property("Active"), result.getAttributeTemplate("status", PropertyTemplate.class).createDefaultInstance());
         assertTrue(result.getAttributeTemplate("status", SelectTemplate.class).getOptions().contains("Active"));
         assertTrue(result.getAttributeTemplate("status", SelectTemplate.class).getOptions().contains("Suspended"));
         assertEquals(true, result.getAttributeTemplate("ref").isStatic());
         assertEquals(new Property("abc123"), result.getAttributeTemplate("ref", PropertyTemplate.class).getValue());
         assertTrue(result.getAttributeTemplate("startTime") instanceof TimeTemplate);
-        assertEquals("now", result.getAttributeTemplate("startTime", TimeTemplate.class).getRawValue());
-        assertNotNull(result.getAttributeTemplate("startTime", TimeTemplate.class).getValue());
-        assertNotNull(result.getAttributeTemplate("startTime", TimeTemplate.class).getValue().getValue());
+        assertEquals("now", result.getAttributeTemplate("startTime", TimeTemplate.class).getRawDefaultValue());
+        assertNotNull(result.getAttributeTemplate("startTime", TimeTemplate.class).createDefaultInstance());
+        assertNotNull(result.getAttributeTemplate("startTime", TimeTemplate.class).createDefaultInstance().getValue());
         assertTrue(result.getAttributeTemplate("limit") instanceof MeasurementTemplate);
-        assertNotNull(result.getAttributeTemplate("limit").getValue());
+        assertNotNull(result.getAttributeTemplate("limit").createDefaultInstance());
         assertTrue(result.getAttributeTemplate("accountHolder") instanceof OlogyTemplate);
         assertNotNull(result.getAttributeTemplate("accountHolder", OlogyTemplate.class).getAttributeTemplate("permissions"));
         LinkTemplate userLinkTemplate = (LinkTemplate) result.getAttributeTemplate("accountHolder", OlogyTemplate.class).getAttributeTemplate("user");
         assertEquals("user", userLinkTemplate.getAssociatedType());
         assertEquals(ReferenceType.name, userLinkTemplate.getReferenceType());
         assertTrue(result.getAttributeTemplate("limits") instanceof CollectionTemplate);
-        assertNotNull(result.getAttributeTemplate("limits").getValue());
+        assertNotNull(result.getAttributeTemplate("limits").createDefaultInstance());
         assertEquals(MeasurementTemplate.class, result.getAttributeTemplate("limits", CollectionTemplate.class).getMemberTemplate().getClass());
         assertEquals(1, result.getActions().size());
         assertEquals(UpdateAttributeAction.class, result.getActions().get("changeStatus").getClass());

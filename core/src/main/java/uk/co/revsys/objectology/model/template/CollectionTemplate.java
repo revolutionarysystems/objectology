@@ -21,11 +21,6 @@ public class CollectionTemplate extends AbstractAttributeTemplate<Collection>{
 		this.memberTemplate = memberTemplate;
 	}
 
-    @Override
-    public Collection newInstance() {
-        return new Collection();
-    }
-
 	@Override
 	public Class<? extends Collection> getAttributeType() {
 		return Collection.class;
@@ -34,6 +29,11 @@ public class CollectionTemplate extends AbstractAttributeTemplate<Collection>{
     @Override
     public String getNature() {
         return "collection";
+    }
+
+    @Override
+    public Collection createDefaultInstance() {
+        return new Collection();
     }
 	
 }

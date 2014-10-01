@@ -54,7 +54,7 @@ public class JacksonTemplateSerialiserTest {
         SelectTemplate statusTemplate = new SelectTemplate();
         statusTemplate.getOptions().add("Active");
         statusTemplate.getOptions().add("Suspended");
-        statusTemplate.setValue(new Property("Active"));
+        statusTemplate.setRawDefaultValue("Active");
         UpdateAttributeAction replacePropertyAction = new UpdateAttributeAction("status");
         template.getActions().put("changeStatus", replacePropertyAction);
         template.setAttributeTemplate("seq", new SequenceTemplate("seq1", 4));
@@ -84,7 +84,7 @@ public class JacksonTemplateSerialiserTest {
         assertEquals(4, seqJson.getInt("length"));
         assertEquals("property", json.getJSONObject("attributes").getJSONObject("description").get("nature"));
         assertEquals("select", json.getJSONObject("attributes").getJSONObject("status").get("nature"));
-        assertEquals("Active", json.getJSONObject("attributes").getJSONObject("status").getString("value"));
+        assertEquals("Active", json.getJSONObject("attributes").getJSONObject("status").getString("default"));
         assertEquals("measurement", json.getJSONObject("attributes").getJSONObject("limits").getJSONObject("memberTemplate").getString("nature"));
         assertEquals("status", json.getJSONObject("actions").getJSONObject("changeStatus").getString("attribute"));
         assertEquals("account", json.getJSONObject("attributes").getJSONObject("account").getString("type"));

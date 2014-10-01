@@ -22,14 +22,4 @@ public class BooleanValue extends AtomicAttribute<BooleanValue, BooleanTemplate,
         return java.lang.Boolean.valueOf(value);
     }
 
-    @Override
-    public BooleanValue copy() {
-        try {
-            return new BooleanValue(getValue());
-        } catch (ValidationException ex) {
-            // Should never be thrown
-            throw new RuntimeException(ex);
-        }
-    }
-
 }

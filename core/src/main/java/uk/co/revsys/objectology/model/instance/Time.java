@@ -40,16 +40,6 @@ public class Time extends AtomicAttribute<Time, TimeTemplate, Date> {
     }
 
     @Override
-    public Time copy() {
-        try {
-            return new Time(getValue());
-        } catch (ValidationException ex) {
-            // Should never be thrown
-            throw new RuntimeException(ex);
-        }
-    }
-
-    @Override
     public String toString() {
         Date value = getValue();
         if (value == null) {

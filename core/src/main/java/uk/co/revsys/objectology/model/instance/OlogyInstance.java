@@ -85,7 +85,7 @@ public class OlogyInstance extends AbstractAttribute<OlogyInstance, OlogyTemplat
         if (attribute != null) {
             attribute.setParent(this);
             AttributeTemplate template = getTemplate().getAttributeTemplate(key);
-            if(template == null){
+            if(template == null || template.isStatic()){
                 throw new UnexpectedAttributeException("Unexpected Attribute: " + key);
             }
             attribute.setTemplate(template);
@@ -100,11 +100,6 @@ public class OlogyInstance extends AbstractAttribute<OlogyInstance, OlogyTemplat
     public <A extends Attribute> A getAttribute(String key, Class<? extends A> type) {
         A attribute = (A) getAttribute(key);
         return attribute;
-    }
-
-    @Override
-    public OlogyInstance copy() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

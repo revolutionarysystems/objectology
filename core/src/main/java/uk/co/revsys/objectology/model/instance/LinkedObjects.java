@@ -36,9 +36,4 @@ public class LinkedObjects extends AbstractAttribute<LinkedObjects, LinkedObject
         return instances;
     }
 
-    @Override
-    public LinkedObjects copy() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

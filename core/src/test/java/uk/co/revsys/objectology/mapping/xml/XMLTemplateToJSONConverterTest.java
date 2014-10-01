@@ -64,7 +64,7 @@ public class XMLTemplateToJSONConverterTest {
         assertEquals("Test Template", json.getString("name"));
         assertEquals("subscription", json.getString("type"));
         assertEquals("measurement", json.getJSONObject("attributes").getJSONObject("limit").getString("nature"));
-        assertEquals("Template", json.getJSONObject("attributes").getJSONObject("status").getString("value"));
+        assertEquals("Template", json.getJSONObject("attributes").getJSONObject("status").getString("default"));
         assertNotNull(json.getJSONObject("views").getJSONObject("summary"));
     }
 

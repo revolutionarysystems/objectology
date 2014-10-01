@@ -40,16 +40,5 @@ public class Collection<M extends Attribute> extends AbstractAttribute<Collectio
     public int size(){
         return members.size();
     }
-
-    @Override
-    public Collection copy() {
-        List<M> membersCopy = new ArrayList<M>();
-        for(M member: members){
-            membersCopy.add((M) member.copy());
-        }
-        Collection collection = new Collection();
-        collection.setMembers(membersCopy);
-        return collection;
-    }
 	
 }

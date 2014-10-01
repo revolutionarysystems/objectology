@@ -18,15 +18,4 @@ public class Property extends AtomicAttribute<Property, PropertyTemplate, String
         return value;
     }
 
-    @Override
-    public Property copy() {
-        try {
-            Property property = new Property(getValue());
-            return property;
-        } catch (ValidationException ex) {
-            // Should never be thrown
-            throw new RuntimeException(ex);
-        }
-    }
-
 }

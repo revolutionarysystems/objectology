@@ -74,7 +74,7 @@ public class JacksonInstanceSerialiserTest {
         template.setId("1234");
         template.setType("subscription");
         PropertyTemplate statusTemplate = new PropertyTemplate();
-        statusTemplate.setValue(new Property("Created"));
+        statusTemplate.setRawDefaultValue("Created");
         template.setAttributeTemplate("status", statusTemplate);
         template.setAttributeTemplate("seq", new SequenceTemplate("seq1", 4));
         template.setAttributeTemplate("startTime", new TimeTemplate());

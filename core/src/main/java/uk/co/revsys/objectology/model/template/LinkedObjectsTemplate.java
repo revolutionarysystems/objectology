@@ -31,11 +31,6 @@ public class LinkedObjectsTemplate extends AbstractAttributeTemplate<LinkedObjec
     public void setLink(String link) {
         this.link = link;
     }
-
-    @Override
-    public LinkedObjects newInstance() {
-        return new LinkedObjects();
-    }
     
     @Override
     public Class<? extends LinkedObjects> getAttributeType() {
@@ -45,6 +40,11 @@ public class LinkedObjectsTemplate extends AbstractAttributeTemplate<LinkedObjec
     @Override
     public String getNature() {
         return "linkedObjects";
+    }
+
+    @Override
+    public LinkedObjects createDefaultInstance() {
+        return new LinkedObjects();
     }
 
 }

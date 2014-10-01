@@ -62,7 +62,7 @@ public class XMLTemplateToJSONConverter {
                 }
             }
         }
-        if(type == null && typeGuess!=null){
+        if (type == null && typeGuess != null) {
             type = typeGuess;
         }
         if (type == null) {
@@ -104,7 +104,16 @@ public class XMLTemplateToJSONConverter {
             if (nodes.isEmpty()) {
                 String text = xml.getText();
                 if (text != null && !text.isEmpty()) {
-                    json.put("value", text);
+                    boolean isStatic = false;
+                    Node staticNode = xml.selectSingleNode("static");
+                    if (staticNode != null && staticNode.getText().equals("true")) {
+                        isStatic = true;
+                    }
+                    if (isStatic) {
+                        json.put("value", text);
+                    } else {
+                        json.put("default", text);
+                    }
                 }
             }
             return json;

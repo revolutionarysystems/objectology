@@ -36,11 +36,6 @@ public class LinkTemplate extends AbstractAttributeTemplate<Link>{
 	public void setReferenceType(ReferenceType referenceType) {
 		this.referenceType = referenceType;
 	}
-
-    @Override
-    public Link newInstance() {
-        return new Link();
-    }
 	
 	@Override
 	public Class<? extends Link> getAttributeType() {
@@ -50,6 +45,11 @@ public class LinkTemplate extends AbstractAttributeTemplate<Link>{
     @Override
     public String getNature() {
         return "link";
+    }
+
+    @Override
+    public Link createDefaultInstance() {
+        return new Link();
     }
 
 }

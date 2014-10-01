@@ -6,16 +6,14 @@ import uk.co.revsys.objectology.model.ObjectWithNature;
 
 public interface AttributeTemplate<A extends Attribute> extends ObjectWithNature{
 	
-	public A getValue();
-	
-	public void setValue(A value);
-	
 	public Class<? extends A> getAttributeType();
     
     public void validate(A attribute) throws ValidationException;
     
     public boolean isStatic();
     
-    public A newInstance();
+    public A getValue();
+    
+    public A createDefaultInstance();
 	
 }

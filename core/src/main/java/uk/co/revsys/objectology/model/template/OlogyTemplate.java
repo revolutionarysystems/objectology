@@ -131,7 +131,7 @@ public class OlogyTemplate extends AbstractAttributeTemplate<OlogyInstance> impl
     }
 
     @Override
-    public OlogyInstance newInstance() {
+    public OlogyInstance createDefaultInstance() {
         return null;
     }
 

@@ -74,18 +74,12 @@ public class OlogyInstanceDeserialiser extends JsonDeserializer<OlogyInstance> {
                 Attribute attribute;
                 if (!attributeTemplate.isStatic()) {
                     if (GeneratedAttribute.class.isAssignableFrom(attributeTemplate.getAttributeType())) {
-                        attribute = attributeTemplate.newInstance();
+                        attribute = attributeTemplate.createDefaultInstance();
                     } else if (root.has(attributeName)) {
                         String attributeJson = root.get(attributeName).toString();
                         attribute = (Attribute) mapper.reader(attributeTemplate.getAttributeType()).withAttribute("template", attributeTemplate).readValue(attributeJson);
-                    } else if (attributeTemplate.getValue() != null) {
-                        try {
-                            attribute = attributeTemplate.getValue().copy();
-                        } catch (UnsupportedOperationException ex) {
-                            attribute = attributeTemplate.newInstance();
-                        }
-                    } else {
-                        attribute = attributeTemplate.newInstance();
+                    }else{
+                        attribute = attributeTemplate.createDefaultInstance();
                     }
                     try {
                         try {

@@ -39,16 +39,6 @@ public class Measurement extends AtomicAttribute<Measurement, MeasurementTemplat
     }
 
     @Override
-    public Measurement copy() {
-        try {
-            return new Measurement(getValue());
-        } catch (ValidationException ex) {
-            // Should never be thrown
-            throw new RuntimeException(ex);
-        }
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (getValue() == null) {
             return obj == null;

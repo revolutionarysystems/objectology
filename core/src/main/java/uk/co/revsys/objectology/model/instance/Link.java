@@ -50,9 +50,4 @@ public class Link extends AbstractLink<Link, LinkTemplate> {
 		}
 	}
 
-    @Override
-    public Link copy() {
-        return new Link(getReference());
-    }
-
 }

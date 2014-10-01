@@ -45,9 +45,4 @@ public class LinkedObject extends AbstractLink<LinkedObject, LinkedObjectTemplat
         return associatedObject;
     }
 
-    @Override
-    public LinkedObject copy() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

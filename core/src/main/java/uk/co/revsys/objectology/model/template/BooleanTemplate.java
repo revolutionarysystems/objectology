@@ -5,13 +5,13 @@ import uk.co.revsys.objectology.model.instance.BooleanValue;
 public class BooleanTemplate extends AtomicAttributeTemplate<BooleanValue>{
 
     @Override
-    public Class<? extends BooleanValue> getAttributeType() {
-        return BooleanValue.class;
+    public BooleanValue createDefaultInstance() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public BooleanValue newInstance() {
-        return new BooleanValue();
+    public Class<? extends BooleanValue> getAttributeType() {
+        return BooleanValue.class;
     }
 
     @Override

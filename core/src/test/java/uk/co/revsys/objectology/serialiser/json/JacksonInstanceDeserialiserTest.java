@@ -71,10 +71,10 @@ public class JacksonInstanceDeserialiserTest {
 		SelectTemplate statusTemplate = new SelectTemplate();
         statusTemplate.getOptions().add("Active");
         statusTemplate.getOptions().add("Suspended");
-        statusTemplate.setValue(new Property("Active"));
+        statusTemplate.setRawDefaultValue("Active");
         PropertyTemplate refTemplate = new PropertyTemplate();
         refTemplate.setStatic(true);
-        refTemplate.setValue(new Property("abc123"));
+        refTemplate.setRawDefaultValue("abc123");
         PropertyTemplate descriptionTemplate = new PropertyTemplate();
         descriptionTemplate.setRequired(true);
         template.setAttributeTemplate("ref", refTemplate);
