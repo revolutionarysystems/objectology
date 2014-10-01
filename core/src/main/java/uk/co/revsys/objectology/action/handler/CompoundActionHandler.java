@@ -15,7 +15,7 @@ public class CompoundActionHandler extends AbstractActionHandler<CompoundAction>
     }
     
     @Override
-    public OlogyInstance invoke(OlogyInstance instance, CompoundAction compoundAction, ActionRequest request) throws ActionInvocationException {
+    public OlogyInstance doInvoke(OlogyInstance instance, CompoundAction compoundAction, ActionRequest request) throws ActionInvocationException {
         for(Action action: compoundAction.getActions()){
             ActionHandler handler = actionHandlerFactory.getHandler(action);
             instance = handler.invoke(instance, action, request);

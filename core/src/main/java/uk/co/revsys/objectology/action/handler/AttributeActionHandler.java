@@ -14,7 +14,7 @@ public abstract class AttributeActionHandler<A extends Action, T extends Attribu
     public abstract  String getAttributeName(A action);
     
     @Override
-    public OlogyInstance invoke(OlogyInstance instance, A action, ActionRequest request) throws ActionInvocationException {
+    public OlogyInstance doInvoke(OlogyInstance instance, A action, ActionRequest request) throws ActionInvocationException {
         T attribute = (T) instance.getAttribute(getAttributeName(action));
         if(attribute == null){
             throw new ActionInvocationException("Attribute " + getAttributeName(action) + " does not exist");

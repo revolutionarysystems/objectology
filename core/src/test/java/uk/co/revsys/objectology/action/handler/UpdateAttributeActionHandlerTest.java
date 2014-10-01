@@ -1,4 +1,3 @@
-
 package uk.co.revsys.objectology.action.handler;
 
 import org.easymock.Capture;
@@ -12,7 +11,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import uk.co.revsys.objectology.action.ActionRequest;
 import static org.junit.Assert.*;
+import uk.co.revsys.objectology.action.handler.exception.ActionInvocationException;
 import uk.co.revsys.objectology.action.model.UpdateAttributeAction;
+import uk.co.revsys.objectology.condition.FailedConditionException;
+import uk.co.revsys.objectology.condition.IsEqualCondition;
 import uk.co.revsys.objectology.mapping.json.JsonInstanceMapper;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.instance.Property;
@@ -64,7 +66,7 @@ public class UpdateAttributeActionHandlerTest {
         OlogyInstance result = capture.getValue();
         assertEquals("disabled", result.getAttribute("status").toString());
     }
-    
+
     @Test
     public void testInvokeUpdateObject() throws Exception {
         IMocksControl mocksControl = EasyMock.createControl();
@@ -94,7 +96,7 @@ public class UpdateAttributeActionHandlerTest {
         System.out.println("result = " + result.getAttribute("part", OlogyInstance.class).getAttribute("p1"));
         assertEquals("v1", result.getAttribute("part", OlogyInstance.class).getAttribute("p1").toString());
     }
-    
+
     @Test
     public void testInvokeWithSetValue() throws Exception {
         IMocksControl mocksControl = EasyMock.createControl();
@@ -113,6 +115,40 @@ public class UpdateAttributeActionHandlerTest {
         expect(mockService.update(capture(capture))).andReturn(null);
         mocksControl.replay();
         UpdateAttributeActionHandler actionHandler = new UpdateAttributeActionHandler(new JsonInstanceMapper());
+        actionHandler.invoke(instance, action, request);
+        mocksControl.verify();
+        OlogyInstance result = capture.getValue();
+        assertEquals("suspended", result.getAttribute("status").toString());
+    }
+
+    @Test
+    public void testInvokeCheckExistingValue() throws Exception {
+        IMocksControl mocksControl = EasyMock.createControl();
+        OlogyInstanceService mockService = mocksControl.createMock(OlogyInstanceService.class);
+        ServiceFactory.setOlogyInstanceService(mockService);
+        OlogyTemplate template = new OlogyTemplate();
+        template.setAttributeTemplate("status", new PropertyTemplate());
+        OlogyInstance instance = new OlogyInstance();
+        instance.setTemplate(template);
+        instance.setAttribute("status", new Property("disabled"));
+        ActionRequest request = new ActionRequest();
+        request.getParameters().put("status", "disabled");
+        UpdateAttributeAction action = new UpdateAttributeAction("status");
+        action.setValue("suspended");
+        action.addCondition(new IsEqualCondition("status", "enabled"));
+        UpdateAttributeActionHandler actionHandler = new UpdateAttributeActionHandler(new JsonInstanceMapper());
+        try {
+            actionHandler.invoke(instance, action, request);
+            fail("Expected FailedConditionException to be thrown");
+        } catch (ActionInvocationException ex) {
+            if (!(ex.getCause() instanceof FailedConditionException)) {
+                fail("Expected FailedConditionException to be thrown");
+            }
+        }
+        instance.getAttribute("status", Property.class).setValue("enabled");
+        Capture<OlogyInstance> capture = new Capture<OlogyInstance>();
+        expect(mockService.update(capture(capture))).andReturn(null);
+        mocksControl.replay();
         actionHandler.invoke(instance, action, request);
         mocksControl.verify();
         OlogyInstance result = capture.getValue();

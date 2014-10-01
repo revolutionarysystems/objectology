@@ -5,7 +5,9 @@ import uk.co.revsys.objectology.action.model.AddToCollectionAction;
 import uk.co.revsys.objectology.action.model.CompoundAction;
 import uk.co.revsys.objectology.action.model.RemoveFromCollectionAction;
 import uk.co.revsys.objectology.action.model.UpdateAttributeAction;
-import uk.co.revsys.objectology.action.model.UpdateSelectAction;
+import uk.co.revsys.objectology.condition.AndCondition;
+import uk.co.revsys.objectology.condition.IsEqualCondition;
+import uk.co.revsys.objectology.condition.OrCondition;
 import uk.co.revsys.objectology.model.ObjectWithNature;
 import uk.co.revsys.objectology.model.template.BooleanTemplate;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
@@ -46,9 +48,12 @@ public class NatureMap {
         // Actions
         NatureMap.setNature("updateAttribute", UpdateAttributeAction.class);
         NatureMap.setNature("addToCollection", AddToCollectionAction.class);
-        NatureMap.setNature("updateSelect", UpdateSelectAction.class);
         NatureMap.setNature("removeFromCollection", RemoveFromCollectionAction.class);
         NatureMap.setNature("compoundAction", CompoundAction.class);
+        // Conditions
+        NatureMap.setNature("and", AndCondition.class);
+        NatureMap.setNature("or", OrCondition.class);
+        NatureMap.setNature("isEqual", IsEqualCondition.class);
     }
     
     public static String getTemplateNature(Class<? extends ObjectWithNature> templateType){

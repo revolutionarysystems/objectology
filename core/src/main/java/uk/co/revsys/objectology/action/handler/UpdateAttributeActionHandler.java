@@ -27,7 +27,7 @@ public class UpdateAttributeActionHandler extends AbstractActionHandler<UpdateAt
     }
 
     @Override
-    public OlogyInstance invoke(OlogyInstance instance, UpdateAttributeAction action, ActionRequest request) throws ActionInvocationException {
+    public OlogyInstance doInvoke(OlogyInstance instance, UpdateAttributeAction action, ActionRequest request) throws ActionInvocationException {
         try {
             String attributeName = action.getAttribute();
             String value = action.getValue();

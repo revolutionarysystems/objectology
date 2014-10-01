@@ -85,6 +85,7 @@ public class JacksonInstanceDeserialiserTest {
 		template.setAttributeTemplate("limit", new MeasurementTemplate());
 		template.setAttributeTemplate("limits", new CollectionTemplate(new MeasurementTemplate()));
         template.setAttributeTemplate("ids", new CollectionTemplate(new MeasurementTemplate()));
+        template.setAttributeTemplate("link1", new LinkTemplate());
         template.setAttributeTemplate("account", new LinkedObjectTemplate("account", "subscription"));
         template.setAttributeTemplate("users", new LinkedObjectsTemplate("user", "subscription"));
 		OlogyTemplate partTemplate = new OlogyTemplate();
