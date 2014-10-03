@@ -25,6 +25,8 @@ import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
 import uk.co.revsys.objectology.mapping.xml.XMLObjectMapper;
+import uk.co.revsys.objectology.model.instance.Dictionary;
+import uk.co.revsys.objectology.model.template.DictionaryTemplate;
 import uk.co.revsys.objectology.model.template.LinkedObjectsTemplate;
 import uk.co.revsys.objectology.service.ServiceFactory;
 import uk.co.revsys.objectology.service.OlogyTemplateServiceImpl;
@@ -65,6 +67,7 @@ public class XMLOlogyInstanceDeserialiserTest {
 		template.setAttributeTemplate("startTime", new TimeTemplate());
 		template.setAttributeTemplate("limit", new MeasurementTemplate());
 		template.setAttributeTemplate("endTime", new TimeTemplate());
+        template.setAttributeTemplate("settings", new DictionaryTemplate(new PropertyTemplate()));
         template.setAttributeTemplate("ids", new CollectionTemplate(new MeasurementTemplate()));
 		template.setAttributeTemplate("limits", new CollectionTemplate(new MeasurementTemplate()));
         template.setAttributeTemplate("users", new LinkedObjectsTemplate("user", "subscription"));
@@ -98,6 +101,10 @@ public class XMLOlogyInstanceDeserialiserTest {
 		source.append("<permissions>all</permissions>");
 		source.append("<user>1234</user>");
 		source.append("</accountHolder>");
+        source.append("<settings>");
+        source.append("<s1>foo</s1>");
+        source.append("<s2>bar</s2>");
+        source.append("</settings>");
 		source.append("</subscription>");
 		OlogyInstance instance = objectMapper.deserialise(source.toString(), OlogyInstance.class);
 		assertNotNull(instance);
@@ -116,6 +123,9 @@ public class XMLOlogyInstanceDeserialiserTest {
 		assertEquals(1, instance.getAttribute("limits", Collection.class).getMembers().size());
 		assertEquals("1", ((Measurement)instance.getAttribute("limits", Collection.class).getMembers().get(0)).toString());
 		assertEquals("Feature 1", ((OlogyInstance)instance.getAttribute("features", Collection.class).getMembers().get(0)).getName());
+        assertEquals(new Property("foo"), instance.getAttribute("settings", Dictionary.class).get("s1"));
+        assertEquals(new Property("bar"), instance.getAttribute("settings", Dictionary.class).get("s2"));
+        
 	}
 
 }

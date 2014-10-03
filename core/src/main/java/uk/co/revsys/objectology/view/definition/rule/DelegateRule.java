@@ -2,6 +2,8 @@ package uk.co.revsys.objectology.view.definition.rule;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import uk.co.revsys.objectology.transform.OlogyTransformer;
 import uk.co.revsys.objectology.transform.OlogyView;
 import uk.co.revsys.objectology.transform.path.PathEvaluatorException;
@@ -51,8 +53,8 @@ public class DelegateRule implements ViewDefinitionRule {
     public OlogyView evaluate(Object object, OlogyView result, ViewDefinition transform, OlogyTransformer transformer) throws TransformException {
         try {
             Object target = transformer.getPathEvaluator().evaluate(object, path);
-            if (target instanceof List) {
-                List parts = (List)target;
+            if (target instanceof Iterable) {
+                Iterable parts = (Iterable) target;
                 List partResults = new LinkedList();
                 for (Object part : parts) {
                     OlogyView partView = new OlogyView();
@@ -60,7 +62,16 @@ public class DelegateRule implements ViewDefinitionRule {
                     partResults.add(partResult);
                 }
                 result.put(getLabel(), partResults);
-            }else{
+            } else if (target instanceof Map) {
+                Map<Object, Object> map = (Map) target;
+                List partResults = new LinkedList();
+                for (Entry entry: map.entrySet()) {
+                    OlogyView partView = new OlogyView();
+                    Object partResult = getRule().evaluate(entry, partView, transform, transformer);
+                    partResults.add(partResult);
+                }
+                result.put(getLabel(), partResults);
+            } else {
                 OlogyView partView = new OlogyView();
                 result.put(getLabel(), getRule().evaluate(target, partView, transform, transformer));
             }

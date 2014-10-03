@@ -10,6 +10,7 @@ import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
+import uk.co.revsys.objectology.model.template.DictionaryTemplate;
 import uk.co.revsys.objectology.service.OlogyTemplateService;
 
 public class XMLInstanceToJSONConverter {
@@ -39,7 +40,9 @@ public class XMLInstanceToJSONConverter {
             if (template == null) {
                 throw new XMLConverterException("Template not found");
             }
-            return convert(xml, template).toString();
+            String json = convert(xml, template).toString();
+            System.out.println("json = " + json);
+            return json;
         } catch (DocumentException ex) {
             throw new XMLConverterException(ex);
         } catch (DaoException ex) {
@@ -66,12 +69,23 @@ public class XMLInstanceToJSONConverter {
         }
         return json;
     }
+    
+    private JSONObject convert(Node xml, DictionaryTemplate template){
+        JSONObject json = new JSONObject();
+        List<Node> nodes = xml.selectNodes("*");
+        for(Node node: nodes){
+            json.put(node.getName(), convert(node, template.getMemberTemplate()));
+        }
+        return json;
+    }
 
     private Object convert(Node xml, AttributeTemplate template) {
         if (template != null) {
             if (template instanceof CollectionTemplate) {
                 return convert(xml, (CollectionTemplate) template);
-            } else if (template instanceof OlogyTemplate) {
+            } else if(template instanceof DictionaryTemplate){
+                return convert(xml, (DictionaryTemplate) template);
+            }else if (template instanceof OlogyTemplate) {
                 return convert(xml, (OlogyTemplate) template);
             } else {
                 return convert(xml);

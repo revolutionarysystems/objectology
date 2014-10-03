@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import uk.co.revsys.objectology.mapping.json.deserialise.DictionaryDeserialiser;
 import uk.co.revsys.objectology.model.template.DictionaryTemplate;
 

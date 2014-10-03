@@ -1,5 +1,6 @@
 package uk.co.revsys.objectology.view.definition.rule;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import uk.co.revsys.objectology.transform.OlogyTransformer;
@@ -16,6 +17,10 @@ public class ViewDefinitionRuleSet implements ViewDefinitionRule {
     
     public ViewDefinitionRuleSet(List<ViewDefinitionRule> rules){
         this.rules = rules;
+    }
+    
+    public ViewDefinitionRuleSet(ViewDefinitionRule... rules){
+        this.rules.addAll(Arrays.asList(rules));
     }
 
     public List<ViewDefinitionRule> getRules() {

@@ -13,10 +13,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import uk.co.revsys.objectology.model.ReferenceType;
+import uk.co.revsys.objectology.model.instance.Dictionary;
 import uk.co.revsys.objectology.model.instance.Link;
 import uk.co.revsys.objectology.model.instance.Measurement;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.instance.Property;
+import uk.co.revsys.objectology.model.template.DictionaryTemplate;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.model.template.MeasurementTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
@@ -56,6 +58,7 @@ public class PathEvaluatorTest {
         partTemplate.setAttributeTemplate("m1", new MeasurementTemplate());
         template.setAttributeTemplate("link", new LinkTemplate("other", ReferenceType.id));
         template.setAttributeTemplate("part", partTemplate);
+        template.setAttributeTemplate("dictionary", new DictionaryTemplate(new PropertyTemplate()));
         template.setId("abcd");
         OlogyInstance instance = new OlogyInstance();
         instance.setTemplate(template);
@@ -67,6 +70,9 @@ public class PathEvaluatorTest {
         part.setAttribute("m1", new Measurement(111));
         Link link = new Link("9876");
         instance.setAttribute("link", link);
+        Dictionary dictionary = new Dictionary();
+        dictionary.put("key1", new Property("value1"));
+        instance.setAttribute("dictionary", dictionary);
         PathEvaluator pathEvaluator = new PathEvaluatorImpl();
         OlogyInstance associatedObject = new OlogyInstance();
         expect(mockInstanceServce.findById("other", "9876")).andReturn(associatedObject);
@@ -80,6 +86,7 @@ public class PathEvaluatorTest {
         assertEquals("9876", pathEvaluator.evaluate(instance, "$.attributes.link.reference"));
         assertEquals(associatedObject, pathEvaluator.evaluate(instance, "$.attributes.link.associatedObject"));
         assertEquals("abcd:1234", pathEvaluator.evaluate(instance, "$.template.id + ':' + $.id"));
+        assertEquals(new Property("value1"), pathEvaluator.evaluate(instance, "$.attributes.dictionary['key1']"));
         mocksControl.verify();
     }
 
