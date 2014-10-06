@@ -10,6 +10,7 @@ public class ObjectologyComponent extends HttpProxyComponent{
     @Override
     protected void populateMappings(Map<String, Class<? extends Processor>> mappings) {
         mappings.put("create", CreateInstanceProcessor.class);
+        mappings.put("query", QueryProcessor.class);
     }
     
 }
