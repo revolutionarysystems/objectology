@@ -3,11 +3,11 @@ package uk.co.revsys.objectology.camel;
 import org.apache.camel.Exchange;
 import uk.co.revsys.esb.component.HttpProxyProcessor;
 
-public class QueryProcessor extends HttpProxyProcessor {
+public class FindAllProcessor extends HttpProxyProcessor{
 
     private String type;
     
-    public QueryProcessor(String baseUrl) {
+    public FindAllProcessor(String baseUrl) {
         super(baseUrl);
     }
 
@@ -21,17 +21,12 @@ public class QueryProcessor extends HttpProxyProcessor {
 
     @Override
     public String getHttpMethod() {
-        return POST;
+        return GET;
     }
 
     @Override
     public String getUrlPath(Exchange exchange) {
-        return "/" + getType() + "/query";
-    }
-
-    @Override
-    public String getContentType() {
-        return APPLICATION_JSON;
+        return "/" + type;
     }
 
 }

@@ -95,6 +95,9 @@ public class JacksonInstanceDeserialiserTest {
 		partTemplate.setAttributeTemplate("permissions", new PropertyTemplate());
 		partTemplate.setAttributeTemplate("user", new LinkTemplate());
 		template.setAttributeTemplate("accountHolder", partTemplate);
+        OlogyTemplate defaultPartTemplate = new OlogyTemplate();
+        defaultPartTemplate.setAttributeTemplate("p1", new PropertyTemplate());
+        template.setAttributeTemplate("defaultPart", defaultPartTemplate);
 		templateService.create(template);
 		String json = "{\"id\": \"1234\", \"ref\": \"xyz987\", \"name\": \"Test Instance\", \"limit\":\"1000\", \"account\":\"456\", \"users\":[\"678\"], \"limits\": [\"123\"], \"startTime\":\"01/01/2001 00:00:00\",\"template\":\"" + template.getId() + "\", \"accountHolder\": {\"id\": \"4321\", \"permissions\": \"all\", \"user\": \"1234\"}}";
         try{
@@ -126,6 +129,8 @@ public class JacksonInstanceDeserialiserTest {
         assertEquals("user", result.getAttribute("users", LinkedObjects.class).getTemplate().getType());
         assertEquals(new Property("foo"), result.getAttribute("settings", Dictionary.class).get("s1"));
         assertEquals(new Property("bar"), result.getAttribute("settings", Dictionary.class).get("s2"));
+        assertNotNull(result.getAttribute("defaultPart"));
+        assertNotNull(result.getAttribute("defaultPart", OlogyInstance.class).getAttribute("p1"));
 	}
 
 }

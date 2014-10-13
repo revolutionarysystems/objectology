@@ -1,5 +1,6 @@
 package uk.co.revsys.objectology.camel;
 
+import org.apache.camel.Exchange;
 import uk.co.revsys.esb.component.HttpProxyProcessor;
 
 public class CreateInstanceProcessor extends HttpProxyProcessor {
@@ -19,7 +20,7 @@ public class CreateInstanceProcessor extends HttpProxyProcessor {
     }
 
     @Override
-    public String getUrlPath() {
+    public String getUrlPath(Exchange exchange) {
         return "/instance";
     }
 
