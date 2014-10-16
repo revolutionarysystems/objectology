@@ -47,4 +47,9 @@ public class InvokeActionProcessor extends HttpProxyProcessor{
         return "/" + getType() + "/" + getId() + "/action/" + getAction();
     }
 
+    @Override
+    public String getContentType() {
+        return APPLICATION_FORM_URLENCODED;
+    }
+
 }
