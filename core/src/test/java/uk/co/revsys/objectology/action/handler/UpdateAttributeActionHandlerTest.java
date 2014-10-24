@@ -16,8 +16,10 @@ import uk.co.revsys.objectology.action.model.UpdateAttributeAction;
 import uk.co.revsys.objectology.condition.FailedConditionException;
 import uk.co.revsys.objectology.condition.IsEqualCondition;
 import uk.co.revsys.objectology.mapping.json.JsonInstanceMapper;
+import uk.co.revsys.objectology.model.instance.Link;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.instance.Property;
+import uk.co.revsys.objectology.model.template.LinkTemplate;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
@@ -65,6 +67,29 @@ public class UpdateAttributeActionHandlerTest {
         mocksControl.verify();
         OlogyInstance result = capture.getValue();
         assertEquals("disabled", result.getAttribute("status").toString());
+    }
+    
+    @Test
+    public void testInvokeLink() throws Exception {
+        IMocksControl mocksControl = EasyMock.createControl();
+        OlogyInstanceService mockService = mocksControl.createMock(OlogyInstanceService.class);
+        ServiceFactory.setOlogyInstanceService(mockService);
+        OlogyTemplate template = new OlogyTemplate();
+        template.setAttributeTemplate("link", new LinkTemplate());
+        OlogyInstance instance = new OlogyInstance();
+        instance.setTemplate(template);
+        instance.setAttribute("link", new Link("abcd1234"));
+        ActionRequest request = new ActionRequest();
+        request.getParameters().put("link", "wxyz5678");
+        UpdateAttributeAction action = new UpdateAttributeAction("link");
+        Capture<OlogyInstance> capture = new Capture<OlogyInstance>();
+        expect(mockService.update(capture(capture))).andReturn(null);
+        mocksControl.replay();
+        UpdateAttributeActionHandler actionHandler = new UpdateAttributeActionHandler(new JsonInstanceMapper());
+        actionHandler.invoke(instance, action, request);
+        mocksControl.verify();
+        OlogyInstance result = capture.getValue();
+        assertEquals("wxyz5678", result.getAttribute("link", Link.class).getReference());
     }
 
     @Test

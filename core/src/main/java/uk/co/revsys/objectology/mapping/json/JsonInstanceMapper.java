@@ -24,8 +24,11 @@ public class JsonInstanceMapper extends JsonObjectMapper {
 
     public Attribute deserialise(String source, AttributeTemplate template) throws DeserialiserException {
         Class attributeType = template.getAttributeType();
-        if (AtomicAttribute.class.isAssignableFrom(attributeType)) {
+        try {
+            attributeType.getConstructor(String.class);
             source = "\"" + source + "\"";
+        } catch (NoSuchMethodException ex) {
+            // Ignore
         }
         Map<String, Object> deserialisationParameters = new HashMap<String, Object>();
         deserialisationParameters.put("template", template);
