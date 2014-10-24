@@ -20,6 +20,7 @@ public abstract class AtomicAttribute<A extends AtomicAttribute, T extends Atomi
         setValue(value);
     }
     
+    @JsonValue
     public V getValue() {
         return value;
     }
@@ -32,7 +33,6 @@ public abstract class AtomicAttribute<A extends AtomicAttribute, T extends Atomi
     public abstract V parseValueFromString(String value) throws ParseException;
     
     @Override
-    @JsonValue
     public String toString() {
         V value = getValue();
         if (value == null) {
