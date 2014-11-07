@@ -32,7 +32,7 @@
         <constructor-arg index="1" value="user-manager"/>
     </bean>
 	
-    <bean id="mongoClient" class="com.mongodb.MongoClient">
+    <bean id="mongoClient" class="uk.co.revsys.mongodb.MongoClient">
         <constructor-arg index="0" value="${user.manager.db.host}"/>
     </bean>
 

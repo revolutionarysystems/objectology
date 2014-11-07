@@ -90,7 +90,7 @@
         <constructor-arg index="1" value="${db.name}"/>
     </bean>
 	
-    <bean id="mongoClient" class="com.mongodb.MongoClient">
+    <bean id="mongoClient" class="uk.co.revsys.utils.mongodb.MongoClient">
         <constructor-arg index="0" value="${db.host}"/>
     </bean>
 	
