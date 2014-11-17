@@ -112,7 +112,7 @@ public class JacksonInstanceDeserialiserTest {
                 throw ex;
             }
         }
-        json = "{\"id\": \"1234\", \"description\": \"Test\", \"flag\": false, \"ref\": \"xyz987\", \"name\": \"Test Instance\", \"settings\": {\"s1\": \"foo\", \"s2\": \"bar\"}, \"limit\":1000, \"account\":\"456\", \"users\":[\"678\"], \"limits\": [\"123\"], \"startTime\":\"01/01/2001 00:00:00\",\"template\":\"" + template.getId() + "\", \"accountHolder\": {\"id\": \"4321\", \"permissions\": \"all\", \"user\": \"1234\"}}";
+        json = "{\"id\": \"1234\", \"description\": \"Test\", \"flag\": false, \"ref\": \"xyz987\", \"name\": \"Test Instance\", \"settings\": {\"s1\": \"foo\", \"s2\": \"bar\"}, \"limit\":1000, \"account\":\"456\", \"users\":[\"678\"], \"limits\": [\"123\"], \"startTime\":978307200000, \"template\":\"" + template.getId() + "\", \"accountHolder\": {\"id\": \"4321\", \"permissions\": \"all\", \"user\": \"1234\"}}";
         OlogyInstance result = objectMapper.deserialise(json, OlogyInstance.class);
         assertEquals("1234", result.getId());
         assertNull(result.getParent());

@@ -3,8 +3,6 @@ package uk.co.revsys.objectology.model.instance;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.lang.time.DateUtils;
 import uk.co.revsys.objectology.exception.ValidationException;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
@@ -23,6 +21,10 @@ public class Time extends AtomicAttribute<Time, TimeTemplate, Date> {
 
     public Time(Date value) throws ValidationException {
         super(value);
+    }
+    
+    public Time(long value) throws ValidationException{
+        super(new Date(value));
     }
 
     @Override
