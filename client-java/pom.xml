@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>uk.co.revsys.utils</groupId>
 			<artifactId>http-utils</artifactId>
-			<version>0.1.0-SNAPSHOT</version>
+			<version>0.1.0</version>
 		</dependency>
 	</dependencies>
 
