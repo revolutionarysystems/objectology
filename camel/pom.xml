@@ -6,12 +6,12 @@
     <parent>
         <artifactId>objectology-parent</artifactId>
         <groupId>uk.co.revsys.objectology</groupId>
-        <version>0.1.0</version>
+        <version>0.1.1</version>
     </parent>
 
     <artifactId>objectology-camel</artifactId>
     <packaging>bundle</packaging>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 
     <name>Objectology - Camel</name>
 
