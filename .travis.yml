@@ -8,3 +8,6 @@ notifications:
     - adam@revolutionarysystems.co.uk
     - andrew@revolutionarysystems.co.uk
     - ci@revolutionarysystems.co.uk
+branches:
+  except:
+    - /^v[0-9]/
