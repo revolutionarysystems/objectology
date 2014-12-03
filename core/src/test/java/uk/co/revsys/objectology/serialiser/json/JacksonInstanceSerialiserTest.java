@@ -22,6 +22,7 @@ import uk.co.revsys.objectology.mapping.ObjectMapper;
 import uk.co.revsys.objectology.mapping.json.JsonDBInstanceMapper;
 import uk.co.revsys.objectology.mapping.json.JsonInstanceMapper;
 import uk.co.revsys.objectology.model.ReferenceType;
+import uk.co.revsys.objectology.model.instance.BlobPointer;
 import uk.co.revsys.objectology.model.instance.BooleanValue;
 import uk.co.revsys.objectology.model.instance.Collection;
 import uk.co.revsys.objectology.model.instance.Link;
@@ -31,6 +32,7 @@ import uk.co.revsys.objectology.model.instance.Measurement;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.model.instance.Property;
 import uk.co.revsys.objectology.model.instance.Time;
+import uk.co.revsys.objectology.model.template.BlobTemplate;
 import uk.co.revsys.objectology.model.template.BooleanTemplate;
 import uk.co.revsys.objectology.model.template.CollectionTemplate;
 import uk.co.revsys.objectology.model.template.LinkTemplate;
@@ -80,6 +82,7 @@ public class JacksonInstanceSerialiserTest {
         template.setAttributeTemplate("status", statusTemplate);
         template.setAttributeTemplate("seq", new SequenceTemplate("seq1", 4));
         template.setAttributeTemplate("startTime", new TimeTemplate());
+        template.setAttributeTemplate("text", new BlobTemplate());
         template.setAttributeTemplate("limit", new MeasurementTemplate());
         template.setAttributeTemplate("active", new BooleanTemplate());
         template.setAttributeTemplate("ids", new CollectionTemplate(new MeasurementTemplate()));
@@ -99,6 +102,7 @@ public class JacksonInstanceSerialiserTest {
         object.setTemplate(template);
         object.setAttribute("status", new Property("Created"));
         object.setAttribute("seq", new Property("0001"));
+        object.setAttribute("text", new BlobPointer("blob1234"));
         object.setAttribute("active", new BooleanValue(true));
         object.setAttribute("startTime", new Time("01/01/2001 00:00:00"));
         object.setAttribute("limit", new Measurement("1000"));
@@ -161,6 +165,7 @@ public class JacksonInstanceSerialiserTest {
         assertEquals("Feature 1", jsonObject.getJSONArray("features").getJSONObject(0).getString("title"));
         assertEquals("5678", jsonObject.getString("account"));
         assertEquals(2, jsonObject.getJSONArray("users").length());
+        assertEquals("blob1234", jsonObject.get("text"));
     }
 
     @Test

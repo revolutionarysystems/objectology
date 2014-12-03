@@ -1,5 +1,7 @@
 package uk.co.revsys.objectology.serialiser.json;
 
+import java.util.List;
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -26,15 +28,19 @@ import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
 import uk.co.revsys.objectology.mapping.json.JsonInstanceMapper;
+import uk.co.revsys.objectology.model.instance.Blob;
+import uk.co.revsys.objectology.model.instance.BlobPointer;
 import uk.co.revsys.objectology.model.instance.BooleanValue;
 import uk.co.revsys.objectology.model.instance.Dictionary;
 import uk.co.revsys.objectology.model.instance.LinkedObject;
 import uk.co.revsys.objectology.model.instance.LinkedObjects;
+import uk.co.revsys.objectology.model.template.BlobTemplate;
 import uk.co.revsys.objectology.model.template.BooleanTemplate;
 import uk.co.revsys.objectology.model.template.DictionaryTemplate;
 import uk.co.revsys.objectology.model.template.LinkedObjectTemplate;
 import uk.co.revsys.objectology.model.template.LinkedObjectsTemplate;
 import uk.co.revsys.objectology.model.template.SelectTemplate;
+import uk.co.revsys.objectology.service.OlogyInstanceBundle;
 import uk.co.revsys.objectology.service.ServiceFactory;
 import uk.co.revsys.objectology.service.OlogyTemplateServiceImpl;
 
@@ -137,6 +143,30 @@ public class JacksonInstanceDeserialiserTest {
         assertEquals(new Property("bar"), result.getAttribute("settings", Dictionary.class).get("s2"));
         assertNotNull(result.getAttribute("defaultPart"));
         assertNotNull(result.getAttribute("defaultPart", OlogyInstance.class).getAttribute("p1"));
+    }
+    
+    @Test
+    public void testDeserialiseJSON_instanceBundle() throws Exception {
+        Dao dao = new InMemoryDao();
+        OlogyTemplateServiceImpl templateService = new OlogyTemplateServiceImpl(dao);
+        ServiceFactory.setOlogyTemplateService(templateService);
+        ServiceFactory.setSequenceGenerator(new InMemorySequenceGenerator());
+        ObjectMapper objectMapper = new JsonInstanceMapper();
+        OlogyTemplate template = new OlogyTemplate();
+        template.setAttributeTemplate("p1", new PropertyTemplate());
+        template.setAttributeTemplate("text", new BlobTemplate("text/plain"));
+        templateService.create(template);
+        String templateId = template.getId();
+        String json = "{\"template\": \"" + templateId + "\", \"p1\": \"v1\", \"text\": \"This is a test\"}";
+        OlogyInstanceBundle instanceBundle = objectMapper.deserialise(json, OlogyInstanceBundle.class);
+        assertEquals("v1", instanceBundle.getInstance().getAttribute("p1").toString());
+        BlobPointer blobPointer = instanceBundle.getInstance().getAttribute("text", BlobPointer.class);
+        assertNotNull(blobPointer.getId());
+        List<Blob> blobs = instanceBundle.getBlobs();
+        assertEquals(1, blobs.size());
+        Blob blob = blobs.get(0);
+        assertEquals(blobPointer.getId(), blob.getId());
+        assertEquals("This is a test", IOUtils.toString(blob.getInputStream()));
     }
 
 }

@@ -40,7 +40,7 @@ public class OlogyInstanceServiceTest {
     @Test
     public void test() throws DaoException, UnexpectedAttributeException, ValidationException {
         DaoFactory instanceDaoFactory = new InMemoryDaoFactory();
-        OlogyInstanceServiceImpl<OlogyInstance> instanceService = new OlogyInstanceServiceImpl<OlogyInstance>(instanceDaoFactory);
+        OlogyInstanceServiceImpl<OlogyInstance> instanceService = new OlogyInstanceServiceImpl<OlogyInstance>(instanceDaoFactory, null);
         OlogyTemplate template1 = new OlogyTemplate();
         template1.setAttributeTemplate("property1", new PropertyTemplate());
         OlogyInstance instance1 = new OlogyInstance();

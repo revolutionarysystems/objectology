@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -47,6 +46,7 @@ import uk.co.revsys.objectology.mapping.xml.XMLConverterException;
 import uk.co.revsys.objectology.mapping.xml.XMLInstanceToJSONConverter;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.security.AuthorisationHandler;
+import uk.co.revsys.objectology.service.OlogyInstanceBundle;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
 import uk.co.revsys.objectology.service.ViewService;
 import uk.co.revsys.objectology.transform.TransformException;
@@ -206,12 +206,13 @@ public class InstanceRestService extends ObjectRestService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createFromJSON(String json) {
         try {
-            OlogyInstance object = getJsonObjectMapper().deserialise(json, OlogyInstance.class);
+            OlogyInstanceBundle bundle = getJsonObjectMapper().deserialise(json, OlogyInstanceBundle.class);
+            OlogyInstance object = bundle.getInstance();
             if (!isAuthorisedToCreate(object)) {
                 LOG.warn("Forbidden Access");
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
-            object = service.create(object);
+            object = service.create(bundle);
             return buildResponse(object);
         } catch (DeserialiserException ex) {
             LOG.error("Error creating instance", ex);
@@ -308,9 +309,10 @@ public class InstanceRestService extends ObjectRestService {
             JSONObject existingObjectJSON = new JSONObject(getJsonObjectMapper().serialise(existingObject));
             JSONObject newObjectJSON = new JSONObject(json);
             JSONObject combinedJSON = mergeJSON(existingObjectJSON, newObjectJSON);
-            OlogyInstance object = getJsonObjectMapper().deserialise(combinedJSON.toString(), OlogyInstance.class);
+            OlogyInstanceBundle bundle = getJsonObjectMapper().deserialise(combinedJSON.toString(), OlogyInstanceBundle.class);
+            OlogyInstance object = bundle.getInstance();
             object.setId(id);
-            object = service.update(object);
+            object = service.update(bundle);
             return buildResponse(object);
         } catch (DeserialiserException ex) {
             LOG.error("Error updating instance " + type + ":" + id, ex);

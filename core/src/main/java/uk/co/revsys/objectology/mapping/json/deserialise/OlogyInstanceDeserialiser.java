@@ -77,7 +77,7 @@ public class OlogyInstanceDeserialiser extends JsonDeserializer<OlogyInstance> {
                         attribute = attributeTemplate.createDefaultInstance();
                     } else if (root.has(attributeName)) {
                         String attributeJson = root.get(attributeName).toString();
-                        attribute = (Attribute) mapper.reader(attributeTemplate.getAttributeType()).withAttribute("template", attributeTemplate).readValue(attributeJson);
+                        attribute = (Attribute) mapper.reader(attributeTemplate.getAttributeType()).withAttribute("instanceBundle", dc.getAttribute("instanceBundle")).withAttribute("template", attributeTemplate).readValue(attributeJson);
                     }else{
                         attribute = attributeTemplate.createDefaultInstance();
                     }
