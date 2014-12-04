@@ -31,7 +31,6 @@ public class MongoViewDefinitionDao implements ViewDefinitionDao {
             if (result == null) {
                 return null;
             }
-            System.out.println(result.toString());
             return objectMapper.deserialise(result.toString(), ViewDefinition.class);
         } catch (DeserialiserException ex) {
             throw new DaoException(ex);

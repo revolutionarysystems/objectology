@@ -23,9 +23,7 @@ public class ViewDefinitionRuleDeserialiser extends JsonDeserializer<ViewDefinit
         ObjectMapper mapper = (ObjectMapper) jp.getCodec();
         JsonNode root = jp.getCodec().readTree(jp);
         String type = root.get("type").asText();
-        System.out.println("type = " + type);
         Class clazz = mappings.get(type);
-        System.out.println("clazz = " + clazz);
         if(clazz == null){
             return null;
         }

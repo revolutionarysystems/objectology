@@ -41,7 +41,6 @@ public class XMLInstanceToJSONConverter {
                 throw new XMLConverterException("Template not found");
             }
             String json = convert(xml, template).toString();
-            System.out.println("json = " + json);
             return json;
         } catch (DocumentException ex) {
             throw new XMLConverterException(ex);
