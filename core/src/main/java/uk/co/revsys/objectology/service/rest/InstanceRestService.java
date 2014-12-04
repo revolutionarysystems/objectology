@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -86,7 +85,7 @@ public class InstanceRestService extends ObjectRestService {
             }
             List<OlogyInstance> instances = service.findAll(type);
             List results = new LinkedList();
-            for(OlogyInstance instance: instances){
+            for (OlogyInstance instance : instances) {
                 View view = getView(instance, viewName);
                 results.add(viewService.transform(instance, view));
             }
@@ -112,9 +111,9 @@ public class InstanceRestService extends ObjectRestService {
             Query query = new QueryImpl(json);
             List<OlogyInstance> instances = service.find(type, query);
             List results = new LinkedList();
-            for(OlogyInstance instance: instances){
+            for (OlogyInstance instance : instances) {
                 View view = getView(instance, viewName);
-                if(!isAuthorisedToView(instance, view)){
+                if (!isAuthorisedToView(instance, view)) {
                     LOG.warn("Forbidden Access");
                     return Response.status(Response.Status.FORBIDDEN).build();
                 }
@@ -154,9 +153,9 @@ public class InstanceRestService extends ObjectRestService {
         try {
             List<OlogyInstance> instances = service.find(type, query);
             List results = new LinkedList();
-            for(OlogyInstance instance: instances){
+            for (OlogyInstance instance : instances) {
                 View view = getView(instance, viewName);
-                if(!isAuthorisedToView(instance, view)){
+                if (!isAuthorisedToView(instance, view)) {
                     LOG.warn("Forbidden Access");
                     return Response.status(Response.Status.FORBIDDEN).build();
                 }
@@ -212,11 +211,19 @@ public class InstanceRestService extends ObjectRestService {
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
             object = service.create(object);
-            return buildResponse(object);
+            View view = getView(object, null);
+            Object result = viewService.transform(object, view);
+            return buildResponse(result);
         } catch (DeserialiserException ex) {
             LOG.error("Error creating instance", ex);
             return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
         } catch (DaoException ex) {
+            LOG.error("Error creating instance", ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+        } catch (ViewNotFoundException ex) {
+            LOG.error("Error creating instance", ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+        } catch (TransformException ex) {
             LOG.error("Error creating instance", ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         }
@@ -311,7 +318,9 @@ public class InstanceRestService extends ObjectRestService {
             OlogyInstance object = getJsonObjectMapper().deserialise(combinedJSON.toString(), OlogyInstance.class);
             object.setId(id);
             object = service.update(object);
-            return buildResponse(object);
+            View view = getView(object, null);
+            Object result = viewService.transform(object, view);
+            return buildResponse(result);
         } catch (DeserialiserException ex) {
             LOG.error("Error updating instance " + type + ":" + id, ex);
             return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
@@ -319,6 +328,12 @@ public class InstanceRestService extends ObjectRestService {
             LOG.error("Error updating instance " + type + ":" + id, ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         } catch (SerialiserException ex) {
+            LOG.error("Error updating instance " + type + ":" + id, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+        } catch (TransformException ex) {
+            LOG.error("Error updating instance " + type + ":" + id, ex);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
+        } catch (ViewNotFoundException ex) {
             LOG.error("Error updating instance " + type + ":" + id, ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
         }

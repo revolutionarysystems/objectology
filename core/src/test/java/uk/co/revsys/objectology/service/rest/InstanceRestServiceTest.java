@@ -27,6 +27,8 @@ import uk.co.revsys.objectology.security.AllowAllAuthorisationHandler;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
 import uk.co.revsys.objectology.service.ServiceFactory;
 import uk.co.revsys.objectology.service.OlogyTemplateService;
+import uk.co.revsys.objectology.service.ViewService;
+import uk.co.revsys.objectology.view.View;
 import uk.co.revsys.user.manager.test.util.AbstractShiroTest;
 
 public class InstanceRestServiceTest extends AbstractShiroTest {
@@ -65,7 +67,8 @@ public class InstanceRestServiceTest extends AbstractShiroTest {
         OlogyTemplateService mockTemplateService = mocksControl.createMock(OlogyTemplateService.class);
         ServiceFactory.setOlogyTemplateService(mockTemplateService);
         ServiceFactory.setSequenceGenerator(new InMemorySequenceGenerator());
-        InstanceRestService instanceRestService = new InstanceRestService(mockInstanceService, null, new JsonInstanceMapper(), null, new AllowAllAuthorisationHandler(), null, null, null);
+        ViewService mockViewService = mocksControl.createMock(ViewService.class);
+        InstanceRestService instanceRestService = new InstanceRestService(mockInstanceService, null, new JsonInstanceMapper(), null, new AllowAllAuthorisationHandler(), null, null, mockViewService);
         OlogyTemplate template = new OlogyTemplate();
         template.setId("abcd");
         template.setAttributeTemplate("prop1", new PropertyTemplate());
@@ -92,6 +95,7 @@ public class InstanceRestServiceTest extends AbstractShiroTest {
         expect(mockTemplateService.findById("abcd")).andReturn(template);
         Capture<OlogyInstance> instanceCapture = new Capture<OlogyInstance>();
         expect(mockInstanceService.update(capture(instanceCapture))).andReturn(instance);
+        expect(mockViewService.transform(isA(OlogyInstance.class), isA(View.class))).andReturn(instance);
         mocksControl.replay();
         Response response = instanceRestService.updateFromJSON(type, id, json);
         mocksControl.verify();
@@ -117,7 +121,8 @@ public class InstanceRestServiceTest extends AbstractShiroTest {
         OlogyTemplateService mockTemplateService = mocksControl.createMock(OlogyTemplateService.class);
         ServiceFactory.setOlogyTemplateService(mockTemplateService);
         ServiceFactory.setSequenceGenerator(new InMemorySequenceGenerator());
-        InstanceRestService instanceRestService = new InstanceRestService(mockInstanceService, null, new JsonInstanceMapper(), new XMLInstanceToJSONConverter(mockTemplateService), new AllowAllAuthorisationHandler(), null, null, null);
+        ViewService mockViewService = mocksControl.createMock(ViewService.class);
+        InstanceRestService instanceRestService = new InstanceRestService(mockInstanceService, null, new JsonInstanceMapper(), new XMLInstanceToJSONConverter(mockTemplateService), new AllowAllAuthorisationHandler(), null, null, mockViewService);
         OlogyTemplate template = new OlogyTemplate();
         template.setId("abcd");
         template.setType("subscription");
@@ -151,6 +156,7 @@ public class InstanceRestServiceTest extends AbstractShiroTest {
         expect(mockTemplateService.findById("abcd")).andReturn(template);
         Capture<OlogyInstance> instanceCapture = new Capture<OlogyInstance>();
         expect(mockInstanceService.update(capture(instanceCapture))).andReturn(instance);
+        expect(mockViewService.transform(isA(OlogyInstance.class), isA(View.class))).andReturn(instance);
         mocksControl.replay();
         Response response = instanceRestService.updateFromXML(type, id, xml);
         mocksControl.verify();
