@@ -1,20 +1,22 @@
 package uk.co.revsys.objectology.view.definition;
 
+import java.util.HashMap;
+import java.util.Map;
 import uk.co.revsys.objectology.view.definition.rule.ViewDefinitionRule;
 
 public class ViewDefinition {
 
     private String name;
     private String root;
-    private ViewDefinitionRule rule;
+    private Map<String, ViewDefinitionRule> rules = new HashMap<String, ViewDefinitionRule>();
 
     public ViewDefinition() {
     }
 
-    public ViewDefinition(String name, String root, ViewDefinitionRule rule) {
+    public ViewDefinition(String name, String root, Map<String, ViewDefinitionRule> rules) {
         this.name = name;
         this.root = root;
-        this.rule = rule;
+        this.rules = rules;
     }
 
     public String getName() {
@@ -33,11 +35,12 @@ public class ViewDefinition {
         this.root = root;
     }
 
-    public ViewDefinitionRule getRule() {
-        return rule;
+    public Map<String, ViewDefinitionRule> getRules() {
+        return rules;
     }
 
-    public void setRule(ViewDefinitionRule rule) {
-        this.rule = rule;
+    public void setRules(Map<String, ViewDefinitionRule> rules) {
+        this.rules = rules;
     }
+
 }

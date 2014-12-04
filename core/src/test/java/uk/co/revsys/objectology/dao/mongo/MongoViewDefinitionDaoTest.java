@@ -1,9 +1,8 @@
-
 package uk.co.revsys.objectology.dao.mongo;
 
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
+import java.util.HashMap;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -14,9 +13,7 @@ import uk.co.revsys.objectology.dao.DuplicateKeyException;
 import uk.co.revsys.objectology.mapping.json.JsonObjectMapper;
 import uk.co.revsys.objectology.mapping.json.JsonViewDefinitionMapper;
 import uk.co.revsys.objectology.view.definition.ViewDefinition;
-import uk.co.revsys.objectology.view.definition.rule.OneToOneMappingRule;
-import uk.co.revsys.objectology.view.definition.rule.ReplaceRootRule;
-import uk.co.revsys.objectology.view.definition.rule.ViewDefinitionRuleSet;
+import uk.co.revsys.objectology.view.definition.rule.ViewDefinitionRule;
 
 public class MongoViewDefinitionDaoTest {
 
@@ -44,22 +41,18 @@ public class MongoViewDefinitionDaoTest {
         MongoClient mongo = new Fongo("Test Server 1").getMongo();
         JsonObjectMapper jsonMapper = new JsonViewDefinitionMapper();
         MongoViewDefinitionDao dao = new MongoViewDefinitionDao(mongo, "test", jsonMapper);
-        ViewDefinitionRuleSet ruleSet = new ViewDefinitionRuleSet();
-        ruleSet.addRule(new ReplaceRootRule("$.id"));
-        ruleSet.addRule(new OneToOneMappingRule("id", "$.id"));
-        ViewDefinition viewDefinition = new ViewDefinition("Test View", "$", ruleSet);
+        ViewDefinition viewDefinition = new ViewDefinition("Test View", "$", new HashMap<String, ViewDefinitionRule>());
         viewDefinition = dao.create(viewDefinition);
         assertNotNull(viewDefinition);
-        try{
+        try {
             viewDefinition = dao.create(viewDefinition);
             fail("Expected DuplicateKeyException to be thrown");
-        }catch(DuplicateKeyException ex){
-            
+        } catch (DuplicateKeyException ex) {
+
         }
         ViewDefinition result = dao.findByName("Test View");
         assertNotNull(viewDefinition);
         assertEquals("Test View", result.getName());
     }
-
 
 }
