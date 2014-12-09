@@ -15,25 +15,10 @@ public class OlogyTemplateServiceImpl<T extends OlogyTemplate> implements OlogyT
 	}
 
 	@Override
-	public List<T> findAll() throws DaoException{
-		return dao.findAll();
-	}
-
-	@Override
-	public <V> List<V> findAll(Class<? extends V> view) throws DaoException {
-		return dao.findAll(view);
-	}
-
-	@Override
 	public List<T> find(Query query) throws DaoException {
 		return dao.find(query);
 	}
-
-	@Override
-	public <V> List<V> find(Query query, Class<? extends V> view) throws DaoException {
-		return dao.find(query, view);
-	}
-
+    
 	@Override
 	public T findById(String id) throws DaoException{
 		return dao.findById(id);

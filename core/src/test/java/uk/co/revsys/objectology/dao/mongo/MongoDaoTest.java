@@ -15,6 +15,7 @@ import static org.junit.Assert.*;
 import uk.co.revsys.objectology.mapping.json.JsonObjectMapper;
 import uk.co.revsys.objectology.mapping.json.JsonTemplateMapper;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
+import uk.co.revsys.objectology.query.JSONQuery;
 
 public class MongoDaoTest {
 
@@ -58,7 +59,7 @@ public class MongoDaoTest {
         assertEquals(templateId, result.getId());
         result = mongoDao.findByName("Test Template");
         assertEquals(templateId, result.getId());
-        List<OlogyTemplate> results = mongoDao.findAll();
+        List<OlogyTemplate> results = mongoDao.find(new JSONQuery());
         assertEquals(1, results.size());
         assertEquals(templateId, results.get(0).getId());
     }

@@ -28,16 +28,6 @@ public class InMemoryDao<O extends PersistedObject> extends AbstractDao<O>{
 	}
 
 	@Override
-	public List<O> findAll() throws DaoException{
-		return new ArrayList<O>(objects.values());
-	}
-
-	@Override
-	public List<O> findAll(Class view) throws DaoException {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
 	public List<O> find(Query query) throws DaoException {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
@@ -50,12 +40,7 @@ public class InMemoryDao<O extends PersistedObject> extends AbstractDao<O>{
 	@Override
 	public O findByName(String name) throws DaoException{
 		return objectsByName.get(name);
-	}
-
-	@Override
-	public <V> List<V> find(Query query, Class<? extends V> view) throws DaoException {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}   
+	} 
         
 	@Override
 	public O update(O object) throws DaoException{

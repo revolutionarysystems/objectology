@@ -38,13 +38,14 @@ import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
 import uk.co.revsys.objectology.query.JSONQuery;
 import uk.co.revsys.objectology.query.Query;
-import uk.co.revsys.objectology.query.QueryImpl;
 import uk.co.revsys.objectology.mapping.DeserialiserException;
 import uk.co.revsys.objectology.mapping.ObjectMapper;
 import uk.co.revsys.objectology.mapping.SerialiserException;
 import uk.co.revsys.objectology.mapping.xml.XMLConverterException;
 import uk.co.revsys.objectology.mapping.xml.XMLInstanceToJSONConverter;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
+import uk.co.revsys.objectology.query.QuerySortingRule;
+import uk.co.revsys.objectology.query.SortOrder;
 import uk.co.revsys.objectology.security.AuthorisationHandler;
 import uk.co.revsys.objectology.service.OlogyInstanceService;
 import uk.co.revsys.objectology.service.ViewService;
@@ -77,38 +78,38 @@ public class InstanceRestService extends ObjectRestService {
     @GET
     @Path("/{type}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findAll(@PathParam("type") String type, @QueryParam("view") String viewName, @QueryParam("depth") int depth) {
-        try {
-            if (!isAdministrator()) {
-                LOG.warn("Forbidden Access");
-                return Response.status(Response.Status.FORBIDDEN).build();
-            }
-            List<OlogyInstance> instances = service.findAll(type);
-            List results = new LinkedList();
-            for (OlogyInstance instance : instances) {
-                View view = getView(instance, viewName);
-                results.add(viewService.transform(instance, view));
-            }
-            return buildResponse(results, depth);
-        } catch (DaoException ex) {
-            LOG.error("Error retrieving all instances of type " + type, ex);
-            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
-        } catch (ViewNotFoundException ex) {
-            LOG.error("Error retrieving all instances of type " + type, ex);
-            return buildErrorResponse(Response.Status.BAD_REQUEST, ex);
-        } catch (TransformException ex) {
-            LOG.error("Error retrieving all instances of type " + type, ex);
-            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
-        }
+    public Response findAll(@PathParam("type") String type, @QueryParam("view") String viewName, @QueryParam("offset") int offset, @QueryParam("limit") int limit, @QueryParam("sort") String sort) {
+        return query(type, viewName, "{}", offset, limit, sort);
     }
 
     @POST
     @Path("/{type}/query")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response query(@PathParam("type") String type, @QueryParam("view") String viewName, @QueryParam("depth") int depth, String json) {
+    public Response query(@PathParam("type") String type, @QueryParam("view") String viewName, String json, @QueryParam("offset") int offset, @QueryParam("limit") int limit, @QueryParam("sort") String sort) {
         try {
-            Query query = new QueryImpl(json);
+            if(offset < 0){
+                offset = 0;
+            }
+            if(limit < 0){
+                limit = 20;
+            }
+            Query query = new JSONQuery(json);
+            query.setOffset(offset);
+            query.setLimit(limit);
+            System.out.println("sort = " + sort);
+            if(sort!=null && !sort.isEmpty()){
+                String[] sortTokens = sort.split("\\|");
+                System.out.println("sortTokens = " + sortTokens);
+                for(String sortToken: sortTokens){
+                    System.out.println("sortToken = " + sortToken);
+                    if(sortToken.startsWith("-")){
+                        query.getSortingRules().add(new QuerySortingRule(sortToken.substring(1), SortOrder.DESCENDING));
+                    }else{
+                        query.getSortingRules().add(new QuerySortingRule(sortToken, SortOrder.ASCENDING));
+                    }
+                }
+            }
             List<OlogyInstance> instances = service.find(type, query);
             List results = new LinkedList();
             for (OlogyInstance instance : instances) {
@@ -119,10 +120,7 @@ public class InstanceRestService extends ObjectRestService {
                 }
                 results.add(viewService.transform(instance, view));
             }
-            if (!isAdministrator()) {
-                depth = 1;
-            }
-            return buildResponse(results, depth);
+            return buildResponse(results);
         } catch (DaoException ex) {
             LOG.error("Error querying instances of type " + type, ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
@@ -138,43 +136,17 @@ public class InstanceRestService extends ObjectRestService {
     @GET
     @Path("/{type}/query")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response query(@PathParam("type") String type, @QueryParam("view") String viewName, @QueryParam("depth") int depth, @Context UriInfo ui) {
+    public Response query(@PathParam("type") String type, @QueryParam("view") String viewName, @Context UriInfo ui, @QueryParam("offset") int offset, @QueryParam("limit") int limit, @QueryParam("sort") String sort) {
         MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
         queryParams.remove("view");
-        queryParams.remove("depth");
-        if (queryParams.isEmpty()) {
-            LOG.warn("Empty query params");
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-        JSONQuery query = new JSONQuery();
+        queryParams.remove("offset");
+        queryParams.remove("limit");
+        queryParams.remove("sort");
+        JSONObject json = new JSONObject();
         for (Entry<String, List<String>> queryParam : queryParams.entrySet()) {
-            query.put(queryParam.getKey(), queryParam.getValue().get(0).replace("+", " "));
+            json.put(queryParam.getKey(), queryParam.getValue().get(0).replace("+", " "));
         }
-        try {
-            List<OlogyInstance> instances = service.find(type, query);
-            List results = new LinkedList();
-            for (OlogyInstance instance : instances) {
-                View view = getView(instance, viewName);
-                if (!isAuthorisedToView(instance, view)) {
-                    LOG.warn("Forbidden Access");
-                    return Response.status(Response.Status.FORBIDDEN).build();
-                }
-                results.add(viewService.transform(instance, view));
-            }
-            if (!isAdministrator()) {
-                depth = 1;
-            }
-            return buildResponse(results, depth);
-        } catch (DaoException ex) {
-            LOG.error("Error querying instances of type " + type, ex);
-            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
-        } catch (ViewNotFoundException ex) {
-            LOG.error("Error querying instances of type " + type, ex);
-            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
-        } catch (TransformException ex) {
-            LOG.error("Error querying instances of type " + type, ex);
-            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
-        }
+        return query(type, viewName, json.toString(), offset, limit, sort);
     }
 
     @POST
@@ -232,7 +204,7 @@ public class InstanceRestService extends ObjectRestService {
     @GET
     @Path("/{type}/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findById(@PathParam("type") String type, @PathParam("id") String id, @QueryParam("depth") int depth, @QueryParam("path") String path, @QueryParam("view") String viewName) {
+    public Response findById(@PathParam("type") String type, @PathParam("id") String id, @QueryParam("path") String path, @QueryParam("view") String viewName) {
         try {
             OlogyInstance instance = service.findById(type, id);
             Object result;
@@ -246,13 +218,10 @@ public class InstanceRestService extends ObjectRestService {
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
             result = viewService.transform(instance, view);
-            if (!isAdministrator()) {
-                depth = 1;
-            }
             if (path != null && isAdministrator()) {
                 result = getPathEvaluator().evaluate(instance, path);
             }
-            return buildResponse(result, depth);
+            return buildResponse(result);
         } catch (DaoException ex) {
             LOG.error("Error finding instance " + type + ":" + id, ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);
@@ -271,7 +240,7 @@ public class InstanceRestService extends ObjectRestService {
     @GET
     @Path("/{type}/name/{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findByName(@PathParam("type") String type, @PathParam("name") String name, @QueryParam("depth") int depth, @QueryParam("path") String path, @QueryParam("view") String viewName) {
+    public Response findByName(@PathParam("type") String type, @PathParam("name") String name, @QueryParam("path") String path, @QueryParam("view") String viewName) {
         try {
             OlogyInstance instance = service.findByName(type, name);
             Object result;
@@ -285,10 +254,7 @@ public class InstanceRestService extends ObjectRestService {
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
             result = viewService.transform(instance, view);
-            if (!isAdministrator()) {
-                depth = 1;
-            }
-            return buildResponse(result, depth);
+            return buildResponse(result);
         } catch (DaoException ex) {
             LOG.error("Error finding instance " + type + ":" + name, ex);
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex);

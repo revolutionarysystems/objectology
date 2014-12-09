@@ -1,6 +1,5 @@
 package uk.co.revsys.objectology.service.rest;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.Consumes;
@@ -23,13 +22,11 @@ import uk.co.revsys.objectology.dao.DaoException;
 import uk.co.revsys.objectology.model.template.OlogyTemplate;
 import uk.co.revsys.objectology.query.JSONQuery;
 import uk.co.revsys.objectology.query.Query;
-import uk.co.revsys.objectology.query.QueryImpl;
 import uk.co.revsys.objectology.mapping.DeserialiserException;
 import uk.co.revsys.objectology.mapping.ObjectMapper;
 import uk.co.revsys.objectology.security.AuthorisationHandler;
 import uk.co.revsys.objectology.service.OlogyTemplateService;
 import uk.co.revsys.objectology.service.TemplateLoader;
-import uk.co.revsys.objectology.view.ViewNotFoundException;
 
 @Path("/template")
 public class TemplateRestService extends AbstractRestService {
@@ -54,7 +51,7 @@ public class TemplateRestService extends AbstractRestService {
             if (!isAdministrator()) {
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
-            List<OlogyTemplate> results = service.findAll();
+            List<OlogyTemplate> results = service.find(new JSONQuery());
             return buildResponse(results);
         } catch (DaoException ex) {
             LOG.error("Error retrieving all templates", ex);
@@ -71,7 +68,7 @@ public class TemplateRestService extends AbstractRestService {
             if (!isAdministrator()) {
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
-            Query query = new QueryImpl(json);
+            Query query = new JSONQuery(json);
             List<OlogyTemplate> results = service.find(query);
             return buildResponse(results);
         } catch (DaoException ex) {

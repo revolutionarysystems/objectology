@@ -32,15 +32,10 @@ public class AbstractRestService {
     protected boolean isAdministrator(){
         return authorisationHandler.isAdministrator();
     }
-
-    protected Response buildResponse(Object entity) {
-        return buildResponse(entity, 1);
-    }
     
-	protected Response buildResponse(Object entity, int depth) {
+	protected Response buildResponse(Object entity) {
 		try {
             Map<String, Object> serialisationParameters = new HashMap<String, Object>();
-            serialisationParameters.put("depth", depth);
 			return Response.ok(jsonObjectMapper.serialise(entity, serialisationParameters)).build();
 		} catch (SerialiserException ex) {
             LOG.error("Error building response", ex);
