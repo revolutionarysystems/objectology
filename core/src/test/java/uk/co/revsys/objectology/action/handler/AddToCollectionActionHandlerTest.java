@@ -71,6 +71,62 @@ public class AddToCollectionActionHandlerTest {
     }
     
     @Test
+    public void testInvokeAddMeasurementToRequestedCollection() throws Exception {
+        IMocksControl mocksControl = EasyMock.createControl();
+        OlogyInstanceService mockService = mocksControl.createMock(OlogyInstanceService.class);
+        ServiceFactory.setOlogyInstanceService(mockService);
+        OlogyTemplate template = new OlogyTemplate();
+        CollectionTemplate collectionTemplate = new CollectionTemplate(new MeasurementTemplate());
+        template.setAttributeTemplate("collection", collectionTemplate);
+        OlogyInstance instance = new OlogyInstance(template);
+        Collection collection = new Collection();
+        instance.setAttribute("collection", collection);
+        ActionRequest request = new ActionRequest();
+        request.getParameters().put("item", "2");
+        request.getParameters().put("collection", "collection");
+        AddToCollectionAction action = new AddToCollectionAction("${collection}", "item");
+        Capture<OlogyInstance> capture = new Capture<OlogyInstance>();
+        expect(mockService.update(capture(capture))).andReturn(null);
+        mocksControl.replay();
+        AddToCollectionActionHandler actionHandler = new AddToCollectionActionHandler(new JsonInstanceMapper());
+        actionHandler.invoke(instance, action, request);
+        mocksControl.verify();
+        OlogyInstance result = capture.getValue();
+        assertEquals(1, result.getAttribute("collection", Collection.class).getMembers().size());
+        assertEquals("2", result.getAttribute("collection", Collection.class).getMembers().get(0).toString());
+    }
+    
+    @Test
+    public void testInvokeAddToPart() throws Exception {
+        IMocksControl mocksControl = EasyMock.createControl();
+        OlogyInstanceService mockService = mocksControl.createMock(OlogyInstanceService.class);
+        ServiceFactory.setOlogyInstanceService(mockService);
+        OlogyTemplate template = new OlogyTemplate();
+        OlogyTemplate partTemplate = new OlogyTemplate();
+        CollectionTemplate collectionTemplate = new CollectionTemplate(new MeasurementTemplate());
+        partTemplate.setAttributeTemplate("collection", collectionTemplate);
+        template.setAttributeTemplate("part", partTemplate);
+        OlogyInstance instance = new OlogyInstance(template);
+        OlogyInstance part = new OlogyInstance();
+        instance.setAttribute("part", part);
+        Collection collection = new Collection();
+        part.setAttribute("collection", collection);
+        ActionRequest request = new ActionRequest();
+        request.getParameters().put("item", "2");
+        AddToCollectionAction action = new AddToCollectionAction("collection", "item");
+        action.setBase("part");
+        Capture<OlogyInstance> capture = new Capture<OlogyInstance>();
+        expect(mockService.update(capture(capture))).andReturn(null);
+        mocksControl.replay();
+        AddToCollectionActionHandler actionHandler = new AddToCollectionActionHandler(new JsonInstanceMapper());
+        actionHandler.invoke(instance, action, request);
+        mocksControl.verify();
+        OlogyInstance result = capture.getValue();
+        assertEquals(1, result.getAttribute("part", OlogyInstance.class).getAttribute("collection", Collection.class).getMembers().size());
+        assertEquals("2", result.getAttribute("part", OlogyInstance.class).getAttribute("collection", Collection.class).getMembers().get(0).toString());
+    }
+    
+    @Test
     public void testInvokeAddObject() throws Exception {
         IMocksControl mocksControl = EasyMock.createControl();
         OlogyInstanceService mockService = mocksControl.createMock(OlogyInstanceService.class);

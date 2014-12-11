@@ -1,6 +1,6 @@
 package uk.co.revsys.objectology.action.model;
 
-public class RemoveFromCollectionAction extends AbstractAction{
+public class RemoveFromCollectionAction extends AttributeAction{
 
     private String collection;
     private String item;

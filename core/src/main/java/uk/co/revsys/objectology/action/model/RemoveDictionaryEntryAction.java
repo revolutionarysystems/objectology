@@ -1,6 +1,6 @@
 package uk.co.revsys.objectology.action.model;
 
-public class RemoveDictionaryEntryAction extends AbstractAction {
+public class RemoveDictionaryEntryAction extends AttributeAction {
 
     private String dictionary;
 

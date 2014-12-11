@@ -1,6 +1,6 @@
 package uk.co.revsys.objectology.action.model;
 
-public class AddToCollectionAction extends AbstractAction {
+public class AddToCollectionAction extends AttributeAction {
 
     private String collection;
     private String item;
