@@ -24,6 +24,8 @@ import uk.co.revsys.objectology.model.template.PropertyTemplate;
 import uk.co.revsys.objectology.model.template.SelectTemplate;
 import uk.co.revsys.objectology.model.template.SequenceTemplate;
 import uk.co.revsys.objectology.model.template.TimeTemplate;
+import uk.co.revsys.objectology.security.IsAccountHolderConstraint;
+import uk.co.revsys.objectology.security.IsAccountMemberConstraint;
 import uk.co.revsys.objectology.security.IsAdministratorConstraint;
 import uk.co.revsys.objectology.security.PermissionConstraint;
 import uk.co.revsys.objectology.security.RoleConstraint;
@@ -50,6 +52,8 @@ public class NatureMap {
         NatureMap.setNature("hasRole", RoleConstraint.class);
         NatureMap.setNature("hasPermission", PermissionConstraint.class);
         NatureMap.setNature("isAdministrator", IsAdministratorConstraint.class);
+        NatureMap.setNature("isAccountHolder", IsAccountHolderConstraint.class);
+        NatureMap.setNature("isAccountMember", IsAccountMemberConstraint.class);
         // Actions
         NatureMap.setNature("updateAttribute", UpdateAttributeAction.class);
         NatureMap.setNature("addToCollection", AddToCollectionAction.class);

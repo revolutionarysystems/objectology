@@ -1,8 +1,6 @@
 package uk.co.revsys.objectology.action.handler;
 
 import uk.co.revsys.objectology.action.handler.exception.ActionInvocationException;
-import java.util.HashMap;
-import java.util.Map;
 import uk.co.revsys.objectology.action.ActionRequest;
 import uk.co.revsys.objectology.action.model.AddToCollectionAction;
 import uk.co.revsys.objectology.dao.DaoException;
@@ -11,7 +9,6 @@ import uk.co.revsys.objectology.mapping.json.JsonInstanceMapper;
 import uk.co.revsys.objectology.model.instance.Attribute;
 import uk.co.revsys.objectology.model.instance.Collection;
 import uk.co.revsys.objectology.model.instance.OlogyInstance;
-import uk.co.revsys.objectology.model.template.AtomicAttributeTemplate;
 import uk.co.revsys.objectology.model.template.AttributeTemplate;
 import uk.co.revsys.objectology.service.ServiceFactory;
 

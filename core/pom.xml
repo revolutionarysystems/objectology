@@ -28,6 +28,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-version>3.2.8.RELEASE</spring-version>
         <wink-version>1.4</wink-version>
+        <user-manager-version>0.2.0-SNAPSHOT</user-manager-version>
     </properties>
 
     <dependencies>
@@ -59,7 +60,7 @@
         <dependency>
             <groupId>uk.co.revsys.user-manager</groupId>
             <artifactId>user-manager-core</artifactId>
-            <version>0.1.1</version>
+            <version>${user-manager-version}</version>
         </dependency>
         
         <dependency>
