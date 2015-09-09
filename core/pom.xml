@@ -28,7 +28,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-version>3.2.8.RELEASE</spring-version>
         <wink-version>1.4</wink-version>
-        <user-manager-version>0.2.3</user-manager-version>
+        <user-manager-version>0.3.0-SNAPSHOT</user-manager-version>
     </properties>
 
     <dependencies>
